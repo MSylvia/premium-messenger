@@ -295,10 +295,8 @@
 			}, function() {
 				var item = current.channels.findItem('linker', linker);
 				if (item) {
-
 					if (user.channels && !user.channels[item.id])
 						return REDIRECT('/');
-
 					current.route.type = 'channel';
 					current.route.item = item;
 					SET('current.title', '#' + item.name);
@@ -307,7 +305,8 @@
 					var is = user.unread[item.id];
 					delete user.unread[item.id];
 					is && refresh_unread();
-				}
+				} else
+					REDIRECT('/');
 			});
 		});
 
@@ -316,12 +315,7 @@
 				return current.users !== EMPTYARRAY;
 			}, function() {
 				var item = current.users.findItem('linker', linker);
-
-				if (item) {
-
-					if (item.id === user.id)
-						return REDIRECT('/users/');
-
+				if (item && item.id !== user.id) {
 					current.route.type = 'user';
 					current.route.item = item;
 					SET('current.title', item.name);
@@ -332,7 +326,8 @@
 					user.recent[item.id] = true;
 					is && refresh_unread();
 					refresh_recent();
-				}
+				} else
+					REDIRECT('/');
 			});
 		});
 

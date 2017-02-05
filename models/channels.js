@@ -13,6 +13,7 @@ NEWSCHEMA('Channel').make(function(schema) {
 		tmp.linker = model.name.slug();
 		tmp.datecreated = F.datetime;
 		F.global.channels.push(tmp);
+		F.global.channels.quicksort('name');
 		F.global.refresh && F.global.refresh();
 		OPERATION('channels.save', NOOP);
 		callback(SUCCESS(true));

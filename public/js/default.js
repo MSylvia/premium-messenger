@@ -14,6 +14,10 @@ $(window).on('resize', function() {
 	EMIT('resize');
 });
 
+ON('404', function() {
+	REDIRECT('/');
+});
+
 ON('resize', function() {
 	var $w = $(window);
 	var width = $w.width();
