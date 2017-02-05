@@ -87,8 +87,9 @@
 			<div data-jc="page" data-jc-path="common.page" data-if="settings" data-template="/templates/settings.html" data-reload="settings_reload"></div>
 		</div>
 		<div id="messagebox">
-			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file here (max. 3 MB).)" data-maxlength="1000"></div>
+			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message (Markdown syntax) or drag & drop file here (max. 3 MB).)" data-maxlength="1000"></div>
 			<div id="status">
+				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
 				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Send: ENTER)' : '@(Send: CTRL+ENTER)'"></span></div>
 				<div data-jc="typing">
 					<script type="text/html">
@@ -102,6 +103,7 @@
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'formuser'" data-url="/forms/formuser.html" data-reload="formuser_reload"></div>
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'formchannel'" data-url="/forms/formchannel.html" data-reload="formchannel_reload"></div>
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'searchresults'" data-url="/forms/searchresults.html" data-reload="searchresults_reload"></div>
+	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'help'" data-url="/forms/help.html"></div>
 
 	@{json(user, 'userdata', (k, v) => k !== 'password' ? v : undefined)}
 
@@ -388,6 +390,10 @@
 
 		function codemirror_enter() {
 			SET('common.enter', !common.enter);
+		}
+
+		function codemirror_help() {
+			SET('common.form', 'help');
 		}
 
 		Tangular.register('time', function(value) {
