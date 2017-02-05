@@ -1,0 +1,164 @@
+<div data-b="common.search" data-b-visible="n => n" class="hidden">
+	<div class="padding">
+		<h3><i class="fa fa-search mr5"></i>@(Search results)</h3>
+		<div data-jc="repeater" data-jc-path="chat.search" class="chat">
+			<script type="text/html">
+				{{ if user }}
+				<figure{{ if user.me }} class="me"{{ fi }}>
+					<div class="chat-picture">
+						<a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><img src="/photos/{{ user.picture }}.jpg" alt="{{ user.name }}" class="img-responsive" border="0" /></a>
+					</div>
+					<div class="chat-body">
+						<div class="chat-user"><i class="fa useronline fa-circle{{ if user.online }} online{{ fi }}" data-id="{{ user.id }}"></i><a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><b>{{ user.name }}</b></a> <span class="datetime" data-value="{{ datecreated }}">{{ datecreated | time }}</span></div>
+						<div class="chat-position">{{ user.position }}</div>
+						<div class="markdown">{{ body | markdown }}</div>
+					</div>
+				</figure>
+				{{ fi }}
+			</script>
+		</div>
+		<div data-b="chat.search" data-b-visible="n => n && !n.length" class="padding">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2 center">
+					<hr />
+					<div><i class="fa fa-search fa-4x"></i></div>
+					<p>@(<b>No messages</b> found in database.)</p>
+					<hr />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div data-b="common.search" data-b-visible="n => !n">
+	<div data-jc="chat" data-previous="@(Previous page: {0})">
+		<script type="text/html">
+			<figure{{ if user.me }} class="me"{{ fi }}>
+				<div class="chat-picture">
+					<a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><img src="/photos/{{ user.picture }}.jpg" alt="{{ user.name }}" class="img-responsive" border="0" /></a>
+				</div>
+				<div class="chat-body">
+					<div class="chat-user"><i class="fa useronline fa-circle{{ if user.online }} online{{ fi }}" data-id="{{ user.id }}"></i><a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><b>{{ user.name }}</b></a> <span class="datetime" data-value="{{ datecreated }}">{{ datecreated | time }}</span></div>
+					<div class="chat-position">{{ user.position }}</div>
+					<div class="markdown">{{ body | markdown }}</div>
+				</div>
+			</figure>
+		</script>
+	</div>
+</div>
+
+<script>
+	var MSG_ROUTE = {};
+	var CHATFILTER = { max: 15 };
+	var CHATSEARCH = { max: 30, q: '', page: 1 };
+	var chat = {};
+
+	function chat_reload(page) {
+		MSG_ROUTE.type = current.route.type;
+		MSG_ROUTE.id = current.route.item.id;
+		CHATFILTER.page = page || 1;
+		SETTER('loading', 'show');
+		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), CHATFILTER, function(response) {
+
+			// We have to reverse array because all messages are from newest to older
+			response.reverse();
+
+			if (CHATFILTER.page === 1) {
+				SETTER('chat', 'empty');
+				SETTER('chat', 'insert', response);
+			} else
+				SETTER('chat', 'prepend', response);
+
+			SETTER('websocket', 'send', MSG_ROUTE);
+			SETTER('loading', 'hide', 500);
+		});
+
+		$('#messagebox').removeClass('hidden');
+		EMIT('resize');
+	}
+
+	WATCH('common.search', function(path, value) {
+
+		if (common.page !== 'chat')
+			return;
+
+		if (!value) {
+			chat.search !== EMPTYARRAY && SET('chat.search', EMPTYARRAY);
+			return;
+		}
+
+		CHATSEARCH.q = value;
+
+		SETTER('loading', 'show');
+		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), CHATSEARCH, function(response) {
+			SETTER('loading', 'hide', 1000);
+
+			response.forEach(function(item) {
+				item.user = current.users.findItem('id', item.iduser);
+			});
+
+			SET('chat.search', response);
+		});
+	});
+
+	COMPONENT('chat', function() {
+
+		var self = this;
+
+		self.blind();
+		self.readonly();
+		self.singleton();
+
+		self.prepend = function(value) {
+			var builder = [];
+
+			value.forEach(function(item) {
+				item.me = user.id === item.iduser;
+				item.user = current.users.findItem('id', item.iduser);
+				builder.push(self.template(item));
+			});
+
+			if (builder.length) {
+				builder.push('<div><div>{0}</div></div>'.format(self.attr('data-previous').format(CHATFILTER.page)));
+				highlight(self.element.prepend(builder.join('')));
+			}
+
+			self.next = value.length === CHATFILTER.max;
+		};
+
+		self.insert = function(value) {
+			if (!(value instanceof Array))
+				value = [value];
+			else
+				self.next = value.length === CHATFILTER.max;
+
+			var builder = [];
+
+			value.forEach(function(item) {
+				item.me = user.id === item.iduser;
+				item.user = current.users.findItem('id', item.iduser);
+				builder.push(self.template(item));
+			});
+
+			highlight(self.append(builder.join('')));
+			setTimeout2(self.id, scrollBottom, 500);
+		};
+
+		self.make = function() {
+			self.classes('chat');
+			var scr = self.find('script');
+			self.template = Tangular.compile(scr.html());
+			scr.remove();
+
+			var content = $('#content');
+			content.on('scroll', function() {
+				if (!self.next || common.page !== 'chat')
+					return;
+				setTimeout2('contentscroll', function() {
+					content.scrollTop() === 0 && chat_reload(CHATFILTER.page + 1);
+				}, 200);
+			});
+		};
+	});
+
+</script>

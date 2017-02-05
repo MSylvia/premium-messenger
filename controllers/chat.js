@@ -1,0 +1,182 @@
+const MSG_ONOFF = { type: 'online' };
+const MSG_CDL = { type: 'cdl' };
+const MSG_UNREAD = { type: 'unread' };
+const MSG_TYPING = { type: 'typing' };
+const SKIPFIELDS = { email: true, unread: true, recent: true, channels: true, password: true, threadid: true, threadtype: true, ticks: true };
+const BLACKLIST = [''];
+
+exports.install = function() {
+	F.websocket('/', messages, ['json', 'authorize']);
+};
+
+function messages() {
+
+	var self = this;
+
+	self.autodestroy(function() {
+		F.global.refresh = null;
+	});
+
+	// Temporary method for refreshing data
+	F.global.refresh = function() {
+		MSG_CDL.channels = F.global.channels;
+		MSG_CDL.users = F.global.users;
+		var is = true;
+		self.send(MSG_CDL, undefined, undefined, function(key, value) {
+			if (is && key === 'channels') {
+				is = false;
+				return value;
+			}
+			return SKIPFIELDS[key] ? undefined : value;
+		});
+	};
+
+	self.on('open', function(client) {
+		var is = true;
+		client.user.online = true;
+		client.user.datelogged = F.datetime;
+		MSG_CDL.channels = F.global.channels;
+		MSG_CDL.users = F.global.users;
+		client.send(MSG_CDL, undefined, function(key, value) {
+			if (is && key === 'channels') {
+				is = false;
+				return value;
+			}
+			return SKIPFIELDS[key] ? undefined : value;
+		});
+
+		setTimeout(function() {
+			MSG_ONOFF.id = client.user.id;
+			MSG_ONOFF.online = true;
+			BLACKLIST[0] = client.id;
+			self.send(MSG_ONOFF, null, BLACKLIST);
+		}, 500);
+	});
+
+	self.on('close', function(client) {
+		client.user.online = false;
+		MSG_ONOFF.id = client.user.id;
+		MSG_ONOFF.online = false;
+		self.send(MSG_ONOFF);
+	});
+
+	self.on('message', function(client, message) {
+
+		var tmp, iduser, idchannel;
+		iduser = message.iduser = client.user.id;
+
+		switch (message.type) {
+
+			case 'unread':
+				MSG_UNREAD.unread = client.user.unread;
+				client.send(MSG_UNREAD);
+				break;
+
+			// Changed group
+			case 'channel':
+			case 'user':
+				client.user.threadtype = message.type;
+				client.user.threadid = message.id;
+				message.type === 'user' && client.user.id !== message.id && (client.user.recent[message.id] = true);
+				client.user.unread[message.id] && (delete client.user.unread[message.id]);
+				self.send(message);
+				break;
+
+			case 'recent':
+				delete client.user.recent[message.id];
+				OPERATION('users.save', NOOP);
+				break;
+
+			// Starts typing
+			case 'typing':
+				MSG_TYPING.id = client.user.id;
+				self.send(MSG_TYPING, (id, m) => m.user.threadtype === client.user.threadtype && m.user !== client.user);
+				break;
+
+			// Real message
+			case 'message':
+
+				message.id = UID();
+				message.iduser = client.user.id;
+				message.datecreated = new Date();
+
+				NOSQL('messages').counter.hit('all').hit(client.user.id);
+
+				// threadtype = "user" (direct message) or "channel"
+
+				if (client.user.threadtype === 'user') {
+					tmp = self.find(n => n.user.threadtype === 'user' && n.user.id === client.user.threadid);
+					if (tmp)
+						tmp.send(message);
+					else {
+						tmp = F.global.users.findItem('id', client.user.threadid);
+						if (tmp) {
+							if (tmp.unread[iduser])
+								tmp.unread[iduser]++;
+							else
+								tmp.unread[iduser] = 1;
+
+							tmp.recent[iduser] = true;
+
+							if (tmp.online) {
+								MSG_UNREAD.unread = tmp.unread;
+								MSG_UNREAD.recent = tmp.recent;
+								tmp = self.find(client => client.user.id === tmp.id);
+								tmp && tmp.send(MSG_UNREAD);
+							}
+
+							OPERATION('users.save', NOOP);
+						}
+					}
+
+					client.send(message);
+				} else {
+
+					tmp = {};
+					idchannel = client.user.threadid;
+
+					// Notify users in this channel
+					self.send(message, function(id, m) {
+						if (m.user.threadid === client.user.threadid) {
+							tmp[m.user.id] = true;
+							return true;
+						}
+					});
+
+					// Set an unread for users outside this channel
+					for (var i = 0, length = F.global.users.length; i < length; i++) {
+						var user = F.global.users[i];
+						if (!tmp[user.id] && (user.channels == null || user.channels[idchannel])) {
+							if (user.unread[idchannel])
+								user.unread[idchannel]++;
+							else
+								user.unread[idchannel] = 1;
+						}
+					}
+
+					self.all(function(m) {
+						if (m.user.id !== client.user.id && m.user.threadid !== client.user.threadid && (!m.user.channels || m.user.channels[client.user.threadid])) {
+							MSG_UNREAD.unread = m.user.unread;
+							MSG_UNREAD.recent = undefined;
+							m.send(MSG_UNREAD);
+						}
+					});
+
+					OPERATION('users.save', NOOP);
+				}
+
+				// Inserts
+				var dbname = client.user.threadtype === 'channel' ? client.user.threadtype + client.user.threadid : 'user' + F.global.merge(client.user.threadid, client.user.id);
+				message.type = undefined;
+				message.idowner = client.user.threadid;
+				message.search = message.body.keywords(true, true).join(' ');
+				var db = NOSQL(dbname);
+				db.insert(message);
+				db.counter.hit('all').hit(client.user.id);
+				NOSQL(dbname + '-backup').insert(message);
+				OPERATION('messages.cleaner', dbname, NOOP);
+				break;
+
+		}
+	});
+}

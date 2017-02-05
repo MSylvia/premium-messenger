@@ -1,0 +1,67 @@
+<div class="padding" data-jc="search" data-jc-path="common.search" data-selector=".jsearch">
+	<div class="savisible">
+		<div class="row">
+			<div class="col-md-3 m">
+				<button class="button button-small exec" data-exec="users_new"><i class="fa fa-plus-circle mr5"></i>@(Add a new user)</button>
+			</div>
+		</div>
+	</div>
+	<div data-jc="repeater-group" data-jc-path="current.users" data-group="position" class="users row">
+		<script type="text/html">
+			<div class="col-md-3 col-sm-4 m jsearch" data-search="{{ name }}">
+				<a href="{{ if me }}javascript:void(0){{ else }}/users/{{ linker }}/{{ fi }}" class="singleline{{ if !me }} jrouting{{ fi }}"><i class="fa fa-circle useronline{{ if online }} online{{ fi }}" data-id="{{ id }}"></i><img src="{{ if picture }}/photos/{{ picture }}.jpg{{ else }}/img/face.jpg{{ fi }}" class="mr5" height="20" />{{ name }}</a>
+				<div class="fs11 mt5"><i class="fa fa-clock-o mr5"></i>@(Logged:) {{ datelogged | time | def('...') }}{{ if blocked }} <b class="red">@((user is blocked))</b>{{ fi }}</div>
+				<div class="operations"><a href="javascript:void(0)" class="exec" data-exec="users_edit" data-id="{{ id }}">@(Edit)</a><a href="javascript:void(0)" class="exec" data-exec="users_remove" data-id="{{ id }}">@(Remove)</a></div>
+			</div>
+		</script>
+		<script type="text/html">
+			<div class="col-md-12 jsearch" data-search="">
+				<h3>{{ position }}</h3>
+			</div>
+			{{ body | raw }}
+			<div class="col-md-12 jsearch" data-search="">
+				<hr class="nmt" />
+			</div>
+		</script>
+	</div>
+</div>
+
+<script>
+	function users_reload() {
+		SET('current.title', '@(Users)');
+		$('#messagebox').addClass('hidden');
+		EMIT('resize');
+	}
+
+	function users_edit(el) {
+		SETTER('loading', 'show');
+		AJAX('GET /api/users/{0}/'.format(el.attr('data-id')), function(response) {
+
+			SETTER('loading', 'hide', 1000);
+
+			if (response instanceof Array)
+				return;
+
+			response.password = '**********';
+			if (response.channels)
+				response.channels = Object.keys(response.channels);
+			else
+				response.channels = [];
+			SET('formuser', response);
+			RESET('formuser.*', true);
+			SET('common.form', 'formuser');
+		});
+	}
+
+	function users_remove(el) {
+		FIND('confirm').confirm('@(Are you sure you want to remove this user?)', ['@(Yes)', '@(Cancel)'], function(index) {
+			!index && AJAX('DELETE /api/users/{0}/'.format(el.attr('data-id')), NOOP);
+		});
+	}
+
+	function users_new() {
+		SET('formuser', { channels: [], email: '@', picture: 'face', notifications: true }, true);
+		SET('common.form', 'formuser');
+	}
+
+</script>

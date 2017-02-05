@@ -1,0 +1,48 @@
+<div class="padding">
+	<div class="padding npb">
+		<div data-jc="textbox" data-jc-keypress="false" data-jc-path="tasks.form.body" data-placeholder="@(Add a new private task and press enter)" data-maxlength="100" data-control-icon="fa-keyboard-o"></div>
+	</div>
+</div>
+<div data-jc="repeater" data-jc-path="tasks.items">
+	<script type="text/html">
+		<div class="task">
+			<div class="task-checkbox exec" data-id="{{ id }}" data-exec="tasks_checked"><i class="fa fa-check"></i></div>
+			<div class="task-body">{{ body | body }}</div>
+		</div>
+	</script>
+</div>
+<div data-b="tasks.items" data-b-visible="n => !n.length">
+	<br /><br />
+	<div class="center">
+		<i class="fa fa-check-circle green fa-5x"></i>
+		<div class="mt10">@(<b>Great.</b> You don't have any tasks.)</div>
+	</div>
+</div>
+
+<script>
+
+	var tasks = {};
+	tasks.form = {};
+
+	WATCH('tasks.form.body', function(path, value) {
+		if (value) {
+			AJAX('POST /api/tasks/', { body: value }, function(response) {
+				response.success && PUSH('tasks.items', { body: value, id: response.value });
+			});
+			SET('tasks.form.body', '');
+		}
+	});
+
+	function tasks_reload() {
+		SET('current.title', '@(My Tasks:)' + ' ' + user.name);
+		$('#messagebox').addClass('hidden');
+		EMIT('resize');
+		AJAX('GET /api/tasks/', 'tasks.items');
+	}
+
+	function tasks_checked(el) {
+		el.removeClass('exec').addClass('task-checked').parent().addClass('task-removed');
+		AJAX('GET /api/tasks/{0}/'.format(el.attr('data-id')), NOOP);
+	}
+
+</script>

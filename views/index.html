@@ -1,0 +1,430 @@
+@{layout('')}
+@{title(user.name)}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="robots" content="all,follow" />
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700&subset=latin,latin-ext" />
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.css" />
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/github.min.css" />
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/mode/markdown/markdown.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/favico.js/0.3.10/favico.min.js"></script>
+	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
+</head>
+<body data-jc="exec,binder"{{ if user.sa }} class="sa"{{ fi }}>
+
+	<div data-jc="loading"></div>
+	<div data-jc="confirm"></div>
+	<div data-jc="message" data-button="@(Close)"></div>
+	<div data-jc="websocket" data-jc-id="websocket" data-url="/"></div>
+	<div data-jc="audio" data-jc-path="common.volume"></div>
+
+	<section class="panel">
+
+		<div class="user">
+			<div class="user-name singleline"><img src="/photos/@{user.picture}.jpg" height="30" alt="@{user.name}" />@{user.name}</div>
+			<div class="user-stats"><i class="fa fa-circle blink online mr5"></i>@(Online:)<span data-b="current.online" data-b-html="n => n + 1" class="b ml5"></span> / <span data-b="current.users.length" data-b-html="n => Tangular.helpers.pluralize(n, @('# users', '# user', '# users', '# users'))"></span></div>
+		</div>
+
+		<div data-jc="searchbox" data-jc-path="panel.search" data-placeholder="@(Search in the panel)"></div>
+		<hr class="nmt nmb" />
+		<div id="panel">
+			<div data-jc="search" data-jc-path="panel.search" data-selector=".jsearch">
+				<div class="caption jsearch" data-search="">@{if user.sa}<div class="operation exec" data-path="common.form" data-value="'formchannel'"><i class="fa fa-plus-square-o"></i></div>@{fi}@(Channels)</div>
+				<nav data-jc="repeater" data-jc-path="current.channels" class="nav-channels">
+					<script type="text/html">
+						{{ if is }}
+						<a href="/channels/{{ linker }}/" class="jrouting jsearch" data-id="{{ id }}" data-search="{{ name }}">@{if user.sa }<span class="operation" data-name="channel"><i class="fa fa-times"></i></span>@{fi}<i class="fa fa-hashtag"></i>{{ name }}</a>
+						{{ fi }}
+					</script>
+				</nav>
+
+				<div class="caption jsearch" data-search=""><div class="operation" data-name="users"><i class="fa fa-plus-square-o"></i></div>@(Direct messages)</div>
+				<nav data-jc="repeater" data-jc-path="current.recent" class="nav-users">
+					<script type="text/html">
+						{{ if !me }}
+						<a href="/users/{{ linker }}/" class="jrouting jsearch" data-search="{{ name }}" data-id="{{ id }}"><span class="operation" data-name="recent"><i class="fa fa-times"></i></span><i class="fa useronline fa-circle {{ if online }}online{{ fi }}" data-id="{{ id }}"></i>{{ name }}</a>
+						{{ fi }}
+					</script>
+				</nav>
+			</div>
+
+			<hr />
+			<nav>
+				<a href="/" class="jrouting"><i class="fa fa-check-circle"></i>@(My Tasks)</a>
+				<a href="/users/" class="jrouting"><i class="fa fa-users"></i>@(Users)</a>
+				<a href="/settings/" class="jrouting"><i class="fa fa-cog"></i>@(Settings)</a>
+				<a href="/logoff/"><i class="fa fa-power-off"></i>@(Sign out)</a>
+			</nav>
+		</div>
+	</section>
+
+	<section class="body">
+		<header id="header">
+			<div class="row">
+				<div class="col-md-4">
+					<h2 data-b="current.title" data-b-html="n => n" class="singline">...</h2>
+				</div>
+				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
+					<div data-jc="searchbox" data-jc-path="common.search" data-enter="true" data-placeholder="@(Search on this page)"></div>
+				</div>
+			</div>
+		</header>
+		<div id="content">
+			<div data-jc="page" data-jc-path="common.page" data-if="tasks" data-template="/templates/tasks.html" data-reload="tasks_reload"></div>
+			<div data-jc="page" data-jc-path="common.page" data-if="chat" data-template="/templates/chat.html" data-reload="chat_reload"></div>
+			<div data-jc="page" data-jc-path="common.page" data-if="users" data-template="/templates/users.html" data-reload="users_reload"></div>
+			<div data-jc="page" data-jc-path="common.page" data-if="settings" data-template="/templates/settings.html" data-reload="settings_reload"></div>
+		</div>
+		<div id="messagebox">
+			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file here (max. 3 MB).)" data-maxlength="1000"></div>
+			<div id="status">
+				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Send: ENTER)' : '@(Send: CTRL+ENTER)'"></span></div>
+				<div data-jc="typing">
+					<script type="text/html">
+						<div data-id="{{ id }}"><img src="/photos/{{ picture }}.jpg" height="16" alt="{{ name }}" /><b>{{ name }}</b> @(is typing.)</div>
+					</script>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'formuser'" data-url="/forms/formuser.html" data-reload="formuser_reload"></div>
+	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'formchannel'" data-url="/forms/formchannel.html" data-reload="formchannel_reload"></div>
+	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'searchresults'" data-url="/forms/searchresults.html" data-reload="searchresults_reload"></div>
+
+	@{json(user, 'userdata', (k, v) => k !== 'password' ? v : undefined)}
+
+	<script>
+
+		var MSG_TYPING = { type: 'typing' };
+		var MSG_MESSAGE = { type: 'message' };
+		var MSG_UNREAD = { type: 'unread' };
+		var MSG_RECENT = { type: 'recent' };
+
+		var common = { sounds: true, volume: 0.9, enter: true };
+		var messages = { message: '' };
+		var current = { route: {}, online: 0, users: EMPTYARRAY, channels: EMPTYARRAY };
+		var user = PARSE($('#userdata').html());
+		var favicon = new Favico({ position : 'up' });
+
+		// Cache
+		CACHEPATH('common.enter', '1 month');
+		CACHEPATH('common.sounds', '1 month');
+
+		NAVIGATION.clientside('.jrouting');
+
+		$(document).on('click', '.operation', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var el = $(this);
+			var tmp;
+			switch (el.attr('data-name')) {
+				case 'users':
+					REDIRECT('/users/');
+					break;
+				case 'channel':
+					FIND('confirm').confirm('@(Are you sure you want to remove selected channel?)', ['@(Yes)', '@(Cancel)'], function(index) {
+						if (index)
+							return;
+						AJAX('DELETE /api/channels/{0}/'.format(el.parent().attr('data-id')), NOOP);
+						REDIRECT('/');
+					});
+					break;
+				case 'recent':
+					tmp = current.users.findItem('id', el.parent().attr('data-id'));
+					if (tmp) {
+						delete user.recent[tmp.id];
+						refresh_recent();
+						MSG_RECENT.id = tmp.id;
+						SETTER('websocket', 'send', MSG_RECENT);
+					}
+				break;
+			}
+		});
+
+		ON('#websocket', function(component) {
+			refresh_unread();
+			component.message = function(response) {
+				var tmp, container;
+				switch (response.type) {
+
+					case 'typing':
+						tmp = current.users.findItem('id', response.id);
+						tmp && SETTER('typing', 'insert', tmp);
+						break;
+
+					case 'unread':
+						user.unread = response.unread;
+						if (response.recent) {
+							user.recent = response.recent;
+							refresh_recent();
+						}
+						refresh_unread();
+						break;
+
+					case 'cdl':
+						tmp = response.users.findItem('id', user.id);
+						tmp.me = true;
+
+						response.channels.forEach(function(item) {
+							item.is = user.channels ? user.channels[item.id] === true : true;
+						});
+
+						SET('current.channels', response.channels);
+						SET('current.users', response.users);
+						EMIT('location');
+						refresh_recent();
+						refresh_online();
+						refresh_unread();
+						break;
+
+					case 'online':
+						$('.useronline[data-id="{0}"]'.format(response.id)).toggleClass('online', response.online);
+						tmp = current.users.findItem('id', response.id);
+						tmp && (tmp.online = response.online);
+						refresh_online();
+						break;
+
+					case 'message':
+						response.iduser !== user.id && playsound();
+						SETTER('chat', 'insert', response);
+						break;
+				}
+			};
+		});
+
+		ON('@codemirror', function(component) {
+
+			component.enter = function(type) {
+				if ((type && common.enter) || (!type && !common.enter))
+					return CodeMirror.Pass;
+
+				MSG_MESSAGE.body = component.getValue().trim();
+				if (MSG_MESSAGE.body) {
+					component.set('');
+					SETTER('websocket', 'send', MSG_MESSAGE);
+				}
+
+				common.search && SET('common.search', '');
+			};
+
+			component.typing = function() {
+				current.online && SETTER('websocket', 'send', MSG_TYPING);
+			};
+
+			component.upload = function(editor, e) {
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				SETTER('loading', 'show');
+
+				var data = new FormData();
+				var files = e.dataTransfer.files;
+
+				for (var i = 0, length = files.length; i < length; i++)
+					data.append('file' + i, files[i]);
+
+				UPLOAD('/api/upload/', data, function(data, err) {
+
+					SETTER('loading', 'hide', 100);
+
+					if (err) {
+						err.toString().indexOf('413:') !== -1 && FIND('message').warning('@(The file is too large. The maximum allowed length of file is 3 MB.)');
+						return;
+					}
+
+					if (!data || !data.length)
+						return;
+
+					var push = [];
+
+					for (var i = 0, length = data.length; i < length; i++) {
+						var file = data[i];
+
+						if (file.width && file.height)
+							push.push('![' + file.filename + '](' + file.url + ')');
+						else
+							push.push('[' + file.filename + '](' + file.url + ')');
+					}
+
+					editor.replaceSelection(push.join('\n'));
+				});
+			};
+		});
+
+		ON('knockknock', function() {
+
+			$('.datetime').each(function() {
+				var el = $(this);
+				el.html(Tangular.helpers.time(el.attr('data-value')));
+			});
+
+			SETTER('websocket', 'send', MSG_UNREAD);
+		});
+
+		ROUTE('/', function() {
+			SET('common.page', 'tasks');
+		});
+
+		ROUTE('/users/', function() {
+			SET('common.search', '');
+			SET('common.page', 'users');
+		});
+
+		ROUTE('/settings/', function() {
+			SET('common.page', 'settings');
+		});
+
+		ROUTE('/channels/{linker}/', function(linker) {
+			WAIT(function() {
+				return current.channels !== EMPTYARRAY;
+			}, function() {
+				var item = current.channels.findItem('linker', linker);
+				if (item) {
+
+					if (user.channels && !user.channels[item.id])
+						return REDIRECT('/');
+
+					current.route.type = 'channel';
+					current.route.item = item;
+					SET('current.title', '#' + item.name);
+					SET('common.search', '');
+					SET('common.page', 'chat');
+					var is = user.unread[item.id];
+					delete user.unread[item.id];
+					is && refresh_unread();
+				}
+			});
+		});
+
+		ROUTE('/users/{linker}/', function(linker) {
+			WAIT(function() {
+				return current.users !== EMPTYARRAY;
+			}, function() {
+				var item = current.users.findItem('linker', linker);
+
+				if (item) {
+
+					if (item.id === user.id)
+						return REDIRECT('/users/');
+
+					current.route.type = 'user';
+					current.route.item = item;
+					SET('current.title', item.name);
+					SET('common.search', '');
+					SET('common.page', 'chat');
+					var is = user.unread[item.id];
+					delete user.unread[item.id];
+					user.recent[item.id] = true;
+					is && refresh_unread();
+					refresh_recent();
+				}
+			});
+		});
+
+		// Highlight the current link in the panel
+		ON('location', function() {
+			setTimeout2('location', function() {
+				var nav = $('.panel').find('nav');
+				nav.find('.selected').removeClass('selected');
+				nav.find('a[href="{0}"]'.format(NAVIGATION.url)).addClass('selected');
+			}, 50);
+		});
+
+		function refresh_online() {
+			var count = 0;
+			current.users.forEach(function(item) {
+				item.online && item.id !== user.id && (count++);
+			});
+			current.online !== count && SET('current.online', count);
+		}
+
+		function refresh_recent() {
+			var recent = [];
+			current.users.forEach(function(item) {
+				user.recent[item.id] && recent.push(item);
+			});
+			if (!NOTMODIFIED('current.recent', recent)) {
+				SET('current.recent', recent);
+				current.route.type === 'user' && EMIT('location');
+			}
+		}
+
+		function playsound() {
+			common.sounds && SETTER('audio', 'play', '/sounds/knockknock.mp3');
+		}
+
+		function refresh_unread() {
+
+			var keys = Object.keys(user.unread);
+			keys.length && playsound();
+
+			var count = 0;
+
+			keys.forEach(function(key) {
+				count += user.unread[key];
+			});
+
+			favicon.badge(count);
+
+			$('.jrouting').each(function() {
+				var el = $(this);
+				var id = el.attr('data-id');
+				el.toggleClass('highlight', user.unread[id] ? true : false);
+			});
+		}
+
+		function codemirror_enter() {
+			SET('common.enter', !common.enter);
+		}
+
+		Tangular.register('time', function(value) {
+
+			if (!value)
+				return;
+
+			var diff = Date.now() - value.parseDate().getTime();
+			var minutes = ((diff / 1000) / 60) >> 0;
+
+			if (minutes < 60) {
+				if (minutes < 3)
+					return '@(now)';
+				return @(minutes + ' minutes ago');
+			}
+
+			var hours = (minutes / 60) >> 0;
+			if (hours < 24)
+				return @(hours + ' ' + Tangular.helpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+
+			var days = (hours / 24) >> 0;
+			if (days < 30)
+				return @(days + ' ' + Tangular.helpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+
+			var months = (days / 29) >> 0;
+			if (months < 12)
+				return @(months + ' ' + Tangular.helpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+
+			var years = (months / 12) >> 0;
+			return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
+		});
+
+		Tangular.register('month', function(value) {
+			var months = [@('january', 'february', 'march', 'april', 'may', 'juny', 'july', 'august', 'september', 'october', 'november', 'december')];
+			return months[value - 1];
+		});
+	</script>
+
+</body>
+</html>
