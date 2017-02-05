@@ -1,2 +1,4 @@
 tmp/*
 debug.pid
+sftp-config.json
+logs/*
