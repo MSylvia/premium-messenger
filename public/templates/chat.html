@@ -47,11 +47,21 @@
 	</div>
 </div>
 
+<div data-b="chat.empty" data-b-visible="n => n">
+	<br /><br />
+	<br /><br />
+	<div class="center">
+		<i class="fa fa-commenting-o green fa-5x"></i>
+		<div class="mt10"><b>@(No conversation yet.)</b><br />@(Just write a new message into this channel.)</div>
+	</div>
+</div>
+
+
 <script>
 	var MSG_ROUTE = {};
 	var CHATFILTER = { max: 15 };
 	var CHATSEARCH = { max: 30, q: '', page: 1 };
-	var chat = {};
+	var chat = { empty: true };
 
 	function chat_reload(page) {
 		MSG_ROUTE.type = current.route.type;
@@ -66,6 +76,7 @@
 			if (CHATFILTER.page === 1) {
 				SETTER('chat', 'empty');
 				SETTER('chat', 'insert', response);
+				SET('chat.empty', response.length === 0);
 			} else
 				SETTER('chat', 'prepend', response);
 
@@ -127,6 +138,7 @@
 		};
 
 		self.insert = function(value) {
+
 			if (!(value instanceof Array))
 				value = [value];
 			else
@@ -140,6 +152,7 @@
 				builder.push(self.template(item));
 			});
 
+			builder.length && chat.empty && SET('chat.empty', false);
 			highlight(self.append(builder.join('')));
 			setTimeout2(self.id, scrollBottom, 500);
 		};
