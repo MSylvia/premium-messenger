@@ -1,6 +1,6 @@
 <div class="padding">
 	<div class="padding npb">
-		<div data-jc="textbox" data-jc-keypress="false" data-jc-path="tasks.form.body" data-placeholder="@(Add a new private task and press enter)" data-maxlength="100" data-control-icon="fa-keyboard-o"></div>
+		<div data-jc="textbox" data-jc-keypress="false" data-jc-path="tasks.form.body" data-placeholder="@(Type a task description and press enter)" data-maxlength="100" data-control-icon="fa-keyboard-o" data-icon="fa-check-circle">@(Add a private task)</div>
 	</div>
 </div>
 <div data-jc="repeater" data-jc-path="tasks.items">
@@ -11,7 +11,7 @@
 		</div>
 	</script>
 </div>
-<div data-b="tasks.items" data-b-visible="n => !n.length">
+<div data-b="tasks.items" data-b-visible="n => !n || !n.length">
 	<br /><br />
 	<div class="center">
 		<i class="fa fa-check-circle green fa-5x"></i>

@@ -66,16 +66,18 @@
 				<a href="/settings/" class="jrouting"><i class="fa fa-cog"></i>@(Settings)</a>
 				<a href="/logoff/"><i class="fa fa-power-off"></i>@(Sign out)</a>
 			</nav>
+			<br />
 		</div>
 	</section>
 
 	<section class="body">
 		<header id="header">
+			<a href="javascript:void(0)" class="mainmenu visible-xs exec" data-exec="mainmenu_toggle"><i class="fa fa-navicon"></i></a>
 			<div class="row">
 				<div class="col-md-4">
 					<h2 data-b="current.title" data-b-html="n => n" class="singline">...</h2>
 				</div>
-				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
+				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
 					<div data-jc="searchbox" data-jc-path="common.search" data-enter="true" data-placeholder="@(Type a phrase and press enter)"></div>
 				</div>
 			</div>
@@ -87,7 +89,7 @@
 			<div data-jc="page" data-jc-path="common.page" data-if="settings" data-template="/templates/settings.html" data-reload="settings_reload"></div>
 		</div>
 		<div id="messagebox">
-			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message (Markdown syntax) or drag & drop file here (max. 3 MB).)" data-maxlength="1000"></div>
+			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file (max. 3 MB).)" data-maxlength="1000"></div>
 			<div id="status">
 				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
 				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Send: ENTER)' : '@(Send: CTRL+ENTER)'"></span></div>
@@ -113,6 +115,7 @@
 		var MSG_MESSAGE = { type: 'message' };
 		var MSG_UNREAD = { type: 'unread' };
 		var MSG_RECENT = { type: 'recent' };
+		var MSG_NOCHAT = { type: 'nochat' };
 
 		var common = { sounds: true, volume: 0.9, enter: true };
 		var messages = { message: '' };
@@ -283,15 +286,18 @@
 		});
 
 		ROUTE('/', function() {
+			refresh_place();
 			SET('common.page', 'tasks');
 		});
 
 		ROUTE('/users/', function() {
+			refresh_place();
 			SET('common.search', '');
 			SET('common.page', 'users');
 		});
 
 		ROUTE('/settings/', function() {
+			refresh_place();
 			SET('common.page', 'settings');
 		});
 
@@ -339,6 +345,7 @@
 
 		// Highlight the current link in the panel
 		ON('location', function() {
+			$('.panel').removeClass('panel-xs');
 			setTimeout2('location', function() {
 				var nav = $('.panel').find('nav');
 				nav.find('.selected').removeClass('selected');
@@ -363,6 +370,10 @@
 				SET('current.recent', recent);
 				current.route.type === 'user' && EMIT('location');
 			}
+		}
+
+		function refresh_place() {
+			common.page === 'chat' && SETTER('websocket', 'send', MSG_NOCHAT);
 		}
 
 		function playsound() {
@@ -395,6 +406,10 @@
 
 		function codemirror_help() {
 			SET('common.form', 'help');
+		}
+
+		function mainmenu_toggle() {
+			$('.panel').toggleClass('panel-xs');
 		}
 
 		Tangular.register('time', function(value) {

@@ -72,6 +72,12 @@ function messages() {
 				client.send(MSG_UNREAD);
 				break;
 
+			// Changed group (outside of channels and users)
+			case 'nochat':
+				client.user.threadtype = undefined;
+				client.user.threadid = undefined;
+				break;
+
 			// Changed group
 			case 'channel':
 			case 'user':
@@ -79,7 +85,6 @@ function messages() {
 				client.user.threadid = message.id;
 				message.type === 'user' && client.user.id !== message.id && (client.user.recent[message.id] = true);
 				client.user.unread[message.id] && (delete client.user.unread[message.id]);
-				self.send(message);
 				break;
 
 			case 'recent':

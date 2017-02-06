@@ -6,7 +6,7 @@ html { overflow: hidden; }
 html,body { margin: 0; height: 100%; position: relative; }
 body { background-color: white; padding: 0; color: gray; font-smoothing: antialiased; overflow-y: scroll; overflow-x: hidden; overflow-scrolling: touch; font-family: Arial; font-size: 14px; }
 
-.panel { height: 100%; float: left; background-color: #303E4D; width: 220px; overflow: hidden; }
+.panel { height: 100%; float: left; background-color: #303E4D; width: 220px; overflow: hidden; transition: left 0.5s; }
 .panel .padding { padding: 5px 20px; }
 .panel hr { border-color: #283440; }
 .body { height: 100%; margin-left: 220px; overflow: hidden; }
@@ -31,12 +31,15 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .npb { padding-bottom: 0; }
 .npt { padding-top: 0; }
 
-#header { height: 60px; border-bottom: 1px solid #E0E0E0; padding: 0 20px; }
+#header { border-bottom: 1px solid #E0E0E0; padding: 0 20px; background: linear-gradient(white,#F8F8F8); min-height: 60px; }
+#header .m { margin-bottom: 0;}
 #content { overflow-y: auto; overflow-x: hidden; width: 100%; overflow-scrolling: touch; }
 #messagebox { min-height: 65px; }
-#status { border-top: 1px solid #E0E0E0; height: 30px; font-size: 11px; padding: 7px 0 0 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: gray; }
+#status { border-top: 1px solid #E0E0E0; height: 30px; font-size: 11px; padding: 7px 0 0 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: gray; background: linear-gradient(white,#F8F8F8); }
 #status > div { float: left; margin-right: 10px; }
 #panel { overflow-x: hidden; overflow-y: auto; width: 240px; padding-right: 20px; overflow-scrolling: touch; }
+
+.mainmenu { position: absolute; }
 .monospace { font-family: monospace; }
 
 .caption { font-size: 12px; font-weight: bold; color: #9AA7B3; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -161,4 +164,14 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 @keyframes blink {
 	0% { opacity: 1; }
 	100% { opacity: 0; }
+}
+
+@media(max-width:767px) {
+	#header .m { margin-bottom: 20px; }
+	.bl { border-width: 0; }
+	.mainmenu { right: 20px; font-size: 22px; margin: 15px 0 0; color: gray; z-index: 5; }
+	.body { margin-left: 0; }
+	.panel { position: absolute; left: -240px; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+	.panel-xs { left: 0; }
+	.section { margin: 0 25px; }
 }
