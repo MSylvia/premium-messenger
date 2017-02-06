@@ -83,7 +83,7 @@ function messages() {
 			case 'user':
 				client.user.threadtype = message.type;
 				client.user.threadid = message.id;
-				message.type === 'user' && client.user.id !== message.id && (client.user.recent[message.id] = true);
+				message.type === 'user' && iduser !== message.id && (client.user.recent[message.id] = true);
 				client.user.unread[message.id] && (delete client.user.unread[message.id]);
 				break;
 
@@ -94,23 +94,22 @@ function messages() {
 
 			// Starts typing
 			case 'typing':
-				MSG_TYPING.id = client.user.id;
-				self.send(MSG_TYPING, (id, m) => m.user.threadtype === client.user.threadtype && m.user !== client.user);
+				MSG_TYPING.id = iduser;
+				self.send(MSG_TYPING, (id, m) => m.user !== client.user && ((m.user.id === client.user.threadid && m.user.threadid === iduser) || (client.user.threadtype === 'channel' && m.user.threadtype === client.user.threadtype && m.user.threadid === client.user.threadid)));
 				break;
 
 			// Real message
 			case 'message':
 
 				message.id = UID();
-				message.iduser = client.user.id;
 				message.datecreated = new Date();
 
-				NOSQL('messages').counter.hit('all').hit(client.user.id);
+				NOSQL('messages').counter.hit('all').hit(iduser);
 
 				// threadtype = "user" (direct message) or "channel"
 
 				if (client.user.threadtype === 'user') {
-					tmp = self.find(n => n.user.threadtype === 'user' && n.user.id === client.user.threadid);
+					tmp = self.find(n => n.user.threadid === iduser && n.user.id === client.user.threadid && n.user !== client.user);
 					if (tmp)
 						tmp.send(message);
 					else {
@@ -122,11 +121,10 @@ function messages() {
 								tmp.unread[iduser] = 1;
 
 							tmp.recent[iduser] = true;
-
 							if (tmp.online) {
 								MSG_UNREAD.unread = tmp.unread;
 								MSG_UNREAD.recent = tmp.recent;
-								tmp = self.find(client => client.user.id === tmp.id);
+								tmp = self.find(n => n.user.id === tmp.id);
 								tmp && tmp.send(MSG_UNREAD);
 							}
 
@@ -160,7 +158,7 @@ function messages() {
 					}
 
 					self.all(function(m) {
-						if (m.user.id !== client.user.id && m.user.threadid !== client.user.threadid && (!m.user.channels || m.user.channels[client.user.threadid])) {
+						if (m.user.id !== iduser && m.user.threadid !== client.user.threadid && (!m.user.channels || m.user.channels[client.user.threadid])) {
 							MSG_UNREAD.unread = m.user.unread;
 							MSG_UNREAD.recent = undefined;
 							m.send(MSG_UNREAD);
@@ -171,7 +169,7 @@ function messages() {
 				}
 
 				// Inserts
-				var dbname = client.user.threadtype === 'channel' ? client.user.threadtype + client.user.threadid : 'user' + F.global.merge(client.user.threadid, client.user.id);
+				var dbname = client.user.threadtype === 'channel' ? client.user.threadtype + client.user.threadid : 'user' + F.global.merge(client.user.threadid, iduser);
 				message.type = undefined;
 				message.idowner = client.user.threadid;
 				message.search = message.body.keywords(true, true).join(' ');
