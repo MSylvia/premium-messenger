@@ -28,10 +28,14 @@
 
 				<div class="row">
 					<div class="col-md-6 m">
+						<div data-jc="textbox" data-jc-path="formuser.status" data-maxlength="50" data-placeholder="@(e.g. At work)">@(Status)</div>
+					</div>
+					<div class="col-md-6 m">
 						<div data-jc="textbox" data-jc-path="formuser.password" data-required="true" data-maxlength="30">@(Password)</div>
 						<div class="mt5 fs11"><a href="javascript:void(0)" data-exec="formuser_password" class="exec">@(Generate password)</a></div>
 					</div>
 				</div>
+				<hr class="nmt" />
 				<div class="m" data-jc="dropdowncheckbox" data-jc-path="formuser.channels" data-source="current.channels" data-placeholder="@(All channels)">@(Channels)</div>
 				<div class="m">
 					<div data-jc="checkbox" data-jc-path="formuser.blocked">@(User is blocked)</div>

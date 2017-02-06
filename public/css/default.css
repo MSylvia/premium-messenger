@@ -138,9 +138,9 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .smiles-12 { background-position: -216px 0; }
 
 .blink { animation: blink 0.5s infinite alternate; }
-.users .singleline { text-decoration: none; color: gray; display: block; padding: 5px 10px; border-radius: 4px; border: 1px solid #E0E0E0; }
-.users .singleline .fa { color: #A0A0A0; margin-right: 5px; font-size: 12px; }
-.users .singleline:hover { background-color: #F0F0F0; }
+.users .users-name { text-decoration: none; color: gray; display: block; padding: 5px 10px; border-radius: 4px; border: 1px solid #E0E0E0; }
+.users .users-name .fa { color: #A0A0A0; margin-right: 5px; font-size: 12px; }
+.users .users-name:hover { background-color: #F0F0F0; }
 .users .operations { font-size: 11px; margin: 5px 0 0 0; display: none; }
 .users .operations a { margin-right: 8px; border-left: 1px solid #E0E0E0; position: relative; display: inline-block; padding-left: 8px; }
 .users .operations a:first-child { border-left: 0; padding-left: 0; }

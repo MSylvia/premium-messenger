@@ -285,6 +285,10 @@
 			SETTER('websocket', 'send', MSG_UNREAD);
 		});
 
+		ON('404', function() {
+			REDIRECT('/');
+		});
+
 		ROUTE('/', function() {
 			refresh_place();
 			SET('common.page', 'tasks');

@@ -4,6 +4,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('name', 'String(50)', true);
 	schema.define('email', 'Email', true);
 	schema.define('password', 'String(30)');
+	schema.define('status', 'String(50)');
 	schema.define('position', 'String(30)', true);
 	schema.define('picture', 'String(30)');
 	schema.define('channels', 'Object');
@@ -19,9 +20,11 @@ NEWSCHEMA('User').make(function(schema) {
 		}
 
 		var tmp;
+		var notify;
 
 		if (model.id) {
 			tmp = F.global.users.findItem('id', model.id);
+			notify = tmp.name !== model.name || tmp.picture !== model.picture || tmp.status !== model.status;
 			tmp.name = model.name;
 			tmp.email = model.email;
 			tmp.position = model.position;
@@ -29,6 +32,7 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.blocked = model.blocked;
 			tmp.linker = model.name.slug();
 			tmp.channels = model.channels;
+			tmp.status = model.status;
 			tmp.notifications = model.notifications;
 			model.password && !model.password.startsWith('****') && (tmp.password = model.password.sha1());
 		} else {
@@ -41,6 +45,7 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.online = false;
 			tmp.linker = model.name.slug();
 			F.global.users.push(tmp);
+			notify = true;
 		}
 
 		F.global.users.quicksort('name');
