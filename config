@@ -1,6 +1,7 @@
 name                      : Messenger
 version                   : 1.0.0
 author                    : Peter Širka
+url                       : https://messenger.totaljs.com
 
 cookie                    : __user
 
