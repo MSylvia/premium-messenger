@@ -49,7 +49,7 @@ function scrollBottom() {
 }
 
 Tangular.register('markdown', function(value) {
-	var str = urlify(mailify(marked(smilefy(value))));
+	var str = marked(smilefy(mailify(urlify(value))));
 	return str.replace(/&lt;i\sclass=&quot;smiles.*?&lt;\/i&gt;/g, function(text) {
 		return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
 	}).replace(/<img/g, '<img class="img-responsive"').replace(/<table/g, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
@@ -94,8 +94,9 @@ function urlify(str) {
 			url = url.substring(0, len - 1);
 		else
 			l = '';
+		var raw = url;
 		url = c === 'www.' ? 'http://' + url : url;
-		return '<a href="' + url + '" target="_blank">' + url + '</a>' + l;
+		return '[' + raw + '](' + url + ')' + l;
 	});
 }
 
@@ -107,7 +108,7 @@ function mailify(str) {
 			m = m.substring(0, len - 1);
 		else
 			l = '';
-		return '<a href="mailto:' + m + '">' + m + '</a>' + l;
+		return '[' + m + '](mailto:' + m + ')' + l;
 	});
 }
 

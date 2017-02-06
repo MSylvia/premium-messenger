@@ -975,10 +975,10 @@ COMPONENT('dropdowncheckbox', function() {
 
 	window.$dropdowncheckboxevent = true;
 	$(document).on('click', function(e) {
-		if (!window.$dropdowncheckboxelement)
-			return;
-		window.$dropdowncheckboxelement.addClass('hidden');
-		window.$dropdowncheckboxelement = null;
+		if (window.$dropdowncheckboxelement) {
+			window.$dropdowncheckboxelement.addClass('hidden');
+			window.$dropdowncheckboxelement = null;
+		}
 	});
 });
 
@@ -1006,6 +1006,11 @@ COMPONENT('codemirror', function() {
 
 	self.codemirror = function() {
 		return editor;
+	};
+
+	self.focus = function() {
+		editor.focus();
+		return this;
 	};
 
 	self.enter = function() {};

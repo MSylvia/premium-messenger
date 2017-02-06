@@ -199,11 +199,17 @@
 						break;
 
 					case 'message':
-						response.iduser !== user.id && playsound();
+						var focus = document.hasFocus();
+						(response.iduser !== user.id || !focus) && playsound();
+						!focus && favicon.badge('?');
 						SETTER('chat', 'insert', response);
 						break;
 				}
 			};
+		});
+
+		$(window).focus(function() {
+			refresh_unread(true);
 		});
 
 		ON('@codemirror', function(component) {
@@ -363,10 +369,10 @@
 			common.sounds && SETTER('audio', 'play', '/sounds/knockknock.mp3');
 		}
 
-		function refresh_unread() {
+		function refresh_unread(nosound) {
 
 			var keys = Object.keys(user.unread);
-			keys.length && playsound();
+			!nosound && keys.length && playsound();
 
 			var count = 0;
 

@@ -52,7 +52,7 @@
 	<br /><br />
 	<div class="center">
 		<i class="fa fa-commenting-o green fa-5x"></i>
-		<div class="mt10"><b>@(No conversation yet.)</b><br />@(Just write a new message into this channel.)</div>
+		<div class="mt10"><b>@(No conversation yet.)</b><br />@(Just write a new message on this page.)</div>
 	</div>
 </div>
 
@@ -82,6 +82,7 @@
 
 			SETTER('websocket', 'send', MSG_ROUTE);
 			SETTER('loading', 'hide', 500);
+			SETTER('codemirror', 'focus');
 		});
 
 		$('#messagebox').removeClass('hidden');
