@@ -117,7 +117,7 @@
 		var MSG_RECENT = { type: 'recent' };
 		var MSG_NOCHAT = { type: 'nochat' };
 
-		var common = { sounds: true, volume: 0.9, enter: true };
+		var common = { sounds: true, volume: 0.9, enter: true, ticks: Date.now() };
 		var messages = { message: '' };
 		var current = { route: {}, online: 0, users: EMPTYARRAY, channels: EMPTYARRAY };
 		var user = PARSE($('#userdata').html());
@@ -276,6 +276,11 @@
 		});
 
 		ON('knockknock', function() {
+
+			if ((((Date.now() - common.ticks) / 1000) / 60) > 60) {
+				location.reload(true);
+				return;
+			}
 
 			$('.datetime').each(function() {
 				var el = $(this);
