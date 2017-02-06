@@ -50,6 +50,12 @@ NEWSCHEMA('User').make(function(schema) {
 	});
 
 	schema.setGet(function(error, model, options, callback, controller) {
+
+		if (!controller.user.sa) {
+			error.push('error-user-privileges');
+			return callback();
+		}
+
 		var item = F.global.users.findItem('id', controller.id);
 		!item && error.push('error-user-404');
 		callback(item);
