@@ -21,7 +21,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/favico.js/0.3.10/favico.min.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 </head>
-<body data-jc="exec,binder"{{ if user.sa }} class="sa"{{ fi }}>
+<body data-jc="exec,binder"@{if user.sa} class="sa"@{fi}>
 
 	<div data-jc="loading"></div>
 	<div data-jc="confirm"></div>
@@ -162,6 +162,9 @@
 			refresh_unread();
 			component.message = function(response) {
 				var tmp, container;
+
+				console.log(response);
+
 				switch (response.type) {
 
 					case 'typing':
@@ -402,10 +405,10 @@
 
 			favicon.badge(count);
 
-			$('.jrouting').each(function() {
+			$('#panel').find('.jrouting').each(function() {
 				var el = $(this);
 				var id = el.attr('data-id');
-				el.toggleClass('highlight', user.unread[id] ? true : false);
+				id && el.toggleClass('highlight', user.unread[id] ? true : false);
 			});
 		}
 
