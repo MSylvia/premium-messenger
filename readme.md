@@ -16,6 +16,15 @@
 - open `http://127.0.0.1:8000/`
 - sign in __user:__ `admin@totaljs.com`, __password:__ `123456` (credentials are stored in `/databases/users.json`)
 
+## How do I translate SuperAdmin?
+
+- install Total.js as global module `npm install -g total.js`
+- then open SuperAdmin directory `cd messenger`
+- then perform this command `totaljs --translate`
+- translate translated file `translate.resource`
+- and copy the content to `/resources/default.resource`
+- run app
+
 ## Contributors
 
 - Peter Širka (author) <petersirka@gmail.com>
