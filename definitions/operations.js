@@ -21,6 +21,45 @@ NEWOPERATION('users.load', function(error, value, callback) {
 	});
 });
 
+// Performs notifications for unread messages
+NEWOPERATION('users.notify', function(error, value, callback) {
+	F.logger('notifications', 'begin');
+	F.global.users.wait(function(item, next) {
+
+		if (!item.notifications)
+			return next();
+
+		var model = {};
+		model.name = item.name;
+		model.channels = [];
+		model.users = [];
+		model.has = false;
+
+		Object.keys(item.unread).forEach(function(id) {
+			var unread = F.global.channels.findItem('id', id);
+			if (unread) {
+				model.channels.push({ item: unread, count: item.unread[id] });
+				model.has = true;
+				return;
+			}
+
+			unread = F.global.users.findItem('id', id);
+			if (unread) {
+				model.users.push({ item: unread, count: item.unread[id] });
+				model.has = true;
+			}
+		});
+
+		if (model.has) {
+			F.logger('notifications', item.email, 'channels: ' + model.channels.length, 'users: ' + model.users.length);
+			F.mail(item.email, '@({0}: unread messages)'.format(F.config.name), 'notification', model, next, '');
+		} else
+			next();
+	}, () => F.logger('notifications', 'end'));
+
+	callback(SUCCESS(true));
+});
+
 NEWOPERATION('channels.save', function(error, value, callback) {
 	callback(SUCCESS(true));
 	setTimeout2('users.save', function() {
