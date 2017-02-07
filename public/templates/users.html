@@ -10,7 +10,7 @@
 		<script type="text/html">
 			<div class="col-lg-3 col-md-4 col-sm-6 m jsearch" data-search="{{ name }}">
 				<a href="{{ if me }}javascript:void(0){{ else }}/users/{{ linker }}/{{ fi }}" class="users-name singleline{{ if !me }} jrouting{{ fi }}"><i class="fa fa-circle useronline{{ if online }} online{{ fi }}" data-id="{{ id }}"></i><img src="{{ if picture }}/photos/{{ picture }}.jpg{{ else }}/img/face.jpg{{ fi }}" class="mr5" height="20" />{{ name }}</a>
-				<div class="fs11 mt5 singleline"><b>@(Current status:)</b> {{ status | def('@(undefined)') }}</div>
+				<div class="fs11 mt5 singleline"><b>@(Current status:)</b> {{ status | def('...') }}</div>
 				<div class="fs11">{{ if notifications }}<i class="fa fa-envelope-o mr5"></i>{{ fi }}<i class="fa fa-clock-o mr5"></i>@(Logged:) {{ datelogged | time | def('...') }}{{ if blocked }} <b class="red">@((user is blocked))</b>{{ fi }}</div>
 				<div class="operations"><a href="javascript:void(0)" class="exec" data-exec="users_edit" data-id="{{ id }}">@(Edit)</a><a href="javascript:void(0)" class="exec" data-exec="users_remove" data-id="{{ id }}">@(Remove)</a></div>
 			</div>
