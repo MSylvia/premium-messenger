@@ -3,7 +3,6 @@ const MSG_CDL = { type: 'cdl' };
 const MSG_UNREAD = { type: 'unread' };
 const MSG_TYPING = { type: 'typing' };
 const SKIPFIELDS = { email: true, unread: true, recent: true, channels: true, password: true, threadid: true, threadtype: true, ticks: true };
-const BLACKLIST = [''];
 
 exports.install = function() {
 	F.websocket('/', messages, ['json', 'authorize']);
@@ -35,6 +34,7 @@ function messages() {
 		var is = true;
 		client.user.online = true;
 		client.user.datelogged = F.datetime;
+		client.user.mobile = client.req.mobile;
 		MSG_CDL.channels = F.global.channels;
 		MSG_CDL.users = F.global.users;
 		client.send(MSG_CDL, undefined, function(key, value) {
@@ -48,8 +48,7 @@ function messages() {
 		setTimeout(function() {
 			MSG_ONOFF.id = client.user.id;
 			MSG_ONOFF.online = true;
-			BLACKLIST[0] = client.id;
-			self.send(MSG_ONOFF, null, BLACKLIST);
+			self.send(MSG_ONOFF, null);
 		}, 500);
 	});
 
@@ -63,12 +62,13 @@ function messages() {
 	self.on('message', function(client, message) {
 
 		var tmp, iduser, idchannel;
-		iduser = message.iduser = client.user.id;
+		iduser = client.user.id;
 
 		switch (message.type) {
 
 			case 'unread':
 				MSG_UNREAD.unread = client.user.unread;
+				MSG_UNREAD.recent = undefined;
 				client.send(MSG_UNREAD);
 				break;
 
@@ -101,8 +101,12 @@ function messages() {
 			// Real message
 			case 'message':
 
-				message.id = UID();
+				var id = message.id;
+				message.id = id ? id : UID();
 				message.datecreated = new Date();
+				message.iduser = iduser;
+				message.mobile = client.req.mobile;
+				id && (message.edited = true);
 
 				NOSQL('messages').counter.hit('all').hit(iduser);
 
@@ -115,6 +119,7 @@ function messages() {
 					else {
 						tmp = F.global.users.findItem('id', client.user.threadid);
 						if (tmp) {
+
 							if (tmp.unread[iduser])
 								tmp.unread[iduser]++;
 							else
@@ -168,16 +173,27 @@ function messages() {
 					OPERATION('users.save', NOOP);
 				}
 
-				// Inserts
+				// Saves message into the DB
 				var dbname = client.user.threadtype === 'channel' ? client.user.threadtype + client.user.threadid : 'user' + F.global.merge(client.user.threadid, iduser);
 				message.type = undefined;
 				message.idowner = client.user.threadid;
 				message.search = message.body.keywords(true, true).join(' ');
+
 				var db = NOSQL(dbname);
-				db.insert(message);
-				db.counter.hit('all').hit(client.user.id);
-				NOSQL(dbname + '-backup').insert(message);
-				OPERATION('messages.cleaner', dbname, NOOP);
+				var dbBackup = NOSQL(dbname + '-backup');
+
+				if (id) {
+					// Edited
+					db.modify({ body: message.body, edited: true, dateupdated: message.datecreated }).where('id', id).where('iduser', iduser);
+					dbBackup.modify({ body: message.body, edited: true, dateupdated: message.datecreated }).where('id', id).where('iduser', iduser);
+				} else {
+					// New
+					db.insert(message);
+					db.counter.hit('all').hit(client.user.id);
+					dbBackup.insert(message);
+					OPERATION('messages.cleaner', dbname, NOOP);
+				}
+
 				break;
 
 		}

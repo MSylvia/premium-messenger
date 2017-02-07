@@ -86,11 +86,12 @@ function urlify(str) {
 	return str.replace(/(((https?:\/\/)|(www\.))[^\s]+)/g, function(url, b, c) {
 
 		// Check the markdown
-		if (url.lastIndexOf(')') !== -1)
+		var l = url.substring(url.length - 1, url.length);
+		if (l === ')' || l === '>')
 			return url;
 
 		var len = url.length;
-		var l = url.substring(len - 1);
+		l = url.substring(len - 1);
 		if (l === ')')
 			return url;
 		if (l === '.' || l === ',')
