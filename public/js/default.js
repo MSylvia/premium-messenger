@@ -84,8 +84,15 @@ function smilefy2(str, wrap) {
 
 function urlify(str) {
 	return str.replace(/(((https?:\/\/)|(www\.))[^\s]+)/g, function(url, b, c) {
+
+		// Check the markdown
+		if (url.lastIndexOf(')') !== -1)
+			return url;
+
 		var len = url.length;
 		var l = url.substring(len - 1);
+		if (l === ')')
+			return url;
 		if (l === '.' || l === ',')
 			url = url.substring(0, len - 1);
 		else
