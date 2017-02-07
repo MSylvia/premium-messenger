@@ -203,9 +203,9 @@
 
 					case 'message':
 						var focus = document.hasFocus();
-						(response.iduser !== user.id || !focus) && playsound();
-						!focus && favicon.badge('?');
-						SETTER('chat', 'insert', response);
+						!response.edited && (response.iduser !== user.id || !focus) && playsound();
+						!response.edited && !focus && favicon.badge('?');
+						SETTER('chat', response.edited ? 'replace' : 'insert', response);
 						break;
 				}
 			};
@@ -221,13 +221,34 @@
 				if ((type && common.enter) || (!type && !common.enter))
 					return CodeMirror.Pass;
 
+				// "chat" is defined in /templates/chat.html
+				if (chat.lastmessage && chat.lastmessage.edited) {
+					MSG_MESSAGE.id = chat.lastmessage.id;
+					chat.lastmessage.edited = false;
+				} else
+					MSG_MESSAGE.id = undefined;
+
 				MSG_MESSAGE.body = component.getValue().trim();
+
 				if (MSG_MESSAGE.body) {
 					component.set('');
 					SETTER('websocket', 'send', MSG_MESSAGE);
 				}
 
 				common.search && SET('common.search', '');
+			};
+
+			component.edit = function(edit) {
+				// "chat" is defined in /templates/chat.html
+				if (!chat.lastmessage)
+					return CodeMirror.pass;
+				if (edit) {
+					component.set(chat.lastmessage.body);
+					chat.lastmessage.edited = true;
+				} else {
+					chat.lastmessage.edited = false;
+					component.set('');
+				}
 			};
 
 			component.typing = function() {
@@ -372,13 +393,15 @@
 
 		function refresh_recent() {
 			var recent = [];
+
 			current.users.forEach(function(item) {
 				user.recent[item.id] && recent.push(item);
 			});
-			if (!NOTMODIFIED('current.recent', recent)) {
-				SET('current.recent', recent);
-				current.route.type === 'user' && EMIT('location');
-			}
+
+			if (NOTMODIFIED('current.recent', recent))
+				return;
+			SET('current.recent', recent);
+			current.route.type === 'user' && EMIT('location');
 		}
 
 		function refresh_place() {

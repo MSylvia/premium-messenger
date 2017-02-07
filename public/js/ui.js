@@ -1016,6 +1016,7 @@ COMPONENT('codemirror', function() {
 	self.enter = function() {};
 	self.upload = function() {};
 	self.typing = function() {};
+	self.edit = function() {};
 
 	self.make = function() {
 
@@ -1027,7 +1028,7 @@ COMPONENT('codemirror', function() {
 		var container = self.find('.ui-codemirror');
 		var maxlength = (self.attr('data-maxlength') || '').parseInt();
 
-		editor = CodeMirror(container.get(0), { lineNumbers: self.attr('data-linenumbers') === 'true', mode: self.attr('data-type') || 'htmlmixed', indentUnit: 4, placeholder: self.attr('data-placeholder'), extraKeys: { 'Enter': function() { return self.enter(0); }, 'Cmd-Enter': function() { return self.enter(1); }, 'Ctrl-Enter': function() { return self.enter(1); }}});
+		editor = CodeMirror(container.get(0), { lineNumbers: self.attr('data-linenumbers') === 'true', mode: self.attr('data-type') || 'htmlmixed', indentUnit: 4, placeholder: self.attr('data-placeholder'), extraKeys: { 'Enter': function() { return self.enter(0); }, 'Cmd-Enter': function() { return self.enter(1); }, 'Up': function() { if (editor.getValue()) return CodeMirror.Pass; self.edit(true); }, 'Esc': function() { self.edit(false); return CodeMirror.pass; }, 'Ctrl-Enter': function() { return self.enter(1); }}});
 
 		editor.on('dragover', function() {
 			self.element.addClass('ui-codemirror-dragdrop');

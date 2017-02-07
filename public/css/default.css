@@ -54,6 +54,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat-picture img { border-radius: 4px; }
 .chat-body { margin-left: 50px; }
 .chat-user i { margin: 4px 5px 0 0; font-size: 12px; float: left; color: silver; }
+.chat .fa-mobile { font-size: 16px; margin-left: 5px; color: black; }
 .chat-user b { color: black; }
 .chat-user a { text-decoration: none; }
 .chat-user span { font-size: 12px; float: right; }
