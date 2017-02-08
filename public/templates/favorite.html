@@ -57,6 +57,7 @@
 		var id = parent.attr('data-id');
 		delete common.favorites[id];
 		REWRITE('favorites.items', favorites.items.remove('id', id));
+		AJAX('DELETE /api/favorites/{0}/'.format(id), NOOP);
 		parent.remove();
 	}
 
