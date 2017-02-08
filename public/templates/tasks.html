@@ -35,6 +35,7 @@
 
 	function tasks_reload() {
 		SET('current.title', '@(My Tasks:)' + ' ' + user.name);
+		SET('current.descripriton', '@(Private to-do tasks)');
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
 		AJAX('GET /api/tasks/', 'tasks.items');

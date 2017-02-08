@@ -87,6 +87,7 @@
 			<div class="row">
 				<div class="col-md-4">
 					<h2 data-b="current.title" data-b-html="n => n" class="singline">...</h2>
+					<p data-b="current.descripriton" data-b-html="n => n">...</p>
 				</div>
 				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
 					<div data-jc="searchbox" data-jc-path="common.search" data-enter="true" data-placeholder="@(Type a phrase and press enter)"></div>
@@ -105,8 +106,9 @@
 			<div id="status">
 				<div class="visible-md visible-lg codemirrorhelp">__<b>bold</b>__ *<i>italic</i>* ~~<s>strike</s>~~ <code>`code`</code> &gt; quote</div>
 				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
+				<div class="exec" data-exec="codemirror_upload"><i class="fa fa-folder-o mr5"></i>@(Upload)</div>
 				<div class="exec" data-exec="chat_export"><i class="fa fa-file-text-o mr5"></i>@(Export)</div>
-				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Send: ENTER)' : '@(Send: CTRL+ENTER)'"></span></div>
+				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-envelope-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Enter)' : '@(CTRL+Enter)'"></span></div>
 				<div data-jc="typing">
 					<script type="text/html">
 						<div data-id="{{ id }}"><img src="/photos/{{ picture }}.jpg" height="16" alt="{{ name }}" /><b>{{ name }}</b> @(is typing.)</div>
@@ -120,6 +122,8 @@
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'formchannel'" data-url="/forms/formchannel.html" data-reload="formchannel_reload"></div>
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'searchresults'" data-url="/forms/searchresults.html" data-reload="searchresults_reload"></div>
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'help'" data-url="/forms/help.html"></div>
+
+	<input type="file" id="uploadfile" class="hidden" />
 
 	@{json(user, 'userdata', (k, v) => k !== 'password' ? v : undefined)}
 
@@ -288,15 +292,17 @@
 				current.online && SETTER('websocket', 'send', MSG_TYPING);
 			};
 
-			component.upload = function(editor, e) {
+			component.upload = function(editor, e, callback) {
 
-				e.preventDefault();
-				e.stopPropagation();
+				if (e.preventDefault) {
+					e.preventDefault();
+					e.stopPropagation();
+				}
 
 				SETTER('loading', 'show');
 
 				var data = new FormData();
-				var files = e.dataTransfer.files;
+				var files = e.dataTransfer ? e.dataTransfer.files : e;
 
 				for (var i = 0, length = files.length; i < length; i++)
 					data.append('file' + i, files[i]);
@@ -325,6 +331,7 @@
 					}
 
 					editor.replaceSelection(push.join('\n'));
+					callback && callback();
 				});
 			};
 		});
@@ -380,6 +387,7 @@
 					current.route.type = 'channel';
 					current.route.item = item;
 					SET('current.title', '#' + item.name);
+					SET('current.descripriton', '@(Selected channel)');
 					SET('common.search', '');
 					SET('common.page', 'chat');
 					var is = user.unread[item.id];
@@ -399,6 +407,7 @@
 					current.route.type = 'user';
 					current.route.item = item;
 					SET('current.title', item.name);
+					SET('current.descripriton', item.position);
 					SET('common.search', '');
 					SET('common.page', 'chat');
 					var is = user.unread[item.id];
@@ -470,6 +479,10 @@
 			});
 		}
 
+		function codemirror_upload() {
+			$('#uploadfile').trigger('click');
+		}
+
 		function codemirror_enter() {
 			SET('common.enter', !common.enter);
 		}
@@ -481,6 +494,14 @@
 		function mainmenu_toggle() {
 			$('.panel').toggleClass('panel-xs');
 		}
+
+		$('#uploadfile').on('change', function(e) {
+			var component = FIND('codemirror');
+			var self = this;
+			component.upload(component.codemirror(), self.files, function() {
+				self.value = '';
+			});
+		});
 
 		Tangular.register('time', function(value) {
 

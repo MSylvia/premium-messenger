@@ -31,7 +31,8 @@
 	var favorites = {};
 
 	function favorites_reload() {
-		SET('current.title', '@(Favorites messages)');
+		SET('current.title', '@(Favorites)');
+		SET('current.descripriton', '@(All stored favorites messages)');
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
 

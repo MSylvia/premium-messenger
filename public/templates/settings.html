@@ -35,6 +35,7 @@
 
 	function settings_reload() {
 		SET('current.title', '@(Settings)');
+		SET('current.descripriton', '@(Change your preferences)');
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
 		SET('settings', CLONE(user), true);
