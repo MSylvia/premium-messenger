@@ -33,6 +33,7 @@
 	<div data-jc="websocket" data-jc-id="websocket" data-url="/"></div>
 	<div data-jc="audio" data-jc-path="common.volume"></div>
 	<div data-jc="nativenotifications" data-jc-path="common.notifications"></div>
+	<div data-jc="clipboardimage"></div>
 
 	<section class="panel">
 
@@ -428,6 +429,14 @@
 				nav.find('.selected').removeClass('selected');
 				nav.find('a[href="{0}"]'.format(NAVIGATION.url)).addClass('selected');
 			}, 50);
+		});
+
+		ON('clipboardimage', function(base64) {
+			SETTER('loading', 'show');
+			AJAX('POST /api/upload/base64/', { file: base64 }, function(response, err) {
+				SETTER('loading', 'hide', 500);
+				FIND('codemirror').codemirror().replaceSelection('![' + response.filename + '](' + response.url + ')');
+			});
 		});
 
 		function refresh_online() {

@@ -1,3 +1,5 @@
+const BASE64 = { width: 0, height: 0 };
+
 exports.install = function() {
 
 	F.route('/api/login/', json_exec, ['*Login', 'post', 'unauthorize']);
@@ -7,34 +9,35 @@ exports.install = function() {
 		F.route('/logoff/', logoff);
 
 		// Uploads
-		F.route('/api/upload/',         upload,       ['upload', 10000], 3084); // 3 MB
-		F.route('/api/upload/photo/',   upload_photo, ['upload', 10000], 1024); // 1 MB
+		F.route('/api/upload/',         upload,        ['upload', 10000], 3084); // 3 MB
+		F.route('/api/upload/photo/',   upload_photo,  ['upload', 10000], 1024); // 1 MB
+		F.route('/api/upload/base64/',  upload_base64, ['post', 10000], 2048); // 2 MB
 
 		// Users
-		F.route('/api/account/',        json_save,    ['*Account', 'post']);
+		F.route('/api/account/',        json_save,     ['*Account', 'post']);
 
 		// Channels (SA)
-		F.route('/api/channels/',       json_save,    ['*Channel', 'post']);
-		F.route('/api/channels/{id}/',  json_remove,  ['*Channel', 'delete']);
+		F.route('/api/channels/',       json_save,     ['*Channel', 'post']);
+		F.route('/api/channels/{id}/',  json_remove,   ['*Channel', 'delete']);
 
 		// Messages
-		F.route('/api/messages/{id}/',  json_query,   ['*Message']);
+		F.route('/api/messages/{id}/',  json_query,    ['*Message']);
 
 		// Favorites
-		F.route('/api/favorites/',      json_query,   ['*Favorite']);
-		F.route('/api/favorites/',      json_save,    ['*Favorite', 'post']);
-		F.route('/api/favorites/{id}/', json_remove,  ['*Favorite', 'delete']);
+		F.route('/api/favorites/',      json_query,    ['*Favorite']);
+		F.route('/api/favorites/',      json_save,     ['*Favorite', 'post']);
+		F.route('/api/favorites/{id}/', json_remove,   ['*Favorite', 'delete']);
 
 		// Tasks
-		F.route('/api/tasks/',          json_query,   ['*Task']);
-		F.route('/api/tasks/',          json_save,    ['*Task', 'post']);
-		F.route('/api/tasks/{id}/',     json_exec,    ['*Task']);
+		F.route('/api/tasks/',          json_query,    ['*Task']);
+		F.route('/api/tasks/',          json_save,     ['*Task', 'post']);
+		F.route('/api/tasks/{id}/',     json_exec,     ['*Task']);
 
 		// Users (SA)
-		F.route('/api/users/',          json_query,   ['*User']);
-		F.route('/api/users/',          json_save,    ['*User', 'post']);
-		F.route('/api/users/{id}/',     json_read,    ['*User']);
-		F.route('/api/users/{id}/',     json_remove,  ['*User', 'delete']);
+		F.route('/api/users/',          json_query,    ['*User']);
+		F.route('/api/users/',          json_save,     ['*User', 'post']);
+		F.route('/api/users/{id}/',     json_read,     ['*User']);
+		F.route('/api/users/{id}/',     json_remove,   ['*User', 'delete']);
 	});
 
 	F.file('/download/', file_read);
@@ -84,6 +87,39 @@ function upload() {
 		});
 
 	}, () => self.json(id));
+}
+
+function upload_base64() {
+	var self = this;
+
+	if (!self.body.file) {
+		self.json(null);
+		return;
+	}
+
+	var type = self.body.file.base64ContentType();
+	var ext;
+
+	switch (type) {
+		case 'image/png':
+			ext = '.png';
+			break;
+		case 'image/jpeg':
+			ext = '.jpg';
+			break;
+		case 'image/gif':
+			ext = '.gif';
+			break;
+		default:
+			self.json(null);
+			return;
+	}
+
+	var data = self.body.file.base64ToBuffer();
+	BASE64.filename = 'clipboard' + ext;
+	BASE64.url = '/download/' + NOSQL('files').binary.insert(BASE64.filename, data) + ext;
+	NOSQL('files').counter.hit('write');
+	self.json(BASE64);
 }
 
 function upload_photo() {
