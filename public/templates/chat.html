@@ -83,7 +83,7 @@
 
 			SETTER('websocket', 'send', MSG_ROUTE);
 			SETTER('loading', 'hide', 500);
-			SETTER('codemirror', 'focus');
+			!isMOBILE && SETTER('codemirror', 'focus');
 		});
 
 		$('#messagebox').removeClass('hidden');
