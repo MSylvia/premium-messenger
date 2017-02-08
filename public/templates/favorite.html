@@ -1,4 +1,4 @@
-<div data-jc="repeater" data-jc-path="favorites.items" class="chat">
+<div data-jc="repeater" data-jc-path="favorites.items" class="chat favorites">
 	<script type="text/html">
 		<figure data-id="{{ id }}"{{ if user.me }} class="me"{{ fi }}>
 			<div class="chat-picture center">
@@ -46,6 +46,7 @@
 					common.favorites[item.id] = true;
 				});
 				SET('favorites.items', response);
+				highlight($('.favorites'));
 				UPDATE('common.favorites');
 			});
 		});
