@@ -197,9 +197,9 @@
 			var divider = '---------------------------------------------------------------';
 			var builder = [];
 
-			builder.push('[{0}]'.format(document.title));
-			builder.push('[Created: {0}]'.format(new Date().format('yyyy-MM-dd HH:mm:ss')));
-			builder.push('[Location: {0}]'.format(location.href));
+			builder.push('[{0}: @(last 100 messages)]'.format(document.title));
+			builder.push('[@(Created): {0}]'.format(new Date().format('yyyy-MM-dd HH:mm:ss')));
+			builder.push('[@(Location): {0}]'.format(location.href));
 			builder.push('');
 			builder.push(divider);
 
