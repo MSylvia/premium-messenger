@@ -193,4 +193,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 	.panel { position: absolute; left: -240px; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
 	.panel-xs { left: 0; }
 	.section { margin: 0 25px; }
+	.chat-picture { width: 24px; }
+	.chat-body { margin-left: 35px; }
+	.chat figure { padding: 10px 10px; }
 }
