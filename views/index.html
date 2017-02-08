@@ -9,6 +9,9 @@
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-title" content="@{config.name}" />
+	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700&subset=latin,latin-ext" />
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.css" />
@@ -19,6 +22,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/favico.js/0.3.10/favico.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 </head>
 <body data-jc="exec,binder"@{if user.sa} class="sa"@{fi}>
@@ -28,12 +32,18 @@
 	<div data-jc="message" data-button="@(Close)"></div>
 	<div data-jc="websocket" data-jc-id="websocket" data-url="/"></div>
 	<div data-jc="audio" data-jc-path="common.volume"></div>
+	<div data-jc="nativenotifications" data-jc-path="common.notifications"></div>
 
 	<section class="panel">
 
 		<div class="user">
 			<div class="user-name singleline"><img src="/photos/@{user.picture}.jpg" height="30" alt="@{user.name}" />@{user.name}</div>
-			<div class="user-stats"><i class="fa fa-circle blink online mr5"></i>@(Online:)<span data-b="current.online" data-b-html="n => n + 1" class="b ml5"></span> / <span data-b="current.users.length" data-b-html="n => Tangular.helpers.pluralize(n, @('# users', '# user', '# users', '# users'))"></span></div>
+			<div class="user-stats"><i class="fa fa-circle blink online mr5" data-b="common.online" data-b-class="n => n ? '+blink +online -offline' : '-online +offline -blink'"></i>@(Online:)<span data-b="current.online" data-b-html="n => n + 1" class="b ml5"></span> / <span data-b="current.users.length" data-b-html="n => Tangular.helpers.pluralize(n, @('# users', '# user', '# users', '# users'))"></span></div>
+			<div class="user-settings">
+				<i class="fa fa-volume-up exec" data-path="common.sounds" data-value="!common.sounds" data-b="common.sounds" data-b-class="n => n ? '+fa-volume-up -off -fa-volume-off' : '-fa-volume-up +off +fa-volume-off'"></i>
+				<i class="fa fa-bell exec" data-path="common.notifications" data-value="!common.notifications" data-b="common.notifications" data-b-class="n => n ? '+fa-bell -off -fa-bell-slash-o' : '-fa-bell +off +fa-bell-slash-o'"></i>
+			</div>
+			<div class="clearfix"></div>
 		</div>
 
 		<div data-jc="searchbox" data-jc-path="panel.search" data-placeholder="@(Search in the panel)"></div>
@@ -92,6 +102,7 @@
 			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file (max. 3 MB).)" data-maxlength="1000"></div>
 			<div id="status">
 				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
+				<div class="exec" data-exec="chat_export"><i class="fa fa-file-text-o mr5"></i>@(Export)</div>
 				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Send: ENTER)' : '@(Send: CTRL+ENTER)'"></span></div>
 				<div data-jc="typing">
 					<script type="text/html">
@@ -111,21 +122,30 @@
 
 	<script>
 
+		MAKE('common', function() {
+			this.enter == null && (this.enter = true);
+			this.sounds == null && (this.sounds = true);
+			this.notifications == null && (this.notifications = true);
+			this.volume = 1;
+			this.ticks = Date.now();
+			this.online = false;
+		});
+
+		// Cache in localStorage
+		CACHEPATH('common.enter', '1 year');
+		CACHEPATH('common.sounds', '1 year');
+		CACHEPATH('common.notifications', '1 year');
+
 		var MSG_TYPING = { type: 'typing' };
 		var MSG_MESSAGE = { type: 'message' };
 		var MSG_UNREAD = { type: 'unread' };
 		var MSG_RECENT = { type: 'recent' };
 		var MSG_NOCHAT = { type: 'nochat' };
 
-		var common = { sounds: true, volume: 0.9, enter: true, ticks: Date.now() };
 		var messages = { message: '' };
 		var current = { route: {}, online: 0, users: EMPTYARRAY, channels: EMPTYARRAY };
 		var user = PARSE($('#userdata').html());
 		var favicon = new Favico({ position : 'up' });
-
-		// Cache
-		CACHEPATH('common.enter', '1 month');
-		CACHEPATH('common.sounds', '1 month');
 
 		NAVIGATION.clientside('.jrouting');
 
@@ -156,6 +176,10 @@
 					}
 				break;
 			}
+		});
+
+		ON('online', function(is) {
+			SET('common.online', is);
 		});
 
 		ON('#websocket', function(component) {
@@ -203,8 +227,12 @@
 
 					case 'message':
 						var focus = document.hasFocus();
-						!response.edited && (response.iduser !== user.id || !focus) && playsound();
-						!response.edited && !focus && favicon.badge('?');
+						if (!response.edited && !focus && response.iduser !== user.id) {
+							favicon.badge('?');
+							var owner = current.users.findItem('id', response.iduser);
+							SETTER('nativenotifications', 'append', '@(New message from: {0})'.format(owner.name), response.body.substring(0, 80));
+						}
+						response.iduser !== user.id && playsound();
 						SETTER('chat', response.edited ? 'replace' : 'insert', response);
 						break;
 				}
@@ -222,9 +250,9 @@
 					return CodeMirror.Pass;
 
 				// "chat" is defined in /templates/chat.html
-				if (chat.lastmessage && chat.lastmessage.edited) {
+				if (chat.lastmessage && chat.lastmessage.modified) {
 					MSG_MESSAGE.id = chat.lastmessage.id;
-					chat.lastmessage.edited = false;
+					chat.lastmessage.modified = false;
 				} else
 					MSG_MESSAGE.id = undefined;
 
@@ -244,9 +272,9 @@
 					return CodeMirror.pass;
 				if (edit) {
 					component.set(chat.lastmessage.body);
-					chat.lastmessage.edited = true;
+					chat.lastmessage.modified = true;
 				} else {
-					chat.lastmessage.edited = false;
+					chat.lastmessage.modified = false;
 					component.set('');
 				}
 			};

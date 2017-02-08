@@ -1,7 +1,7 @@
 <div class="padding" data-jc="search" data-jc-path="common.search" data-selector=".jsearch">
 	<div class="savisible">
 		<div class="row">
-			<div class="col-md-3 m">
+			<div class="col-md-3 col-sm-5 m">
 				<button class="button button-small exec" data-exec="users_new"><i class="fa fa-plus-circle mr5"></i>@(Add a new user)</button>
 			</div>
 		</div>
@@ -49,6 +49,7 @@
 				response.channels = Object.keys(response.channels);
 			else
 				response.channels = [];
+
 			SET('formuser', response);
 			RESET('formuser.*', true);
 			SET('common.form', 'formuser');

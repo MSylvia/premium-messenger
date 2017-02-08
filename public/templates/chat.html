@@ -116,7 +116,7 @@
 	COMPONENT('chat', function() {
 
 		var self = this;
-
+		self.next = false;
 		self.blind();
 		self.readonly();
 		self.singleton();
@@ -161,6 +161,7 @@
 			builder.length && chat.empty && SET('chat.empty', false);
 			highlight(self.append(builder.join('')));
 			setTimeout2(self.id, scrollBottom, 500);
+
 			return self;
 		};
 
@@ -188,5 +189,33 @@
 			});
 		};
 	});
+
+	function chat_export() {
+		SETTER('loading', 'show');
+		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), { max: 100 }, function(response) {
+
+			var divider = '---------------------------------------------------------------';
+			var builder = [];
+
+			builder.push('[{0}]'.format(document.title));
+			builder.push('[Created: {0}]'.format(new Date().format('yyyy-MM-dd HH:mm:ss')));
+			builder.push('[Location: {0}]'.format(location.href));
+			builder.push('');
+			builder.push(divider);
+
+			response.forEach(function(item) {
+				var u = current.users.findItem('id', item.iduser);
+				builder.push('DATETIME: {0}, USERNAME: {1}'.format(item.datecreated.format('yyyy-MM-dd HH:mm:ss'), u ? u.name : '@(unknown user)'));
+				builder.push('');
+				builder.push(item.body);
+				builder.push('');
+				builder.push(divider);
+			});
+
+			SETTER('loading', 'hide', 1000);
+			var name = (MSG_ROUTE.type === 'channel' ? current.channels : current.users).findItem('id', MSG_ROUTE.id).linker;
+			saveAs(new Blob([builder.join('\n')], { type: 'text/plain;charset=utf-8' }), 'conversation-{0}.txt'.format(name));
+		});
+	}
 
 </script>

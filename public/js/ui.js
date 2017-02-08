@@ -1419,6 +1419,7 @@ COMPONENT('websocket', function() {
 		if (!ws)
 			return self;
 		self.online = false;
+		EMIT('online', false);
 		ws.onopen = ws.onclose = ws.onmessage = null;
 		!isClosed && ws.close();
 		ws = null;
@@ -1442,6 +1443,7 @@ COMPONENT('websocket', function() {
 
 	function onOpen() {
 		self.online = true;
+		EMIT('online', true);
 	}
 
 	self.connect = function() {
@@ -1724,6 +1726,74 @@ COMPONENT('pictureupload', function() {
 			img.attr('src', (self.attr('data-path') || '{0}').format(value));
 		else
 			img.attr('src', empty);
+	};
+});
+
+COMPONENT('nativenotifications', function() {
+	var self = this;
+	var autoclosing;
+	var system = false;
+
+	self.singleton();
+	self.readonly();
+	self.items = [];
+
+	self.make = function() {
+		system = window.Notification.permission === 'granted';
+		!system && window.Notification.requestPermission(function (permission) {
+			system = permission === 'granted';
+		});
+	};
+
+	self.append = function(title, message, callback, img) {
+
+		if (!system || !self.get())
+			return;
+
+		var obj = { id: Math.floor(Math.random() * 100000), date: new Date(), callback: callback };
+		var options = {};
+
+		options.body = message.replace(/(<([^>]+)>)/ig, '');
+		self.items.push(obj);
+
+		self.autoclose();
+
+		if (img === undefined)
+			options.icon = '/icon.png';
+		else if (img != null)
+			options.icon = img;
+
+		obj.system = new window.Notification(title, options);
+		obj.system.onclick = function() {
+
+			window.focus();
+			self.items = self.items.remove('id', obj.id);
+
+			if (obj.callback) {
+				obj.callback();
+				obj.callback = null;
+			}
+
+			obj.system.close();
+			obj.system.onclick = null;
+			obj.system = null;
+		};
+	};
+
+	self.autoclose = function() {
+
+		if (autoclosing)
+			return self;
+
+		autoclosing = setTimeout(function() {
+			clearTimeout(autoclosing);
+			autoclosing = null;
+			var obj = self.items.shift();
+			obj.system.onclick = null;
+			obj.system.close();
+			obj.system = null;
+			self.items.length && self.autoclose();
+		}, +self.attr('data-timeout') || 8000);
 	};
 });
 

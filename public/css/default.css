@@ -53,7 +53,8 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat-picture { float: left; width: 34px; }
 .chat-picture img { border-radius: 4px; }
 .chat-body { margin-left: 50px; }
-.chat-user i { margin: 4px 5px 0 0; font-size: 12px; float: left; color: silver; }
+.chat-user i { margin: 4px 5px 0 0; font-size: 12px; float: left; color: silver; display: none; }
+.chat-user i.online { display: block; }
 .chat .fa-mobile { font-size: 16px; margin-left: 5px; color: black; }
 .chat-user b { color: black; }
 .chat-user a { text-decoration: none; }
@@ -73,7 +74,11 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .panel .user-name { font-size: 18px; font-weight: bold; }
 .panel .user-name img { margin-right: 10px; border-radius: 4px; }
 .panel .user-name > .fa { width: 26px; }
-.panel .user-stats { padding: 5px 0 0; font-size: 11px; color: #99A0A7; }
+.panel .user-stats { margin: 5px 0 0; font-size: 11px; color: #99A0A7; float: left; }
+.panel .user-settings { margin: 3px 0 0; font-size: 14px; float: right;  }
+.panel .user-settings .off { color: #4C5A6D !important; }
+.panel .user-settings .fa { margin-left: 7px; padding-left: 7px; cursor: pointer; color: #99A0A7; border-left: 1px solid #404C5B; width: 16px; text-align: center; }
+.panel .user-settings .fa:first-child { margin-left: 0; padding-left: 0; border-left: 0; }
 .panel nav .operation { float: right; }
 
 .search .fa-times { color: #D63B32; cursor: pointer; }
@@ -104,6 +109,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .black { color: black; }
 .green { color: #68B25B !important; }
 .online { color: #92E464 !important; }
+.offline { color: #D63B32 !important; }
 
 .markdown { font-size: 16px; line-height: 22px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif; color: #404040; }
 .markdown h1 { margin: 0 0 20px; font-size: 30px; padding: 0 0 13px; border-bottom: 1px solid #E0E0E0; color: black; line-height: 38px; font-family: Arial, sans-serif; }
@@ -167,8 +173,11 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 	100% { opacity: 0; }
 }
 
-@media(max-width:767px) {
+@media(max-width:980px) {
 	#header .m { margin-bottom: 20px; }
+}
+
+@media(max-width:767px) {
 	.bl { border-width: 0; }
 	.mainmenu { right: 20px; font-size: 22px; margin: 15px 0 0; color: gray; z-index: 5; }
 	.body { margin-left: 0; }
