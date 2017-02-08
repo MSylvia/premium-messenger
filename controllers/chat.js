@@ -61,7 +61,7 @@ function messages() {
 
 	self.on('message', function(client, message) {
 
-		var tmp, iduser, idchannel;
+		var tmp, iduser, idchannel, is;
 		iduser = client.user.id;
 
 		switch (message.type) {
@@ -113,10 +113,19 @@ function messages() {
 				// threadtype = "user" (direct message) or "channel"
 
 				if (client.user.threadtype === 'user') {
-					tmp = self.find(n => n.user.threadid === iduser && n.user.id === client.user.threadid && n.user !== client.user);
-					if (tmp)
-						tmp.send(message);
-					else {
+
+					is = true;
+
+					// Users can be logged from multiple devices
+					self.send(message, function(id, n) {
+						if (n.user.threadid === iduser && n.user.id === client.user.threadid && n.user !== client.user) {
+							is = false;
+							return true;
+						}
+						return n.user.id === iduser && n.id !== client.id;
+					});
+
+					if (is) {
 						tmp = F.global.users.findItem('id', client.user.threadid);
 						if (tmp) {
 
