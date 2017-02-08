@@ -203,6 +203,8 @@
 			builder.push('');
 			builder.push(divider);
 
+			response.reverse();
+
 			response.forEach(function(item) {
 				var u = current.users.findItem('id', item.iduser);
 				builder.push('DATETIME: {0}, USERNAME: {1}'.format(item.datecreated.format('yyyy-MM-dd HH:mm:ss'), u ? u.name : '@(unknown user)'));
