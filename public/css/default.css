@@ -61,12 +61,16 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat-user span { font-size: 12px; float: right; }
 .chat-position { font-size: 11px; margin-bottom: 10px; }
 .chat .me .chat-user b { color: #D63B32; }
+.chat-favorite { margin-top: 10px; cursor: pointer; }
+.chat-favorite .fa-heart { color: #D63B32; }
 
 .panel nav a { color: #99A0A7; display: block; padding: 1px 0 1px 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 15px; border-radius: 0 4px 4px 0; margin-bottom: 2px; }
 .panel nav a:hover { background-color: #404C5B; text-decoration: none; }
 .panel nav .fa { width: 16px; opacity: 0.5; font-size: 11px; float: left; margin: 5px 0 0 0; }
 .panel nav .selected { background-color: #6698C8 !important; color: white !important; }
 .panel nav .highlight { color: yellow; font-weight: bold; }
+.panel nav .fa-heart { color: #FF5651; opacity: 1; }
+.panel nav .fa-check-circle { color: #92E464; opacity: 1; }
 .panel .caption { margin: 20px 0 5px 20px; }
 .panel hr { border-color: #404C5B; }
 
@@ -162,11 +166,16 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 
 .task { margin-top: 10px; border-top: 1px solid #E0E0E0; padding: 10px 40px 0; color: black; }
 .task:first-child { border-top: 0; }
-.task-checkbox { width: 22px; border: 1px solid #D0D0D0; float: left; text-align: center; border-radius: 4px; cursor: not-allowed; color: white; }
+.task-checkbox { width: 22px; border: 1px solid silver; float: left; text-align: center; border-radius: 4px; cursor: not-allowed; color: white; }
 .task-body { margin-left: 35px; padding: 1px 0 0; }
-.task-checked { color: black; }
+.task-body code { font-family: monospace; padding: 1px 3px; border-radius: 3px; background-color: #E0E0E0; }
+.task-checked { color: black; background-color: #F8F8F8; }
 .task-removed { color: #A0A0A0 !important; }
+.task-removed a { color: #B0B0B0; }
 .task .exec { cursor: pointer; }
+
+.codemirrorhelp { float: right !important; }
+.codemirrorhelp code { padding: 0 2px; border-radius: 3px; background-color: #E0E0E0; font-family: monospace; }
 
 @keyframes blink {
 	0% { opacity: 1; }

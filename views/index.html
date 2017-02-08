@@ -72,6 +72,7 @@
 			<hr />
 			<nav>
 				<a href="/" class="jrouting"><i class="fa fa-check-circle"></i>@(My Tasks)</a>
+				<a href="/favorite/" class="jrouting"><i class="fa fa-heart"></i>@(Favorites)</a>
 				<a href="/users/" class="jrouting"><i class="fa fa-users"></i>@(Users)</a>
 				<a href="/settings/" class="jrouting"><i class="fa fa-cog"></i>@(Settings)</a>
 				<a href="/logoff/"><i class="fa fa-power-off"></i>@(Sign out)</a>
@@ -94,13 +95,15 @@
 		</header>
 		<div id="content">
 			<div data-jc="page" data-jc-path="common.page" data-if="tasks" data-template="/templates/tasks.html" data-reload="tasks_reload"></div>
+			<div data-jc="page" data-jc-path="common.page" data-if="favorite" data-template="/templates/favorite.html" data-reload="favorites_reload"></div>
 			<div data-jc="page" data-jc-path="common.page" data-if="chat" data-template="/templates/chat.html" data-reload="chat_reload"></div>
 			<div data-jc="page" data-jc-path="common.page" data-if="users" data-template="/templates/users.html" data-reload="users_reload"></div>
 			<div data-jc="page" data-jc-path="common.page" data-if="settings" data-template="/templates/settings.html" data-reload="settings_reload"></div>
 		</div>
 		<div id="messagebox">
-			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file (max. 3 MB).)" data-maxlength="1000"></div>
+			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file (max. 3 MB).)" data-maxlength="1200"></div>
 			<div id="status">
+				<div class="visible-md visible-lg codemirrorhelp">__<b>bold</b>__ *<i>italic</i>* ~~<s>strike</s>~~ <code>`code`</code> &gt; quote</div>
 				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
 				<div class="exec" data-exec="chat_export"><i class="fa fa-file-text-o mr5"></i>@(Export)</div>
 				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Send: ENTER)' : '@(Send: CTRL+ENTER)'"></span></div>
@@ -126,6 +129,7 @@
 			this.enter == null && (this.enter = true);
 			this.sounds == null && (this.sounds = true);
 			this.notifications == null && (this.notifications = true);
+			this.favorites == null && (this.favorites = {});
 			this.volume = 1;
 			this.ticks = Date.now();
 			this.online = false;
@@ -134,6 +138,7 @@
 		// Cache in localStorage
 		CACHEPATH('common.enter', '1 year');
 		CACHEPATH('common.sounds', '1 year');
+		CACHEPATH('common.favorites', '1 year');
 		CACHEPATH('common.notifications', '1 year');
 
 		var MSG_TYPING = { type: 'typing' };
@@ -346,6 +351,11 @@
 		ROUTE('/', function() {
 			refresh_place();
 			SET('common.page', 'tasks');
+		});
+
+		ROUTE('/favorite/', function() {
+			refresh_place();
+			SET('common.page', 'favorite');
 		});
 
 		ROUTE('/users/', function() {

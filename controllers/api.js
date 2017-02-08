@@ -20,6 +20,11 @@ exports.install = function() {
 		// Messages
 		F.route('/api/messages/{id}/',  json_query,   ['*Message']);
 
+		// Favorites
+		F.route('/api/favorites/',      json_query,   ['*Favorite']);
+		F.route('/api/favorites/',      json_save,    ['*Favorite', 'post']);
+		F.route('/api/favorites/{id}/', json_remove,  ['*Favorite', 'delete']);
+
 		// Tasks
 		F.route('/api/tasks/',          json_query,   ['*Task']);
 		F.route('/api/tasks/',          json_save,    ['*Task', 'post']);
@@ -124,4 +129,16 @@ function json_exec(id) {
 function logoff() {
 	this.cookie(F.config.cookie, '', '-1 day');
 	this.redirect('/');
+}
+
+function json_favorite_add(id, idmessage) {
+	this.id = id;
+	this.idmessage = idmessage;
+	this.$workflow('favorite', this.callback());
+}
+
+function json_favorite_rem(id, idmessage) {
+	this.id = id;
+	this.idmessage = idmessage;
+	this.$workflow('unfavorite', this.callback());
 }
