@@ -53,6 +53,8 @@ function messages() {
 	});
 
 	self.on('close', function(client) {
+		if (self.find(n => n.user.id === client.user.id && n.id !== client.id))
+			return;
 		client.user.online = false;
 		MSG_ONOFF.id = client.user.id;
 		MSG_ONOFF.online = false;
