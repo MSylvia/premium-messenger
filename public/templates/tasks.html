@@ -1,5 +1,18 @@
 <div class="padding">
 	<div class="padding npb">
+		<nav data-jc="template" data-jc-path="tasks.unread">
+			<script type="text/html">
+				{{ if count }}
+					<div class="unreadmessages row">
+					{{ foreach m in items }}
+						<div class="col-lg-3 col-md-4 col-xs-6"><a href="{{ m.url }}" class="jrouting"><span class="count">{{ m.count }}</span>{{ if m.user }}<img src="/photos/{{ m.picture }}.jpg" alt="{{ m.name }}" border="0" />{{ else }}<i class="fa fa-envelope"></i>{{ fi }}<span>{{ m.name}}</span></a></div>
+					{{ end }}
+					</div>
+					<br />
+					<br />
+				{{ fi }}
+			</script>
+		</nav>
 		<div data-jc="textbox" data-jc-keypress="false" data-jc-path="tasks.form.body" data-placeholder="@(Type a task description and press enter)" data-maxlength="100" data-control-icon="fa-keyboard-o" data-icon="fa-check-circle">@(Add a private task)</div>
 	</div>
 </div>
@@ -39,6 +52,35 @@
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
 		AJAX('GET /api/tasks/', 'tasks.items');
+
+		WAIT(function() {
+			return current.users !== EMPTYARRAY;
+		}, tasks_refreshunread);
+	}
+
+	ON('unread', tasks_refreshunread);
+
+	function tasks_refreshunread() {
+		var unread = {};
+		unread.items = [];
+		unread.count = 0;
+
+		Object.keys(user.unread).forEach(function(id) {
+			var count = user.unread[id];
+			var tmp = current.channels.findItem('id', id);
+			if (tmp) {
+				unread.items.push({ url: '/channels/{0}/'.format(tmp.linker), name: tmp.name, count: count });
+				unread.count += count;
+				return;
+			}
+
+			tmp = current.users.findItem('id', id);
+			if (tmp) {
+				unread.items.push({ user: true, url: '/users/{0}/'.format(tmp.linker), name: tmp.name, count: count, picture: tmp.picture, online: tmp.online });
+				unread.count += count;
+			}
+		});
+		SET('tasks.unread', unread);
 	}
 
 	function tasks_checked(el) {
