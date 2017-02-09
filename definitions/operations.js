@@ -24,12 +24,17 @@ NEWOPERATION('users.load', function(error, value, callback) {
 // Performs notifications for unread messages
 NEWOPERATION('users.notify', function(error, value, callback) {
 	F.logger('notifications', 'begin');
+
+	var has = false;
+
 	F.global.users.wait(function(item, next) {
 
 		if (!item.notifications)
 			return next();
 
 		var model = {};
+		var count = 0;
+
 		model.name = item.name;
 		model.channels = [];
 		model.users = [];
@@ -38,6 +43,7 @@ NEWOPERATION('users.notify', function(error, value, callback) {
 		Object.keys(item.unread).forEach(function(id) {
 			var unread = F.global.channels.findItem('id', id);
 			if (unread) {
+				count += item.unread[id];
 				model.channels.push({ item: unread, count: item.unread[id] });
 				model.has = true;
 				return;
@@ -45,17 +51,26 @@ NEWOPERATION('users.notify', function(error, value, callback) {
 
 			unread = F.global.users.findItem('id', id);
 			if (unread) {
+				count += item.unread[id];
 				model.users.push({ item: unread, count: item.unread[id] });
 				model.has = true;
 			}
 		});
 
 		if (model.has) {
+			if (count === item.unreadcount)
+				return next();
+			item.unreadcount = count;
+			has = true;
 			F.logger('notifications', item.email, 'channels: ' + model.channels.length, 'users: ' + model.users.length);
 			F.mail(item.email, '@({0}: unread messages)'.format(F.config.name), 'notification', model, next, '');
 		} else
 			next();
-	}, () => F.logger('notifications', 'end'));
+
+	}, function() {
+		F.logger('notifications', 'end');
+		has && OPERATION('users.save', NOOP);
+	});
 
 	callback(SUCCESS(true));
 });
