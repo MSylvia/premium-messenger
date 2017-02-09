@@ -202,6 +202,7 @@ function messages() {
 					db.insert(message);
 					db.counter.hit('all').hit(client.user.id);
 					dbBackup.insert(message);
+					message.files.length && NOSQL(dbname + '-files').insert(message);
 					OPERATION('messages.cleaner', dbname, NOOP);
 				}
 

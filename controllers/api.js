@@ -22,6 +22,7 @@ exports.install = function() {
 
 		// Messages
 		F.route('/api/messages/{id}/',  json_query,    ['*Message']);
+		F.route('/api/files/{id}/',     json_files,    ['*Message']);
 
 		// Favorites
 		F.route('/api/favorites/',      json_query,    ['*Favorite']);
@@ -160,6 +161,11 @@ function json_remove(id) {
 function json_exec(id) {
 	this.id = id;
 	this.$workflow('exec', this.callback());
+}
+
+function json_files(id) {
+	this.id = id;
+	this.$workflow('files', this.callback());
 }
 
 function logoff() {

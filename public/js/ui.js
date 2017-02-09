@@ -1803,9 +1803,11 @@ COMPONENT('nativenotifications', function() {
 			clearTimeout(autoclosing);
 			autoclosing = null;
 			var obj = self.items.shift();
-			obj.system.onclick = null;
-			obj.system.close();
-			obj.system = null;
+			if (obj) {
+				obj.system.onclick = null;
+				obj.system.close();
+				obj.system = null;
+			}
 			self.items.length && self.autoclose();
 		}, +self.attr('data-timeout') || 8000);
 	};
@@ -1814,7 +1816,7 @@ COMPONENT('nativenotifications', function() {
 COMPONENT('clipboardimage', function() {
 
 	var self = this;
-	var ctx, img, canvas;
+	var ctx, img, canvas, maxW, maxH, quality;
 
 	self.singleton();
 	self.readonly();
@@ -1827,6 +1829,9 @@ COMPONENT('clipboardimage', function() {
 		canvas = self.find('canvas').get(0);
 		ctx = canvas.getContext('2d');
 		img = self.find('img').get(0);
+		maxW = (self.attr('data-width') || '1280').parseInt();
+		maxH = (self.attr('data-height') || '1024').parseInt();
+		quality = (self.attr('data-quality') || '90').parseInt() * 0.01;
 
 		$(window).on('paste', function(e) {
 			var item = e.originalEvent.clipboardData.items[0];
@@ -1844,13 +1849,25 @@ COMPONENT('clipboardimage', function() {
 
 	self.resize = function() {
 		var dpr = window.devicePixelRatio;
+
 		if (dpr > 1) {
 			canvas.width = img.width / dpr;
 			canvas.height = img.height / dpr;
-			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-			EMIT('clipboardimage', canvas.toDataURL('image/jpeg'));
-		} else
-			EMIT('clipboardimage', img.src);
+		} else {
+			canvas.width = img.width;
+			canvas.height = img.height;
+		}
+
+		if (canvas.width > maxW) {
+			canvas.width = maxW;
+			canvas.height = (img.width / (img.width / img.height)) >> 0;
+		} else if (canvas.height > maxH) {
+			canvas.height = maxH;
+			canvas.width = (img.height / (img.width / img.height)) >> 0;
+		}
+
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+		EMIT('clipboardimage', canvas.toDataURL('image/jpeg', quality));
 	};
 });
 

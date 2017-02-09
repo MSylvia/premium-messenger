@@ -229,6 +229,10 @@
 		};
 	});
 
+	function chat_files() {
+		common.page === 'chat' && SET('common.form', 'files');
+	}
+
 	function chat_export() {
 		SETTER('loading', 'show');
 		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), { max: 100 }, function(response) {

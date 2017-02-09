@@ -85,9 +85,12 @@ function smilefy2(str, wrap) {
 function urlify(str, a) {
 	return str.replace(/(((https?:\/\/)|(www\.))[^\s]+)/g, function(url, b, c) {
 
+
 		// Check the markdown
 		var l = url.substring(url.length - 1, url.length);
-		if (l === ')' || l === '>')
+		var p = url.substring(url.length - 2, url.length - 1);
+
+		if (l === ')' || l === '>' || p === ')' || p === '>')
 			return url;
 
 		var len = url.length;
@@ -114,6 +117,21 @@ function mailify(str, a) {
 			l = '';
 		return (a ? '<a href="mailto:{0}">{0}</a>'.format(m) : '[' + m + '](mailto:' + m + ')') + l;
 	});
+}
+
+function findfiles(str) {
+	var match = str.match(/\[.*?\]\(\/download\/.*?\)/g);
+	if (!match)
+		return null;
+	var files = [];
+	for (var i = 0, length = match.length; i < length; i++) {
+		var text = match[i].trim();
+		var index = text.indexOf('(');
+		var name = text.substring(1, index - 1);
+		var url = text.substring(index + 1, text.length - 1);
+		files.push({ name: name, url: url });
+	}
+	return files;
 }
 
 Tangular.register('body', function(value) {
