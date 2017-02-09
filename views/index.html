@@ -489,6 +489,8 @@
 				var id = el.attr('data-id');
 				id && el.toggleClass('highlight', user.unread[id] ? true : false);
 			});
+
+			count && EMIT('unread');
 		}
 
 		function codemirror_upload() {
