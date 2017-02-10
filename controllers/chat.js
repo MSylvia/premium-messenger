@@ -50,7 +50,8 @@ function messages() {
 		setTimeout(function() {
 			MSG_ONOFF.id = client.user.id;
 			MSG_ONOFF.online = true;
-			self.send(MSG_ONOFF, null);
+			MSG_ONOFF.datetime = F.datetime;
+			self.send(MSG_ONOFF);
 		}, 500);
 
 		F.emit('messenger.online', self, client);
@@ -62,6 +63,7 @@ function messages() {
 		client.user.online = false;
 		MSG_ONOFF.id = client.user.id;
 		MSG_ONOFF.online = false;
+		MSG_ONOFF.datetime = F.datetime;
 		self.send(MSG_ONOFF);
 		F.emit('messenger.close', self, client);
 	});
