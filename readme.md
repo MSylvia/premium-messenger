@@ -6,8 +6,8 @@
 
 - __Premium Messenger__ (v1.0.0) needs latest Total.js from NPM `+v2.4.0`
 - __License__: [MIT](license.txt)
+- [__Live chat with professional support__](https://messenger.totaljs.com)
 - [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
-- [__Messenger with professional support__](https://messenger.totaljs.com)
 
 ## First start
 
