@@ -10,7 +10,7 @@
 					</div>
 					<div class="chat-body">
 						<div class="chat-user"><i class="fa useronline fa-circle{{ if user.online }} online{{ fi }}" data-id="{{ user.id }}"></i><a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><b>{{ user.name }}</b></a> <span class="datetime" data-value="{{ datecreated }}">{{ datecreated | time }}</span></div>
-						<div class="chat-position">{{ if !user.online }}<span class="lastonline hidden-xs"><i class="fa fa-clock-o"></i>@(Last logged:) {{ user.datelogged | format('@(yyyy-MM-dd)') }}</span>{{ fi }}{{ user.position }}{{ if user.status }}<span class="status"><i class="fa fa-user-circle-o"></i>{{ user.status }}</span>{{ fi }}</div>
+						<div class="chat-position">{{ if !user.online }}<span class="lastonline hidden-xs"><i class="fa fa-clock-o"></i>@(Last logged:) {{ user.datelogged | time }}</span>{{ fi }}{{ user.position }}{{ if user.status }}<span class="status"><i class="fa fa-user-circle-o"></i>{{ user.status }}</span>{{ fi }}</div>
 						<div class="markdown">{{ body | markdown }}</div>
 					</div>
 				</figure>
@@ -41,7 +41,7 @@
 				</div>
 				<div class="chat-body">
 					<div class="chat-user"><i class="fa useronline fa-circle{{ if user.online }} online{{ fi }}" data-id="{{ user.id }}"></i><a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><b>{{ user.name }}</b></a>{{ if mobile }}<span class="fa fa-mobile"></span>{{ fi }}<span class="datetime" title="{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}" data-value="{{ datecreated }}">{{ datecreated | time }}</span></div>
-					<div class="chat-position">{{ if !user.online }}<span class="lastonline hidden-xs"><i class="fa fa-clock-o"></i>@(Last logged:) {{ user.datelogged | format('@(yyyy-MM-dd)') }}</span>{{ fi }}{{ if !read }}<span class="datetime unread" data-value="{{ datecreated }}">{{ datecreated | time }}</span>{{ fi }}{{ user.position }}{{ if user.status }}<span class="status"><i class="fa fa-user-circle-o"></i>{{ user.status }}</span>{{ fi }}</div>
+					<div class="chat-position">{{ if !user.online }}<span class="lastonline hidden-xs"><i class="fa fa-clock-o"></i>@(Last logged:) {{ user.datelogged | time }}</span>{{ fi }}{{ if !read }}<span class="datetime unread" data-value="{{ datecreated }}">{{ datecreated | time }}</span>{{ fi }}{{ user.position }}{{ if user.status }}<span class="status"><i class="fa fa-user-circle-o"></i>{{ user.status }}</span>{{ fi }}</div>
 					<div class="markdown">{{ body | markdown }}</div>
 				</div>
 			</figure>
