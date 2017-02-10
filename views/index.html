@@ -104,9 +104,9 @@
 			<div data-jc="page" data-jc-path="common.page" data-if="settings" data-template="/templates/settings.html" data-reload="settings_reload"></div>
 		</div>
 		<div id="messagebox">
-			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a chat message or drag & drop file (max. 3 MB).)" data-maxlength="1200"></div>
+			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a message or drop file.)" data-maxlength="1200"></div>
 			<div id="status">
-				<div class="visible-md visible-lg codemirrorhelp">__<b>bold</b>__ *<i>italic</i>* ~~<s>strike</s>~~ <code>`code`</code> &gt; quote</div>
+				<div class="visible-md visible-lg codemirrorhelp">__<b>@(bold)</b>__ *<i>@(italic)</i>* ~~<s>@(strike)</s>~~ <code>`@(code)`</code> &gt; @(quote)</div>
 				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
 				<div class="exec" data-exec="codemirror_upload"><i class="fa fa-folder-o mr5"></i>@(Upload)</div>
 				<div class="exec" data-exec="chat_export"><i class="fa fa-file-text-o mr5"></i>@(Export)</div>
