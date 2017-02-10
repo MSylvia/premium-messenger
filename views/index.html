@@ -449,7 +449,7 @@
 
 		isSTANDALONE && ON('messenger.ready', function() {
 			var url = CACHE('location');
-			url && REDIRECT(url);
+			url && url !== NAVIGATION.url && REDIRECT(url);
 		});
 
 		ON('clipboardimage', function(base64) {
