@@ -14,8 +14,16 @@ NEWOPERATION('users.load', function(error, value, callback) {
 		else
 			F.global.users = data.toString('utf8').parseJSON(true);
 
-		for (var i = 0, length = F.global.users.length; i < length; i++)
-			F.global.users[i].online = false;
+		for (var i = 0, length = F.global.users.length; i < length; i++) {
+			var user = F.global.users[i];
+			user.online = false;
+			!user.lastmessages && (user.lastmessages = {});
+
+			// Cleaner for unhandled assignment
+			delete user.recent[user.id];
+			delete user.unread[user.id];
+			delete user.lastmessages[user.id];
+		}
 
 		callback(SUCCESS(true));
 	});
