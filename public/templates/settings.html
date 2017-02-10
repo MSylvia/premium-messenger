@@ -51,8 +51,10 @@
 		user.email = settings.email;
 		user.picture !== settings.picture && $('.user-name').find('img').attr('src', '/photos/{0}.jpg'.format(settings.picture));
 		user.picture = settings.picture;
+		user.status = settings.status;
 		var tmp = current.users.findItem('id', user.id);
 		if (tmp) {
+			tmp.status = user.status;
 			tmp.name = user.name;
 			tmp.email = user.email;
 			tmp.picture = user.picture;
