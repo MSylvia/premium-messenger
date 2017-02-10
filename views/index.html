@@ -239,7 +239,10 @@
 					case 'online':
 						$('.useronline[data-id="{0}"]'.format(response.id)).toggleClass('online', response.online);
 						tmp = current.users.findItem('id', response.id);
-						tmp && (tmp.online = response.online);
+						if (tmp) {
+							tmp.online = response.online;
+							tmp.datelogged = response.datelogged;
+						}
 						refresh_online();
 						break;
 
