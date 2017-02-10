@@ -25,7 +25,7 @@
 - and copy the content to `/resources/default.resource`
 - run app
 
-## How can extend messenger independently?
+## How can I extend messenger independently?
 
 ### Server-side
 
