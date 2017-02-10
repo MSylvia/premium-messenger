@@ -436,12 +436,20 @@
 
 		// Highlight the current link in the panel
 		ON('location', function() {
+
+			isSTANDALONE && CACHE('location', NAVIGATION.url, '1 month');
+
 			$('.panel').removeClass('panel-xs');
 			setTimeout2('location', function() {
 				var nav = $('.panel').find('nav');
 				nav.find('.selected').removeClass('selected');
 				nav.find('a[href="{0}"]'.format(NAVIGATION.url)).addClass('selected');
 			}, 50);
+		});
+
+		isSTANDALONE && ON('ready', function() {
+			var url = CACHE('location');
+			url && REDIRECT(url);
 		});
 
 		ON('clipboardimage', function(base64) {
