@@ -25,6 +25,52 @@
 - and copy the content to `/resources/default.resource`
 - run app
 
+## How can extend messenger independently?
+
+### Server-side
+
+```javascript
+F.on('messenger.open', function(controller, client) {
+    // open client
+});
+
+F.on('messenger.close', function(controller, client) {
+    // disconnected client
+});
+
+F.on('messenger.message', function(controller, client, message) {
+    // message === OBJECT
+});
+```
+
+### Client-side
+
+```javascript
+ON('messager.ready', function() {
+    // messenger is ready
+});
+
+ON('messenger.message', function(message) {
+    // message === OBJECT
+});
+
+ON('messenger.send', function(message) {
+
+});
+
+// You can register unlimited count of workflows with same name
+WORKFLOW('messenger.render', function(message) {
+    // message.message  - instance of retrieved message
+    // message.html     - rendered HTML (can be modified)
+    
+    // Example:
+    message.html = message.html.replace(/\,/g, ' --- ');
+});
+
+// How to send a message to the server via WebSocket?
+SETTER('websocket', 'send', OBJECT);
+```
+
 ## Contributors
 
 - Peter Širka (author) <petersirka@gmail.com>
