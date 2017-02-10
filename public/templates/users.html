@@ -1,12 +1,15 @@
-<div class="padding" data-jc="search" data-jc-path="common.search" data-selector=".jsearch">
+<div class="padding" data-jc="search" data-jc-path="common.search" data-selector=".jsearch" id="userscontainer">
 	<div class="savisible">
 		<div class="row">
 			<div class="col-md-3 col-sm-5 m">
 				<button class="button button-small exec" data-exec="users_new"><i class="fa fa-plus-circle mr5"></i>@(Add a new user)</button>
 			</div>
+			<div class="col-md-3 col-sm-5 m mt10">
+				<div data-jc="checkbox" data-jc-path="users.online">Show online users</div>
+			</div>
 		</div>
 	</div>
-	<div data-jc="repeater-group" data-jc-path="current.users" data-group="position" class="users row">
+	<div data-jc="repeater-group" data-jc-path="users.items" data-group="position" class="users row">
 		<script type="text/html">
 			<div class="col-lg-3 col-md-4 col-xs-6 m jsearch" data-search="{{ name }}">
 				<a href="{{ if me }}javascript:void(0){{ else }}/users/{{ linker }}/{{ fi }}" class="users-name singleline{{ if !me }} jrouting{{ fi }}"><img src="{{ if picture }}/photos/{{ picture }}.jpg{{ else }}/img/face.jpg{{ fi }}" class="mr5" height="20" />{{ name }}</a>
@@ -29,12 +32,18 @@
 </div>
 
 <script>
+	var users = { online: false };
+
 	function users_reload() {
 		SET('current.title', '@(Users)');
 		SET('current.descripriton', '@(All registered users)');
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
+		users_refresh();
 	}
+
+	WATCH('current.users', users_refresh);
+	WATCH('users.online', users_refresh);
 
 	function users_edit(el) {
 		SETTER('loading', 'show');
@@ -55,6 +64,16 @@
 			RESET('formuser.*', true);
 			SET('common.form', 'formuser');
 		});
+	}
+
+	function users_refresh() {
+		var items = [];
+		current.users.forEach(function(item) {
+			if (users.online && !item.online)
+				return;
+			items.push(item);
+		});
+		SET('users.items', items);
 	}
 
 	function users_remove(el) {
