@@ -79,6 +79,7 @@ function messages() {
 
 			case 'unread':
 				MSG_UNREAD.unread = client.user.unread;
+				MSG_UNREAD.lastmessages = client.user.lastmessages;
 				MSG_UNREAD.recent = undefined;
 				client.send(MSG_UNREAD);
 				break;
@@ -150,6 +151,7 @@ function messages() {
 							if (tmp.online) {
 								MSG_UNREAD.unread = tmp.unread;
 								MSG_UNREAD.recent = tmp.recent;
+								MSG_UNREAD.lastmessages = tmp.lastmessages;
 								tmp = self.find(n => n.user.id === tmp.id);
 								tmp && tmp.send(MSG_UNREAD);
 							}

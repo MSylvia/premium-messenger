@@ -24,8 +24,8 @@ NEWSCHEMA('Message').make(function(schema) {
 
 		NOSQL(controller.id).find().sort('datecreated', true).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(function(err, response) {
 			// Sets the first message as read message
-			if (controller.query.page === 1 && controller.user.threadid && response.length)
-				controller.user.lastmessages[controller.user.threadid] = response[0].id;
+			if (controller.query.page === 1 && id && response.length)
+				controller.user.lastmessages[id] = response[0].id;
 			callback(response);
 		});
 	});
