@@ -437,7 +437,7 @@
 		// Highlight the current link in the panel
 		ON('location', function() {
 
-			isSTANDALONE && CACHE('location', NAVIGATION.url, '1 month');
+			current.ready && isSTANDALONE && CACHE('location', NAVIGATION.url, '1 month');
 
 			$('.panel').removeClass('panel-xs');
 			setTimeout2('location', function() {
@@ -447,7 +447,7 @@
 			}, 50);
 		});
 
-		isSTANDALONE && ON('ready', function() {
+		isSTANDALONE && ON('messenger.ready', function() {
 			var url = CACHE('location');
 			url && REDIRECT(url);
 		});
