@@ -14,7 +14,7 @@
 - set up configuration file `/config`
 - run `$ node debug.js` (development) or `$ node release.js` (production)
 - open `http://127.0.0.1:8000/`
-- sign in __user:__ `admin@totaljs.com`, __password:__ `123456` (credentials are stored in `/databases/users.json`)
+- sign in __user:__ `info@totaljs.com`, __password:__ `123456` (credentials are stored in `/databases/users.json`)
 
 ## How do I translate Messenger?
 
