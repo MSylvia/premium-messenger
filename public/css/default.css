@@ -53,16 +53,21 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat-picture { float: left; width: 34px; }
 .chat-picture img { border-radius: 4px; }
 .chat-body { margin-left: 50px; }
+.chat-user { line-height: 18px; }
 .chat-user i { margin: 4px 5px 0 0; font-size: 12px; float: left; color: silver; display: none; }
 .chat-user i.online { display: block; }
 .chat .fa-mobile { font-size: 16px; margin-left: 5px; color: black; }
 .chat-user b { color: black; }
 .chat-user a { text-decoration: none; }
-.chat-user span { font-size: 12px; float: right; }
+.chat-user span { font-size: 12px; float: right; color: #505050; }
 .chat-position { font-size: 11px; margin-bottom: 10px; }
-.chat-position span { margin-right: 5px; padding: 1px 5px; border-radius: 3px; background-color: #68B25B; color: white; font-size: 10px; }
+.chat-position .unread { margin-right: 5px; padding: 1px 5px; border-radius: 3px; background-color: #68B25B; color: white; font-size: 10px; }
+.chat-position .status { margin-left: 5px; color: #A0A0A0; }
+.chat-position .status .fa { margin-right: 5px; }
+.chat-position .lastonline { float: right; font-size: 11px; color: #A0A0A0; }
+.chat-position .lastonline .fa { margin-right: 5px; }
 .chat .me .chat-user b { color: #D63B32; }
-.chat .me .chat-position span { background-color: #AE9E65; }
+.chat .me .chat-position .unread { background-color: #AE9E65; }
 .chat-favorite { margin-top: 10px; cursor: pointer; }
 .chat-favorite .fa-heart { color: #D63B32; }
 
