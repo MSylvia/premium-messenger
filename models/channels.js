@@ -34,6 +34,8 @@ NEWSCHEMA('Channel').make(function(schema) {
 				delete item.unread[controller.id];
 			if (item.channels && item.channels[controller.id])
 				delete item.channels[controller.id];
+			if (item.lastmessages && item.lastmessages[controller.id])
+				delete item.lastmessages[controller.id];
 		});
 
 		NOSQL('channel' + controller.id).drop();

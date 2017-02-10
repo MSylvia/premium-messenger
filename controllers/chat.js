@@ -28,6 +28,7 @@ function messages() {
 			}
 			return SKIPFIELDS[key] ? undefined : value;
 		});
+		F.emit('messenger.refresh', self);
 	};
 
 	self.on('open', function(client) {
@@ -37,6 +38,7 @@ function messages() {
 		client.user.mobile = client.req.mobile;
 		MSG_CDL.channels = F.global.channels;
 		MSG_CDL.users = F.global.users;
+
 		client.send(MSG_CDL, undefined, function(key, value) {
 			if (is && key === 'channels') {
 				is = false;
@@ -50,6 +52,8 @@ function messages() {
 			MSG_ONOFF.online = true;
 			self.send(MSG_ONOFF, null);
 		}, 500);
+
+		F.emit('messenger.online', self, client);
 	});
 
 	self.on('close', function(client) {
@@ -59,12 +63,15 @@ function messages() {
 		MSG_ONOFF.id = client.user.id;
 		MSG_ONOFF.online = false;
 		self.send(MSG_ONOFF);
+		F.emit('messenger.close', self, client);
 	});
 
 	self.on('message', function(client, message) {
 
 		var tmp, iduser, idchannel, is;
 		iduser = client.user.id;
+
+		F.emit('messenger.message', self, client, message);
 
 		switch (message.type) {
 
@@ -109,9 +116,9 @@ function messages() {
 				message.iduser = iduser;
 				message.mobile = client.req.mobile;
 				id && (message.edited = true);
+				client.user.lastmessages[client.user.threadid] = message.id;
 
 				NOSQL('messages').counter.hit('all').hit(iduser);
-
 				// threadtype = "user" (direct message) or "channel"
 
 				if (client.user.threadtype === 'user') {
@@ -122,6 +129,7 @@ function messages() {
 					self.send(message, function(id, n) {
 						if (n.user.threadid === iduser && n.user.id === client.user.threadid && n.user !== client.user) {
 							is = false;
+							n.user.lastmessages[n.user.threadid] = message.id;
 							return true;
 						}
 						return n.user.id === iduser && n.id !== client.id;
@@ -158,6 +166,7 @@ function messages() {
 					self.send(message, function(id, m) {
 						if (m.user.threadid === client.user.threadid) {
 							tmp[m.user.id] = true;
+							m.user.lastmessages[m.user.threadid] = message.id;
 							return true;
 						}
 					});
@@ -176,6 +185,7 @@ function messages() {
 					self.all(function(m) {
 						if (m.user.id !== iduser && m.user.threadid !== client.user.threadid && (!m.user.channels || m.user.channels[client.user.threadid])) {
 							MSG_UNREAD.unread = m.user.unread;
+							MSG_UNREAD.lastmessages = m.user.lastmessages;
 							MSG_UNREAD.recent = undefined;
 							m.send(MSG_UNREAD);
 						}

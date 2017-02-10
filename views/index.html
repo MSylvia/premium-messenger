@@ -23,7 +23,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/favico.js/0.3.10/favico.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
-	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
+	@{import('meta', 'default.css', 'default.js', 'favicon.ico', 'head')}
 </head>
 <body data-jc="exec,binder"@{if user.sa} class="sa"@{fi}>
 
@@ -155,7 +155,7 @@
 		var MSG_NOCHAT = { type: 'nochat' };
 
 		var messages = { message: '' };
-		var current = { route: {}, online: 0, users: EMPTYARRAY, channels: EMPTYARRAY };
+		var current = { route: {}, online: 0, users: EMPTYARRAY, channels: EMPTYARRAY, ready: false };
 		var user = PARSE($('#userdata').html());
 		var favicon = new Favico({ position : 'up' });
 
@@ -197,6 +197,9 @@
 		ON('#websocket', function(component) {
 			refresh_unread();
 			component.message = function(response) {
+
+				EMIT('messenger.message', response);
+
 				var tmp, container;
 				switch (response.type) {
 
@@ -215,6 +218,7 @@
 						break;
 
 					case 'cdl':
+
 						tmp = response.users.findItem('id', user.id);
 						tmp.me = true;
 
@@ -228,6 +232,8 @@
 						refresh_recent();
 						refresh_online();
 						refresh_unread();
+						!current.ready && EMIT('messenger.ready');
+						current.ready = true;
 						break;
 
 					case 'online':
@@ -270,6 +276,8 @@
 
 				MSG_MESSAGE.body = component.getValue().trim();
 				MSG_MESSAGE.files = findfiles(MSG_MESSAGE.body);
+
+				EMIT('messenger.send', MSG_MESSAGE);
 
 				if (MSG_MESSAGE.body) {
 					component.set('');

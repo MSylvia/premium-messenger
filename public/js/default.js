@@ -1,3 +1,4 @@
+var MARKDOWN = {};
 marked.setOptions({ gfm: true, breaks: true, sanitize: true, tables: true });
 
 $(document).ready(function() {
@@ -45,10 +46,12 @@ function scrollBottom() {
 }
 
 Tangular.register('markdown', function(value) {
-	var str = marked(smilefy(mailify(urlify(value))));
-	return str.replace(/&lt;i\sclass=&quot;smiles.*?&lt;\/i&gt;/g, function(text) {
+	MARKDOWN.message = this;
+	MARKDOWN.html = marked(smilefy(mailify(urlify(value)))).replace(/&lt;i\sclass=&quot;smiles.*?&lt;\/i&gt;/g, function(text) {
 		return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
 	}).replace(/<img/g, '<img class="img-responsive"').replace(/<table/g, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
+	WORKFLOW('messenger.render')(MARKDOWN);
+	return MARKDOWN.html;
 });
 
 function smilefy(str) {
@@ -132,6 +135,10 @@ function findfiles(str) {
 		files.push({ name: name, url: url });
 	}
 	return files;
+}
+
+function newest(a, b) {
+	return a.substring(0, 14).parseInt() >= b.substring(0, 14).parseInt();
 }
 
 Tangular.register('body', function(value) {

@@ -42,6 +42,7 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.datecreated = F.datetime;
 			tmp.unread = {};
 			tmp.recent = {};
+			tmp.lastmessages = {};
 			tmp.online = false;
 			tmp.linker = model.name.slug();
 			F.global.users.push(tmp);

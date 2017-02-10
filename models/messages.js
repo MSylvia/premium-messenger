@@ -17,10 +17,17 @@ NEWSCHEMA('Message').make(function(schema) {
 
 		controller.user.unread[id] && (delete controller.user.unread[id]);
 
-		if (controller.query.q)
+		if (controller.query.q) {
 			NOSQL(controller.id + '-backup').find().search('search', controller.query.q.keywords(true, true)).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(callback);
-		else
-			NOSQL(controller.id).find().sort('datecreated', true).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(callback);
+			return;
+		}
+
+		NOSQL(controller.id).find().sort('datecreated', true).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(function(err, response) {
+			// Sets the first message as read message
+			if (controller.query.page === 1 && controller.user.threadid && response.length)
+				controller.user.lastmessages[controller.user.threadid] = response[0].id;
+			callback(response);
+		});
 	});
 
 	schema.addWorkflow('files', function(error, model, options, callback, controller) {
