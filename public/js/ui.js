@@ -1292,13 +1292,13 @@ COMPONENT('search', function() {
 				return;
 			}
 
-			var search = value.toLowerCase().replace(/y/gi, 'i');
+			var search = value.toLowerCase().toSearch();
 			var hide = [];
 			var show = [];
 
 			elements.toArray().waitFor(function(item, next) {
 				var el = $(item);
-				var val = (el.attr(options_attribute) || '').toLowerCase().replace(/y/gi, 'i');
+				var val = (el.attr(options_attribute) || '').toSearch();
 				if (val.indexOf(search) === -1)
 					hide.push(el);
 				else
