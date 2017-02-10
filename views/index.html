@@ -402,6 +402,7 @@
 					SET('current.descripriton', '@(Selected channel)');
 					SET('common.search', '');
 					SET('common.page', 'chat');
+					SETTER('codemirror', 'reload');
 					var is = user.unread[item.id];
 					delete user.unread[item.id];
 					is && refresh_unread();
@@ -422,6 +423,7 @@
 					SET('current.descripriton', item.position);
 					SET('common.search', '');
 					SET('common.page', 'chat');
+					SETTER('codemirror', 'reload');
 					var is = user.unread[item.id];
 					delete user.unread[item.id];
 					user.recent[item.id] = true;

@@ -1050,6 +1050,7 @@ COMPONENT('codemirror', function() {
 	self.upload = function() {};
 	self.typing = function() {};
 	self.edit = function() {};
+	self.change2 = function() {};
 
 	self.make = function() {
 
@@ -1110,10 +1111,12 @@ COMPONENT('codemirror', function() {
 			}
 
 			setTimeout2(self.id, function() {
+				var val = editor.getValue();
 				skipA = true;
 				self.reset(true);
 				self.dirty(false);
-				self.set(editor.getValue());
+				self.set(val);
+				CACHE('codemirror.' + NAVIGATION.url, val, '7 days');
 			}, 200);
 		});
 
@@ -1135,13 +1138,21 @@ COMPONENT('codemirror', function() {
 		skipB = true;
 	};
 
-	self.setter = function(value, path) {
+	self.reload = function() {
+		var val = CACHE('codemirror.' + NAVIGATION.url) || '';
+		setTimeout2(self.id, function() {
+			self.set(val);
+		}, 500);
+	};
+
+	self.setter = function(value, path, type) {
 
 		if (skipA === true) {
 			skipA = false;
 			return;
 		}
 
+		type && CACHE('codemirror.' + NAVIGATION.url, value, '7 days');
 		skipB = true;
 		editor.setValue(value || '');
 		editor.refresh();
