@@ -20,9 +20,14 @@ NEWOPERATION('users.load', function(error, value, callback) {
 			!user.lastmessages && (user.lastmessages = {});
 
 			// Cleaner for unhandled assignment
+			delete user.threadid;
+			delete user.threadtype;
 			delete user.recent[user.id];
 			delete user.unread[user.id];
 			delete user.lastmessages[user.id];
+			delete user.recent['undefined'];
+			delete user.unread['undefined'];
+			delete user.lastmessages['undefined'];
 		}
 
 		callback(SUCCESS(true));
