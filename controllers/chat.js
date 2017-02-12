@@ -2,7 +2,7 @@ const MSG_ONOFF = { type: 'online' };
 const MSG_CDL = { type: 'cdl' };
 const MSG_UNREAD = { type: 'unread' };
 const MSG_TYPING = { type: 'typing' };
-const SKIPFIELDS = { email: true, unread: true, recent: true, channels: true, password: true, threadid: true, threadtype: true, ticks: true };
+const SKIPFIELDS = { email: true, unread: true, recent: true, channels: true, password: true, ticks: true };
 
 exports.install = function() {
 	F.websocket('/', messages, ['json', 'authorize']);
@@ -36,6 +36,8 @@ function messages() {
 		client.user.online = true;
 		client.user.datelogged = F.datetime;
 		client.user.mobile = client.req.mobile;
+		client.threadtype = '';
+		client.threadid = '';
 		MSG_CDL.channels = F.global.channels;
 		MSG_CDL.users = F.global.users;
 
@@ -86,15 +88,15 @@ function messages() {
 
 			// Changed group (outside of channels and users)
 			case 'nochat':
-				client.user.threadtype = undefined;
-				client.user.threadid = undefined;
+				client.threadtype = undefined;
+				client.threadid = undefined;
 				break;
 
 			// Changed group
 			case 'channel':
 			case 'user':
-				client.user.threadtype = message.type;
-				client.user.threadid = message.id;
+				client.threadtype = message.type;
+				client.threadid = message.id;
 				message.type === 'user' && iduser !== message.id && (client.user.recent[message.id] = true);
 				client.user.unread[message.id] && (delete client.user.unread[message.id]);
 				break;
@@ -107,7 +109,7 @@ function messages() {
 			// Starts typing
 			case 'typing':
 				MSG_TYPING.id = iduser;
-				self.send(MSG_TYPING, (id, m) => m.user !== client.user && ((m.user.id === client.user.threadid && m.user.threadid === iduser) || (client.user.threadtype === 'channel' && m.user.threadtype === client.user.threadtype && m.user.threadid === client.user.threadid)));
+				self.send(MSG_TYPING, (id, m) => m.user !== client.user && ((m.user.id === client.threadid && m.threadid === iduser) || (client.threadtype === 'channel' && m.threadtype === client.threadtype && m.threadid === client.threadid)));
 				break;
 
 			// Real message
@@ -119,27 +121,32 @@ function messages() {
 				message.iduser = iduser;
 				message.mobile = client.req.mobile;
 				id && (message.edited = true);
-				client.user.lastmessages[client.user.threadid] = message.id;
+				client.user.lastmessages[client.threadid] = message.id;
 
 				NOSQL('messages').counter.hit('all').hit(iduser);
 				// threadtype = "user" (direct message) or "channel"
 
-				if (client.user.threadtype === 'user') {
+				if (client.threadtype === 'user') {
 
 					is = true;
 
 					// Users can be logged from multiple devices
 					self.send(message, function(id, n) {
-						if (n.user.threadid === iduser && n.user.id === client.user.threadid && n.user !== client.user) {
+
+						if (n === client)
+							return false;
+
+						// Target user
+						if (n.threadid === iduser && n.user.id === client.threadid && n.id !== client.id) {
 							is = false;
-							n.user.lastmessages[n.user.threadid] = message.id;
+							n.user.lastmessages[n.threadid] = message.id;
 							return true;
 						}
-						return n.user.id === iduser && n.id !== client.id;
+
 					});
 
 					if (is) {
-						tmp = F.global.users.findItem('id', client.user.threadid);
+						tmp = F.global.users.findItem('id', client.threadid);
 						if (tmp) {
 
 							if (tmp.unread[iduser])
@@ -148,6 +155,7 @@ function messages() {
 								tmp.unread[iduser] = 1;
 
 							tmp.recent[iduser] = true;
+
 							if (tmp.online) {
 								MSG_UNREAD.unread = tmp.unread;
 								MSG_UNREAD.recent = tmp.recent;
@@ -164,18 +172,18 @@ function messages() {
 				} else {
 
 					tmp = {};
-					idchannel = client.user.threadid;
+					idchannel = client.threadid;
 
 					// Notify users in this channel
 					self.send(message, function(id, m) {
-						if (m.user.threadid === client.user.threadid) {
+						if (m.threadid === client.threadid) {
 							tmp[m.user.id] = true;
-							m.user.lastmessages[m.user.threadid] = message.id;
+							m.user.lastmessages[m.threadid] = message.id;
 							return true;
 						}
 					});
 
-					// Set an unread for users outside this channel
+					// Set "unread" for users outside of this channel
 					for (var i = 0, length = F.global.users.length; i < length; i++) {
 						var user = F.global.users[i];
 						if (!tmp[user.id] && (user.channels == null || user.channels[idchannel])) {
@@ -187,7 +195,7 @@ function messages() {
 					}
 
 					self.all(function(m) {
-						if (m.user.id !== iduser && m.user.threadid !== client.user.threadid && (!m.user.channels || m.user.channels[client.user.threadid])) {
+						if (m.user.id !== iduser && m.threadid !== client.threadid && (!m.user.channels || m.user.channels[client.threadid])) {
 							MSG_UNREAD.unread = m.user.unread;
 							MSG_UNREAD.lastmessages = m.user.lastmessages;
 							MSG_UNREAD.recent = undefined;
@@ -199,9 +207,9 @@ function messages() {
 				}
 
 				// Saves message into the DB
-				var dbname = client.user.threadtype === 'channel' ? client.user.threadtype + client.user.threadid : 'user' + F.global.merge(client.user.threadid, iduser);
+				var dbname = client.threadtype === 'channel' ? client.threadtype + client.threadid : 'user' + F.global.merge(client.threadid, iduser);
 				message.type = undefined;
-				message.idowner = client.user.threadid;
+				message.idowner = client.threadid;
 				message.search = message.body.keywords(true, true).join(' ');
 
 				var db = NOSQL(dbname);
