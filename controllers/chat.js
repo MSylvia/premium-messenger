@@ -36,10 +36,12 @@ function messages() {
 		client.user.online = true;
 		client.user.datelogged = F.datetime;
 		client.user.mobile = client.req.mobile;
-		client.threadtype = '';
-		client.threadid = '';
 		MSG_CDL.channels = F.global.channels;
 		MSG_CDL.users = F.global.users;
+
+		// latest values
+		client.threadtype = client.user.threadtype;
+		client.threadid = client.user.threadid;
 
 		client.send(MSG_CDL, undefined, function(key, value) {
 			if (is && key === 'channels') {
@@ -95,8 +97,8 @@ function messages() {
 			// Changed group
 			case 'channel':
 			case 'user':
-				client.threadtype = message.type;
-				client.threadid = message.id;
+				client.user.threadtype = client.threadtype = message.type;
+				client.user.threadid = client.threadid = message.id;
 				message.type === 'user' && iduser !== message.id && (client.user.recent[message.id] = true);
 				client.user.unread[message.id] && (delete client.user.unread[message.id]);
 				break;
@@ -114,6 +116,9 @@ function messages() {
 
 			// Real message
 			case 'message':
+
+				if (!client.threadid || !client.threadtype)
+					return
 
 				var id = message.id;
 				message.id = id ? id : UID();
