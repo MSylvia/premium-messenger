@@ -191,6 +191,7 @@
 		});
 
 		ON('online', function(is) {
+			current.ready && current.route && current.route.type && REDIRECT(NAVIGATION.url);
 			SET('common.online', is);
 		});
 
