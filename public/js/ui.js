@@ -1790,14 +1790,17 @@ COMPONENT('nativenotifications', function() {
 	var self = this;
 	var autoclosing;
 	var system = false;
+	var N = window.Notification;
 
 	self.singleton();
 	self.readonly();
 	self.items = [];
 
 	self.make = function() {
-		system = window.Notification.permission === 'granted';
-		!system && window.Notification.requestPermission(function (permission) {
+		if (!N)
+			return;
+		system = N.permission === 'granted';
+		!system && N.requestPermission(function (permission) {
 			system = permission === 'granted';
 		});
 	};
@@ -1820,7 +1823,7 @@ COMPONENT('nativenotifications', function() {
 		else if (img != null)
 			options.icon = img;
 
-		obj.system = new window.Notification(title, options);
+		obj.system = new N(title, options);
 		obj.system.onclick = function() {
 
 			window.focus();
