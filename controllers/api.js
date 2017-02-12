@@ -57,10 +57,11 @@ function file_read(req, res) {
 				return res.throw404();
 			}
 
+			res.noCompress = true;
 			var writer = require('fs').createWriteStream(filename);
 
 			CLEANUP(writer, function() {
-				res.file(filename, header.name);
+				res.file(filename, req.extension === 'js' || req.extension === 'css' || req.extension === 'html' || req.extension === 'jpg' || req.extension === 'jpeg' || req.extension === 'png' || req.extension === 'gif' ? undefined : header.name);
 				next();
 			});
 
