@@ -1,5 +1,8 @@
 NEWSCHEMA('Channel').make(function(schema) {
+
+	schema.define('id', 'UID');
 	schema.define('name', 'String(30)', true);
+	schema.define('description', 'String(200)', true);
 
 	schema.setSave(function(error, model, options, callback, controller) {
 
@@ -9,10 +12,26 @@ NEWSCHEMA('Channel').make(function(schema) {
 		}
 
 		var tmp = model.$clean();
-		tmp.id = UID();
+
 		tmp.linker = model.name.slug();
-		tmp.datecreated = F.datetime;
-		F.global.channels.push(tmp);
+
+		if (tmp.id) {
+
+			var item = F.global.channels.findItem('id', tmp.id);
+			if (!item) {
+				error.push('error-channel-404');
+				return callback();
+			}
+
+			item.name = tmp.name;
+			item.linker = tmp.linker;
+			item.description = tmp.description;
+		} else {
+			tmp.datecreated = F.datetime;
+			tmp.id = UID();
+			F.global.channels.push(tmp);
+		}
+
 		F.global.channels.quicksort('name');
 		F.global.refresh && F.global.refresh();
 		OPERATION('channels.save', NOOP);

@@ -171,6 +171,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .users img { border-radius: 4px; }
 .sa .users .operations { display: block; }
 
+.fs12 { font-size: 12px; }
 .fs11 { font-size: 11px; }
 .bl { border-left:1px dotted #E0E0E0; padding-left: 30px; }
 

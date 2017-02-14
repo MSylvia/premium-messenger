@@ -55,7 +55,7 @@
 				<nav data-jc="repeater" data-jc-path="current.channels" class="nav-channels">
 					<script type="text/html">
 						{{ if is }}
-						<a href="/channels/{{ linker }}/" class="jrouting jsearch" data-id="{{ id }}" data-search="{{ name }}">@{if user.sa }<span class="operation" data-name="channel"><i class="fa fa-times"></i></span>@{fi}<i class="fa fa-hashtag"></i>{{ name }}</a>
+						<a href="/channels/{{ linker }}/" class="jrouting jsearch" data-id="{{ id }}" data-search="{{ name }}">@{if user.sa }<span class="operation" data-name="channel"><i class="fa fa-pencil"></i></span>@{fi}<i class="fa fa-hashtag"></i>{{ name }}</a>
 						{{ fi }}
 					</script>
 				</nav>
@@ -87,8 +87,8 @@
 			<a href="javascript:void(0)" class="mainmenu visible-xs exec" data-exec="mainmenu_toggle"><i class="fa fa-navicon"></i></a>
 			<div class="row">
 				<div class="col-md-4">
-					<h2 data-b="current.title" data-b-html="n => n" class="singline">...</h2>
-					<p data-b="current.descripriton" data-b-html="n => n">...</p>
+					<h2 data-b="current.title" data-b-html="n => n" class="singleline">...</h2>
+					<p data-b="current.descripriton" data-b-html="n => n" class="singleline">...</p>
 				</div>
 				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
 					<div class="attachments" data-b="common.page" data-b-class="n => n === 'chat' ? '-attachment-disabled' : '+attachment-disabled'"><a href="javascript:void(0)" class="exec" data-exec="chat_files" title="@(Files)"><i class="fa fa-copy"></i></a></div>
@@ -171,11 +171,16 @@
 					REDIRECT('/users/');
 					break;
 				case 'channel':
-					FIND('confirm').confirm('@(Are you sure you want to remove selected channel?)', ['@(Yes)', '@(Cancel)'], function(index) {
-						if (index)
-							return;
-						AJAX('DELETE /api/channels/{0}/'.format(el.parent().attr('data-id')), NOOP);
-						REDIRECT('/');
+					tmp = current.channels.findItem('id', el.parent().attr('data-id'));
+					SET('common.form', 'formchannel');
+					SETTER('loading', 'show');
+					WAIT(function() {
+						return window.formchannel;
+					}, function() {
+						setTimeout(function() {
+							SET('formchannel', CLONE(tmp), true);
+							SETTER('loading', 'hide', 1000);
+						}, 200);
 					});
 					break;
 				case 'recent':
@@ -403,7 +408,7 @@
 					current.route.type = 'channel';
 					current.route.item = item;
 					SET('current.title', '#' + item.name);
-					SET('current.descripriton', '@(Selected channel)');
+					SET('current.descripriton', item.description);
 					SET('common.search', '');
 					SET('common.page', 'chat');
 					SETTER('codemirror', 'reload');
