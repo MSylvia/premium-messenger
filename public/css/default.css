@@ -105,7 +105,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 #header .search span { float: left; width: 40px; font-size: 14px; border-right: 1px solid #D0D0D0; text-align: center; height: 28px; padding: 6px 0 0 0; }
 #header .search div { margin-left: 40px; padding: 6px 10px 0; height: 28px; }
 #header .search input { background: transparent; border: 0; padding: 0; margin: 0; font-family: Arial; font-size: 14px; color: black; outline: 0; width: 100%; }
-#header p { font-size: 12px; margin: 0; padding: 0; }
+#header p { font-size: 12px; margin: 0; padding: 0; line-height: 14px; }
 #header { line-height: 10px; }
 #header .attachments { float: right; width: 34px; text-align: center; margin-top: 12px; }
 #header .attachments a { position: relative; display: inline-block; font-size: 18px; background-color: #E0E0E0; padding: 8px 0; border-radius: 4px; width: 100%; color: #505050; }
