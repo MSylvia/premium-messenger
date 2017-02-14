@@ -69,7 +69,10 @@
 		MSG_ROUTE.id = current.route.item.id;
 		CHATFILTER.page = page || 1;
 		SETTER('loading', 'show');
-		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), CHATFILTER, function(response) {
+		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), CHATFILTER, function(response, err) {
+
+			if (err)
+				return;
 
 			// We have to reverse array because all messages are from newest to older
 			response.reverse();
