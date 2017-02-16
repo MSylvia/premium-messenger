@@ -152,7 +152,13 @@
 			}
 
 			var el = $('#content');
-			el.scrollTop(el.find('.previouspage').eq(0).offset().top - 100);
+			var prev = el.find('.previouspage');
+			if (!prev.length) {
+				self.next = false;
+				return self;
+			}
+
+			el.scrollTop(prev.eq(0).offset().top - 100);
 			self.next = value.length === CHATFILTER.max;
 			return self;
 		};
