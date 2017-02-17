@@ -1163,6 +1163,7 @@ COMPONENT('codemirror', function() {
 		var t = editor.getCursor(false);
 		skipB = true;
 		editor.setValue(editor.getValue());
+		editor.setCursor(editor.lineCount(), 0);
 		skipB = true;
 
 		setTimeout(function() {
