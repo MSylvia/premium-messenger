@@ -148,7 +148,7 @@ function messages() {
 							return true;
 						}
 
-						return n.threadid === client.threadid;
+						return n.user.id === iduser && n.threadid === client.threadid;
 					});
 
 					if (is) {
