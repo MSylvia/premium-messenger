@@ -142,12 +142,13 @@ function messages() {
 							return false;
 
 						// Target user
-						if (n.threadid === iduser && n.user.id === client.threadid && n.id !== client.id) {
+						if (n.threadid === iduser && n.user.id === client.threadid) {
 							is = false;
 							n.user.lastmessages[n.threadid] = message.id;
 							return true;
 						}
 
+						return n.threadid === client.threadid;
 					});
 
 					if (is) {
