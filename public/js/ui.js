@@ -1449,7 +1449,7 @@ COMPONENT('websocket', function() {
 	self.blind();
 
 	self.make = function() {
-		reconnect_timeout = (self.attr('data-reconnect') || '2000').parseInt();
+		reconnect_timeout = (self.attr('data-reconnect') || '5000').parseInt();
 		url = self.attr('data-url');
 		if (!url.match(/^(ws|wss)\:\/\//))
 			url = (location.protocol.length === 6 ? 'wss' : 'ws') + '://' + location.host + (url.substring(0, 1) !== '/' ? '/' : '') + url;
@@ -1465,6 +1465,7 @@ COMPONENT('websocket', function() {
 	self.close = function(isClosed) {
 		if (!ws)
 			return self;
+		SETTER('loading', 'show');
 		self.online = false;
 		EMIT('online', false);
 		ws.onopen = ws.onclose = ws.onmessage = null;
@@ -1488,7 +1489,8 @@ COMPONENT('websocket', function() {
 		};
 	}
 
-	function onOpen() {
+	function onOpen(e) {
+		SETTER('loading', 'hide', 500);
 		self.online = true;
 		EMIT('online', true);
 	}
