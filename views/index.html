@@ -34,6 +34,7 @@
 	<div data-jc="audio" data-jc-path="common.volume"></div>
 	<div data-jc="nativenotifications" data-jc-path="common.notifications"></div>
 	<div data-jc="clipboardimage"></div>
+	<div data-jc="fontawesome" data-search="@(Search icons ...)"></div>
 
 	<section class="panel">
 
@@ -107,6 +108,7 @@
 			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a message or drop file.)" data-maxlength="1200"></div>
 			<div id="status">
 				<div class="visible-md visible-lg codemirrorhelp">__<b>@(bold)</b>__ *<i>@(italic)</i>* ~~<s>@(strike)</s>~~ <code>`@(code)`</code> &gt; @(quote)</div>
+				<div class="exec b blue" data-exec="codemirror_icons"><i class="fa fa-smile-o mr5"></i>@(Icons)</div>
 				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
 				<div class="exec" data-exec="codemirror_upload"><i class="fa fa-folder-o mr5"></i>@(Upload)</div>
 				<div class="exec" data-exec="chat_export"><i class="fa fa-file-text-o mr5"></i>@(Export)</div>
@@ -273,6 +275,7 @@
 		ON('@codemirror', function(component) {
 
 			component.enter = function(type) {
+
 				if ((type && common.enter) || (!type && !common.enter))
 					return CodeMirror.Pass;
 
@@ -293,6 +296,7 @@
 					SETTER('websocket', 'send', MSG_MESSAGE);
 				}
 
+				SETTER('fontawesome', 'hide');
 				common.search && SET('common.search', '');
 			};
 
@@ -352,6 +356,7 @@
 					}
 
 					editor.replaceSelection(push.join('\n'));
+					SETTER('fontawesome', 'hide');
 					callback && callback();
 				});
 			};
@@ -532,6 +537,15 @@
 
 		function codemirror_help() {
 			SET('common.form', 'help');
+		}
+
+		function codemirror_icons() {
+			SETTER('fontawesome', 'show', WIDTH() === 'xs' ? 0 : 240, $(window).height() - 400, function(icon) {
+				var editor = FIND('codemirror').codemirror();
+				var str = editor.getSelection() || editor.getValue();
+				var is = str.substring(str.length - 1) === ' ' || str.length === 0;
+				editor.replaceSelection((is ? '' : ' ') + ':' + icon.replace('fa-', '') + ':');
+			});
 		}
 
 		function mainmenu_toggle() {

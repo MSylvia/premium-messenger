@@ -47,7 +47,7 @@ function scrollBottom() {
 
 Tangular.register('markdown', function(value) {
 	MARKDOWN.message = this;
-	MARKDOWN.html = marked(smilefy(mailify(urlify(value)))).replace(/&lt;i\sclass=&quot;smiles.*?&lt;\/i&gt;/g, function(text) {
+	MARKDOWN.html = marked(smilefy(mailify(urlify(value)))).replace(/&lt;i\sclass=&quot;(smiles|fa).*?&lt;\/i&gt;/g, function(text) {
 		return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
 	}).replace(/<img/g, '<img class="img-responsive"').replace(/<table/g, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
 	WORKFLOW('messenger.render')(MARKDOWN);
@@ -84,6 +84,8 @@ function smilefy2(str, wrap) {
 			return match;
 		var smile = db[match.replace('-', '')];
 		return smile === undefined ? match : '<i class="smiles smiles-' + smile + '"></i>';
+	}).replace(/\:[a-z0-9\-]+\:/g, function(text) {
+		return '<i class="fa fa-' + text.substring(1, text.length - 1) + '"></i>';
 	});
 }
 
