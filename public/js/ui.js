@@ -1024,6 +1024,7 @@ COMPONENT('codemirror', function() {
 	var timeout;
 	var isTyping = false;
 	var currentH;
+	var maxlength;
 
 	self.validate = function(value) {
 		return required ? value && value.length > 0 : true;
@@ -1034,7 +1035,8 @@ COMPONENT('codemirror', function() {
 	};
 
 	self.getValue = function() {
-		return editor.getValue();
+		var value = editor.getValue();
+		return value.length > maxlength ? value.substring(0, maxlength) : value;
 	};
 
 	self.codemirror = function() {
@@ -1060,7 +1062,7 @@ COMPONENT('codemirror', function() {
 		self.html('<div class="ui-codemirror"></div>');
 
 		var container = self.find('.ui-codemirror');
-		var maxlength = (self.attr('data-maxlength') || '').parseInt();
+		maxlength = (self.attr('data-maxlength') || '').parseInt();
 
 		editor = CodeMirror(container.get(0), { lineNumbers: self.attr('data-linenumbers') === 'true', lineWrapping: true, mode: self.attr('data-type') || 'htmlmixed', indentUnit: 4, placeholder: self.attr('data-placeholder'), extraKeys: { 'Enter': function() { return self.enter(0); }, 'Cmd-Enter': function() { return self.enter(1); }, 'Up': function() { if (editor.getValue()) return CodeMirror.Pass; self.edit(true); }, 'Esc': function() { self.edit(false); return CodeMirror.pass; }, 'Ctrl-Enter': function() { return self.enter(1); }}});
 
