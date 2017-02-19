@@ -61,7 +61,7 @@ function file_read(req, res) {
 			var writer = require('fs').createWriteStream(filename);
 
 			CLEANUP(writer, function() {
-				res.file(filename, req.extension === 'js' || req.extension === 'css' || req.extension === 'html' || req.extension === 'jpg' || req.extension === 'jpeg' || req.extension === 'png' || req.extension === 'gif' ? undefined : header.name);
+				res.file(filename, req.extension === 'js' || req.extension === 'css' || req.extension === 'jpg' || req.extension === 'jpeg' || req.extension === 'png' || req.extension === 'gif' ? undefined : header.name);
 				next();
 			});
 
