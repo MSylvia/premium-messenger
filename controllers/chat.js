@@ -5,7 +5,7 @@ const MSG_TYPING = { type: 'typing' };
 const SKIPFIELDS = { email: true, unread: true, recent: true, channels: true, password: true, ticks: true };
 
 exports.install = function() {
-	F.websocket('/', messages, ['json', 'authorize']);
+	F.websocket('/', messages, ['json', 'authorize'], 3);
 };
 
 function messages() {
