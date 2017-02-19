@@ -436,8 +436,10 @@
 					var is = user.unread[item.id];
 					delete user.unread[item.id];
 					user.recent[item.id] = true;
-					is && refresh_unread();
-					refresh_recent();
+					if (is) {
+						refresh_recent();
+						refresh_unread();
+					}
 				} else
 					REDIRECT('/');
 			});
