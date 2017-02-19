@@ -2040,6 +2040,7 @@ COMPONENT('fontawesome', function() {
 
 		is = true;
 		self.element.css({ left: x, top: y }).removeClass('hidden');
+		!isMOBILE && input.focus();
 	};
 
 	self.render_recent = function() {
