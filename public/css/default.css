@@ -144,6 +144,14 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .markdown blockquote { border-left: 5px solid #E0E0E0; margin: 10px 0; padding: 10px; color: gray; }
 .markdown blockquote p { margin-bottom: 0; }
 .markdown .fa { font-size: 18px; margin: 0 2px; color: black; }
+.markdown .fa-2x { font-size: 3em; }
+.chat-unread .fa-2x { animation: icon 0.4s 1s; }
+
+@keyframes icon {
+	0% { transform: scale(1); }
+	50% { transform: scale(2.3); color: #303E4D; }
+	100% { transform: scale(1); }
+}
 
 .inline { position: relative; display: inline-block; }
 

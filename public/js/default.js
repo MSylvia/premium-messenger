@@ -1,4 +1,14 @@
 var MARKDOWN = {};
+var REGEXP = {};
+
+REGEXP.tag = /(<([^>]+)>)/ig;
+REGEXP.smiles = /&lt;i\sclass=&quot;(smiles|fa).*?&lt;\/i&gt;/g;
+REGEXP.table = /<table/g;
+REGEXP.quotes = /&quot;/g;
+REGEXP.g = /&gt;/g;
+REGEXP.l = /&lt;/g;
+REGEXP.fa = /"fa\s/g;
+
 marked.setOptions({ gfm: true, breaks: true, sanitize: true, tables: true });
 
 $(document).ready(function() {
@@ -47,9 +57,13 @@ function scrollBottom() {
 
 Tangular.register('markdown', function(value) {
 	MARKDOWN.message = this;
-	MARKDOWN.html = marked(smilefy(mailify(urlify(value)))).replace(/&lt;i\sclass=&quot;(smiles|fa).*?&lt;\/i&gt;/g, function(text) {
-		return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
-	}).replace(/<img/g, '<img class="img-responsive"').replace(/<table/g, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
+	MARKDOWN.html = marked(smilefy(mailify(urlify(value)))).replace(REGEXP.smiles, function(text) {
+		return text.replace(REGEXP.l, '<').replace(REGEXP.g, '>').replace(REGEXP.quotes, '"');
+	}).replace(/<img/g, '<img class="img-responsive"').replace(REGEXP.table, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
+
+	if (!MARKDOWN.html.replace(REGEXP.tag, '').trim())
+		MARKDOWN.html = MARKDOWN.html.replace(REGEXP.fa, '"fa fa-2x ');
+
 	WORKFLOW('messenger.render')(MARKDOWN);
 	return MARKDOWN.html;
 });
