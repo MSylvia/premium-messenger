@@ -544,7 +544,8 @@
 				var editor = FIND('codemirror').codemirror();
 				var str = editor.getSelection() || editor.getValue();
 				var is = str.substring(str.length - 1) === ' ' || str.length === 0;
-				editor.replaceSelection((is ? '' : ' ') + ':' + icon.replace('fa-', '') + ':');
+				editor.replaceSelection((is ? '' : ' ') + ':' + icon.replace('fa-', '') + ': ');
+				editor.focus();
 			});
 		}
 
