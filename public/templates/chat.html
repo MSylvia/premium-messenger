@@ -185,6 +185,7 @@
 			value.length && (user.lastmessages[MSG_ROUTE.id] = value.last().id);
 			builder.length && chat.empty && SET('chat.empty', false);
 			highlight(self.append(builder.join('')));
+			scrollBottom();
 			setTimeout2(self.id, scrollBottom, 500);
 			return self;
 		};
