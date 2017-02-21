@@ -158,9 +158,20 @@
 		var MSG_NOCHAT = { type: 'nochat' };
 
 		var messages = { message: '' };
-		var current = { route: {}, online: 0, users: EMPTYARRAY, channels: EMPTYARRAY, ready: false };
+
+		MAKE('current', function() {
+			this.route = {};
+			this.online = 0;
+			!this.users && (this.users = EMPTYARRAY);
+			!this.channels && (this.channels = EMPTYARRAY);
+			this.ready = false;
+		});
+
 		var user = PARSE($('#userdata').html());
 		var favicon = new Favico({ position : 'up' });
+
+		CACHEPATH('current.users', '1 year');
+		CACHEPATH('current.channels', '1 year');
 
 		NAVIGATION.clientside('.jrouting');
 
