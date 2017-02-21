@@ -108,11 +108,12 @@
 			<div data-jc="codemirror" data-jc-path="messages.message" data-type="markdown" data-height="100%" data-placeholder="@(Type a message or drop file.)" data-maxlength="1200"></div>
 			<div id="status">
 				<div class="visible-md visible-lg codemirrorhelp">__<b>@(bold)</b>__ *<i>@(italic)</i>* ~~<s>@(strike)</s>~~ <code>`@(code)`</code> &gt; @(quote)</div>
-				<div class="exec b blue" data-exec="codemirror_icons"><i class="fa fa-smile-o mr5"></i>@(Icons)</div>
-				<div class="exec" data-exec="codemirror_help"><i class="fa fa-question-circle-o mr5"></i>@(Help)</div>
-				<div class="exec" data-exec="codemirror_upload"><i class="fa fa-folder-o mr5"></i>@(Upload)</div>
-				<div class="exec" data-exec="chat_export"><i class="fa fa-file-text-o mr5"></i>@(Export)</div>
-				<div class="black exec" data-exec="codemirror_enter"><i class="fa fa-envelope-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Enter)' : '@(CTRL+Enter)'"></span></div>
+				<div class="border exec b blue" data-exec="codemirror_icons"><i class="fa fa-smile-o"></i></div>
+				<div class="border exec" data-exec="codemirror_help" title="@(Help)"><i class="fa fa-question-circle-o"></i></div>
+				<div class="border exec" data-exec="codemirror_thumbsup" title="@(Thumbs Up!)"><i class="fa fa-thumbs-up"></i></div>
+				<div class="border exec" data-exec="codemirror_upload" title="@(Upload)"><i class="fa fa-folder-o"></i></div>
+				<div class="border exec" data-exec="chat_export" title="@(Export)"><i class="fa fa-print"></i></div>
+				<div class="border black exec" data-exec="codemirror_enter"><i class="fa fa-keyboard-o mr5"></i><span data-b="common.enter" data-b-html="n => n ? '@(Enter)' : '@(CTRL+Enter)'"></span></div>
 				<div data-jc="typing">
 					<script type="text/html">
 						<div data-id="{{ id }}"><img src="/photos/{{ picture }}.jpg" height="16" alt="{{ name }}" /><b>{{ name }}</b> @(is typing.)</div>
@@ -162,6 +163,14 @@
 		var favicon = new Favico({ position : 'up' });
 
 		NAVIGATION.clientside('.jrouting');
+
+		$(document).on('click', '.userlinker', function(e) {
+			var editor = FIND('codemirror').codemirror();
+			var str = editor.getSelection() || editor.getValue();
+			var is = str.substring(str.length - 1) === ' ' || str.length === 0;
+			editor.replaceSelection((is ? '' : ' ') + '@' + this.getAttribute('data-linker'));
+			editor.focus();
+		});
 
 		$(document).on('click', '.operation', function(e) {
 			e.preventDefault();
@@ -472,7 +481,7 @@
 			SETTER('loading', 'show');
 			AJAX('POST /api/upload/base64/', { file: base64 }, function(response, err) {
 				SETTER('loading', 'hide', 500);
-				FIND('codemirror').codemirror().replaceSelection('![' + response.filename + '](' + response.url + ')');
+				FIND('codemirror').codemirror().replaceSelection('![@(Screenshot from clipboard)](' + response.url + ')');
 			});
 		});
 
@@ -533,6 +542,12 @@
 
 		function codemirror_enter() {
 			SET('common.enter', !common.enter);
+		}
+
+		function codemirror_thumbsup() {
+			MSG_MESSAGE.files = null;
+			MSG_MESSAGE.body = ':thumbs-up:';
+			SETTER('websocket', 'send', MSG_MESSAGE);
 		}
 
 		function codemirror_help() {

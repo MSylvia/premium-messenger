@@ -1,4 +1,4 @@
-<div data-jc="form" data-title="@(List of all uploaded files)" data-jc-path="common.form" data-if="value === 'files'" data-width="600px" class="hidden">
+<div data-jc="form" data-title="@(List of all uploaded files)" data-jc-path="common.form" data-if="value === 'files'" data-width="700px" class="hidden">
 	<div class="padding">
 		<div data-jc="repeater" data-jc-path="files.items" class="files">
 			<script type="text/html">
@@ -13,7 +13,7 @@
 					</div>
 					<ul>
 					{{ foreach m in files }}
-						<li class="singleline">@(Download:) <a href="{{ m.url }}" target="_blank"><i class="fa fa-cloud-download"></i>{{ m.name }}</a></li>
+						<li class="singleline"><a href="{{ m.url }}" target="_blank"><i class="fa fa-cloud-download"></i>{{ m.name }}</a></li>
 					{{ end }}
 					</ul>
 				</div>

@@ -3,6 +3,7 @@ var REGEXP = {};
 
 REGEXP.tag = /(<([^>]+)>)/ig;
 REGEXP.smiles = /&lt;i\sclass=&quot;(smiles|fa).*?&lt;\/i&gt;/g;
+REGEXP.users = /(\s|\<)?@[a-z0-9\-]+(\s|\>)?/g;
 REGEXP.table = /<table/g;
 REGEXP.quotes = /&quot;/g;
 REGEXP.g = /&gt;/g;
@@ -63,6 +64,17 @@ Tangular.register('markdown', function(value) {
 
 	if (!MARKDOWN.html.replace(REGEXP.tag, '').trim())
 		MARKDOWN.html = MARKDOWN.html.replace(REGEXP.fa, '"fa fa-2x ');
+
+	MARKDOWN.html = MARKDOWN.html.replace(REGEXP.users, function(text) {
+		var index = text.indexOf('@');
+		var l = text.substring(text.length - 1);
+		var u = current.users.findItem('linker', text.substring(index + 1).trim());
+
+		if (l !== ' ' && l !== '>')
+			l = '';
+
+		return u ? ((text.substring(0, index) + '<img src="/photos/{0}.jpg" alt="{1}" width="18" border="0" class="chat-user-picture" /><a href="javascript:void(0)" class="b userlinker" data-linker="{2}">{1}</a>'.format(u.picture, Tangular.helpers.encode(u.name), u.linker)) + l) : text;
+	}).trim();
 
 	WORKFLOW('messenger.render')(MARKDOWN);
 	return MARKDOWN.html;
