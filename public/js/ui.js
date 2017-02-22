@@ -469,7 +469,7 @@ COMPONENT('repeater', function() {
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
 			item.index = i;
-			builder.push(self.template(item).replace(/\$index/g, i.toString());
+			builder.push(self.template(item).replace(/\$index/g, i.toString()));
 			//.replace(/\$/g, self.path + '[' + i + ']'));
 		}
 

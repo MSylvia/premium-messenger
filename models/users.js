@@ -6,6 +6,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('password', 'String(30)');
 	schema.define('status', 'String(50)');
 	schema.define('position', 'String(30)', true);
+	schema.define('department', 'String(30)', true);
 	schema.define('picture', 'String(30)');
 	schema.define('channels', 'Object');
 	schema.define('blocked', Boolean);
@@ -28,6 +29,7 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.name = model.name;
 			tmp.email = model.email;
 			tmp.position = model.position;
+			tmp.department = model.department;
 			tmp.picture = model.picture;
 			tmp.blocked = model.blocked;
 			tmp.linker = model.name.slug();

@@ -454,7 +454,7 @@
 					current.route.type = 'user';
 					current.route.item = item;
 					SET('current.title', item.name);
-					SET('current.descripriton', item.position);
+					SET('current.descripriton', item.department + ' / ' + item.position);
 					SET('common.search', '');
 					SET('common.page', 'chat');
 					SETTER('codemirror', 'reload');

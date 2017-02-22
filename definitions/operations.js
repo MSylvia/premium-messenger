@@ -17,6 +17,10 @@ NEWOPERATION('users.load', function(error, value, callback) {
 		for (var i = 0, length = F.global.users.length; i < length; i++) {
 			var user = F.global.users[i];
 			user.online = false;
+
+			if (!user.department)
+				user.department = 'Members';
+
 			!user.lastmessages && (user.lastmessages = {});
 
 			// Cleaner for unhandled assignment

@@ -19,6 +19,15 @@
 
 				<div class="row">
 					<div class="col-md-6 m">
+						<div data-jc="textbox" data-jc-path="formuser.department" data-required="true" data-placeholder="@(e.g. Developers)">@(Department)</div>
+					</div>
+					<div class="col-md-6 m">
+						<div data-jc="dropdown" data-jc-path="formuser.department" data-source="formuserdepartments" data-empty="">@(Department)</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6 m">
 						<div data-jc="textbox" data-jc-path="formuser.position" data-required="true" data-placeholder="@(e.g. Developer)">@(Position)</div>
 					</div>
 					<div class="col-md-6 m">
@@ -57,13 +66,18 @@
 
 <script>
 	function formuser_reload() {
-		var group = {};
+		var position = {};
+		var department = {};
 
 		current.users.forEach(function(item) {
-			group[item.position] = true;
+			if (item.position)
+				position[item.position] = true;
+			if (item.department)
+				department[item.department] = true;
 		});
 
-		SET('formuserpositions', Object.keys(group));
+		SET('formuserpositions', Object.keys(position));
+		SET('formuserdepartments', Object.keys(department));
 	}
 
 	function formuser_password() {
