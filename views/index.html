@@ -178,8 +178,17 @@
 		$(document).on('click', '.userlinker', function(e) {
 			var editor = FIND('codemirror').codemirror();
 			var str = editor.getSelection() || editor.getValue();
-			var is = str.substring(str.length - 1) === ' ' || str.length === 0;
-			editor.replaceSelection((is ? '' : ' ') + '@' + this.getAttribute('data-linker'));
+			var l = str.substring(str.length - 1);
+			var is = l === ' ' || str.length === 0;
+
+			if (is)
+				l = ' @';
+			else if (l !== '@')
+				l = ' @';
+			else
+				l = '';
+
+			editor.replaceSelection(l + this.getAttribute('data-linker'));
 			editor.focus();
 		});
 
