@@ -224,15 +224,6 @@
 				}, 200);
 			});
 
-			self.element.on('click', '.chat-like', function() {
-				var el = $(this);
-				var parent = el.closest('figure');
-				var message = history.findItem('id', parent.attr('data-id'));
-				if (!message)
-					return;
-				el.addClass('chat-like-liked');
-			});
-
 			self.element.on('click', '.chat-favorite', function() {
 				var el = $(this);
 				var parent = el.closest('figure');
