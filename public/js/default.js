@@ -49,6 +49,7 @@ function highlight(el) {
 	$(el).find('pre code').each(function(i, block) {
 		hljs.highlightBlock(block);
 	});
+	return el;
 }
 
 function scrollBottom() {
@@ -58,7 +59,7 @@ function scrollBottom() {
 
 Tangular.register('markdown', function(value) {
 	MARKDOWN.message = this;
-	MARKDOWN.html = marked(smilefy(mailify(urlify(value)))).replace(REGEXP.smiles, function(text) {
+	MARKDOWN.html = marked(marked_features(value)).replace(REGEXP.smiles, function(text) {
 		return text.replace(REGEXP.l, '<').replace(REGEXP.g, '>').replace(REGEXP.quotes, '"');
 	}).replace(/<img/g, '<img class="img-responsive"').replace(REGEXP.table, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
 
@@ -80,8 +81,7 @@ Tangular.register('markdown', function(value) {
 	return MARKDOWN.html;
 });
 
-function smilefy(str) {
-
+function marked_features(str) {
 	var builder = [];
 	var beg = 0;
 	var skip = false;
@@ -90,7 +90,7 @@ function smilefy(str) {
 		var c = String.fromCharCode(str.charCodeAt(i));
 
 		if (c === '`') {
-			!skip && builder.push(smilefy2(str.substring(beg, i)));
+			!skip && builder.push(smilefy(mailify(urlify(str.substring(beg, i)))));
 			skip = !skip;
 			!skip && (beg = i + 1);
 			builder.push(c);
@@ -99,11 +99,12 @@ function smilefy(str) {
 	}
 
 	var tmp = str.substring(beg, str.length);
-	tmp && builder.push(smilefy2(tmp, true));
+	tmp && builder.push(smilefy(mailify(urlify(tmp), true)));
 	return builder.join('');
 }
 
-function smilefy2(str, wrap) {
+
+function smilefy(str, wrap) {
 	var db = { ':-)': 1, ':)': 1, ';)': 8, ':D': 0, '8)': 5, ':((': 7, ':(': 3, ':|': 2, ':P': 6, ':O': 4, ':*': 9, '+1': 10, '1': 11, '\/': 12 };
 	return str.replace(/(\-1|[:;8O\-)DP(|\*]|\+1){1,3}/g, function(match) {
 		if (match === '-1')
@@ -117,7 +118,6 @@ function smilefy2(str, wrap) {
 
 function urlify(str, a) {
 	return str.replace(/(((https?:\/\/)|(www\.))[^\s]+)/g, function(url, b, c) {
-
 
 		// Check the markdown
 		var l = url.substring(url.length - 1, url.length);
@@ -180,5 +180,23 @@ Tangular.register('body', function(value) {
 Tangular.register('def', function(value, def) {
 	return value === '' || value == null ? def : value;
 });
+
+function marked_video(selector) {
+	selector.find('.lang-video').each(function() {
+		var el = $(this);
+		var html = el.html();
+		if (html.indexOf('youtube') !== -1)
+			el.parent().replaceWith('<div class="video-container"><div class="video"><iframe src="https://www.youtube.com/embed/' + Tangular.helpers.encode(html.split('v=')[1] || '') + '" frameborder="0" allowfullscreen></iframe></div></div>');
+		else if (html.indexOf('vimeo') !== -1)
+			el.parent().replaceWith('<div class="video-container"><div class="video"><iframe src="//player.vimeo.com/video/' + Tangular.helpers.encode(html.substring(html.lastIndexOf('/') + 1)) + '" frameborder="0" allowfullscreen></iframe></div></div>');
+	});
+}
+
+function marked_iframe(selector) {
+	selector.find('.lang-iframe').each(function() {
+		var el = $(this);
+		el.parent().replaceWith('<div class="iframe"><iframe src="' + Tangular.helpers.encode(el.html()) + '" frameborder="0"></iframe></div>');
+	});
+}
 
 !function(a){"object"==typeof exports&&"object"==typeof module?a(require("../../lib/codemirror")):"function"==typeof define&&define.amd?define(["../../lib/codemirror"],a):a(CodeMirror)}(function(a){function b(a){a.state.placeholder&&(a.state.placeholder.parentNode.removeChild(a.state.placeholder),a.state.placeholder=null)}function c(a){b(a);var c=a.state.placeholder=document.createElement("pre");c.style.cssText="height: 0; overflow: visible",c.className="CodeMirror-placeholder";var d=a.getOption("placeholder");"string"==typeof d&&(d=document.createTextNode(d)),c.appendChild(d),a.display.lineSpace.insertBefore(c,a.display.lineSpace.firstChild)}function d(a){f(a)&&c(a)}function e(a){var d=a.getWrapperElement(),e=f(a);d.className=d.className.replace(" CodeMirror-empty","")+(e?" CodeMirror-empty":""),e?c(a):b(a)}function f(a){return 1===a.lineCount()&&""===a.getLine(0)}a.defineOption("placeholder","",function(c,f,g){var h=g&&g!=a.Init;if(f&&!h)c.on("blur",d),c.on("change",e),c.on("swapDoc",e),e(c);else if(!f&&h){c.off("blur",d),c.off("change",e),c.off("swapDoc",e),b(c);var i=c.getWrapperElement();i.className=i.className.replace(" CodeMirror-empty","")}f&&!c.hasFocus()&&d(c)})});

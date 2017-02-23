@@ -145,12 +145,17 @@
 				history.push(item);
 			});
 
+			var el;
+
 			if (builder.length) {
 				builder.push('<div class="previouspage"><div>{0}</div></div>'.format(self.attr('data-previous').format(CHATFILTER.page)));
-				highlight(self.element.prepend(builder.join('')));
+				el = self.element.prepend(builder.join(''));
+				marked_video(el);
+				marked_iframe(el);
+				highlight(el);
 			}
 
-			var el = $('#content');
+			el = $('#content');
 			var prev = el.find('.previouspage');
 			if (!prev.length) {
 				self.next = false;
@@ -184,7 +189,10 @@
 
 			value.length && (user.lastmessages[MSG_ROUTE.id] = value.last().id);
 			builder.length && chat.empty && SET('chat.empty', false);
-			highlight(self.append(builder.join('')));
+			var el = self.append(builder.join(''));
+			marked_video(el);
+			marked_iframe(el);
+			highlight(el);
 			scrollBottom();
 			setTimeout2(self.id, scrollBottom, 500);
 			return self;
@@ -196,6 +204,8 @@
 			item.me && (chat.lastmessage = item);
 			self.find('[data-id="{0}"]'.format(item.id)).replaceWith(self.template(item));
 			highlight(self.element);
+			marked_video(self.element);
+			marked_iframe(self.element);
 			return self;
 		};
 

@@ -158,6 +158,12 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .markdown .fa { font-size: 18px; margin: 0 2px; color: black; }
 .markdown .fa-2x { font-size: 3em; }
 .markdown img { max-width: 1024px; }
+.iframe { max-width: 800px; }
+.iframe iframe { width: 100%; min-height: 300px; }
+.video-container { max-width: 800px; }
+.video { position: relative; padding-bottom: 56.25%; padding-top: 25px; height: 0; margin-bottom: 15px; }
+.video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
 .chat-unread .fa-2x { animation: icon 0.4s 1s; }
 
 @keyframes icon {

@@ -46,7 +46,10 @@
 					common.favorites[item.id] = true;
 				});
 				SET('favorites.items', response);
-				highlight($('.favorites'));
+				var el = $('.favorites');
+				marked_video(el);
+				marked_iframe(el);
+				highlight(el);
 				UPDATE('common.favorites');
 			});
 		});
