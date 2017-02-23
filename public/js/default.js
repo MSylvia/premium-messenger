@@ -167,6 +167,26 @@ function findfiles(str) {
 	return files;
 }
 
+function findusers(str) {
+	var match = str.match(REGEXP.users);
+	if (!match)
+		return null;
+	var users = {};
+	var is = false;
+	for (var i = 0, length = match.length; i < length; i++) {
+		var text = match[i].trim();
+		var beg = text.indexOf('@');
+		var end = text.indexOf(' ', index);
+		text = text.substring(beg + 1, end === -1 ? text.length : end);
+		var user = current.users.findItem('linker', text);
+		if (user) {
+			is = true;
+			users[user.id] = true
+		}
+	}
+	return is ? users : null;
+}
+
 function newest(a, b) {
 	return a.substring(0, 14).parseInt() >= b.substring(0, 14).parseInt();
 }

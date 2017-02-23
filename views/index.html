@@ -317,6 +317,8 @@
 
 				MSG_MESSAGE.body = component.getValue().trim();
 				MSG_MESSAGE.files = findfiles(MSG_MESSAGE.body);
+				MSG_MESSAGE.users = findusers(MSG_MESSAGE.body);
+				MSG_MESSAGE.users && (MSG_MESSAGE.users[user.id] = true);
 
 				EMIT('messenger.send', MSG_MESSAGE);
 

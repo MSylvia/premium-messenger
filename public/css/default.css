@@ -58,12 +58,12 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat > div > div { position: relative; display: inline-block; margin-top: 0; padding: 8px 20px; border-radius: 0 0 4px 4px; background-color: #E0E0E0; }
 .chat-picture { float: left; width: 31px; }
 .chat-picture img { border-radius: 4px; }
-.chat-user-picture { border-radius: 4px; vertical-align: middle; margin-right: 5px; }
+.chat-user-picture { border-radius: 4px; margin-right: 5px; vertical-align: -2px; }
 .chat-body { margin-left: 50px; padding-bottom: 10px; min-height: 90px; }
-.markdown .userlinker { color: #303030; background-color: #F0F0F0; padding: 1px 4px; border-radius: 4px; vertical-align: middle; font-size: 12px; }
+.markdown .userlinker { color: #303030; background-color: #F0F0F0; padding: 0 4px; border-radius: 4px; vertical-align: 0; }
 .chat-user { line-height: 18px; }
 .chat-user i { margin: 4px 5px 0 0; font-size: 12px; float: left; color: silver; display: none; }
-.chat-user i.online { display: block; }
+.chat-user i.online { display: block; vertical-align: middle; }
 .chat-user .fa-mobile { font-size: 16px; margin-left: 5px; color: black; }
 .chat-user .fa-pencil { font-size: 16px; margin-left: 5px; color: black; }
 .chat-user b { color: black; }
