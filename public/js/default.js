@@ -172,7 +172,7 @@ function newest(a, b) {
 }
 
 Tangular.register('body', function(value) {
-	return smilefy2(urlify(mailify(value.replace(/\`.*?\`/g, function(text) {
+	return smilefy(urlify(mailify(value.replace(/\`.*?\`/g, function(text) {
 		return '<code>' + text.replace(/\`/g, '') + '</code>';
 	}), true), true));
 });
