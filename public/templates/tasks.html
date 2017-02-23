@@ -84,6 +84,7 @@
 
 	function tasks_checked(el) {
 		el.removeClass('exec').addClass('task-checked').parent().addClass('task-removed');
+		tasks.items = tasks.items.remove('id', el.attr('data-id'));
 		AJAX('GET /api/tasks/{0}/'.format(el.attr('data-id')), NOOP);
 	}
 
