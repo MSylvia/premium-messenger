@@ -22,7 +22,13 @@ NEWSCHEMA('Message').make(function(schema) {
 			return;
 		}
 
-		NOSQL(controller.id).find().sort('datecreated', true).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(function(err, response) {
+		var db = NOSQL(controller.id);
+		var count = db.meta('likes');
+
+		if (!controller.query.max)
+			controller.query.max = 15;
+
+		db.find().sort('datecreated', true).page((controller.query.page || 1) - 1, controller.query.max + count).callback(function(err, response) {
 			// Sets the first message as read message
 			if (controller.query.page === 1 && id && response.length)
 				controller.user.lastmessages[id] = response[0].id;

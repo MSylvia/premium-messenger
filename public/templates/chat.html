@@ -33,7 +33,7 @@
 <div data-b="common.search" data-b-visible="n => !n">
 	<div data-jc="chat" data-previous="@(Previous page: {0})">
 		<script type="text/html">
-			<figure data-id="{{ id }}" class="chat-message{{ if !read }} chat-unread{{ fi }}{{ if user.me }} me{{ fi }}">
+			<figure data-id="{{ id }}" class="chat-message{{ if !read }} chat-unread{{ fi }}{{ if user.me }} me{{ fi }}" data-linker="{{ user.linker }}">
 				<div class="chat-picture center">
 					<a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><img src="/photos/{{ user.picture }}.jpg" alt="{{ user.name }}" class="img-responsive" border="0" /></a>
 					<div class="chat-favorite" title="@(Add to favorites)"><i class="fa fa-heart{{ if !favorited }}-o{{ fi }}"></i></div>
@@ -44,6 +44,18 @@
 					<div class="markdown">{{ body | markdown }}</div>
 				</div>
 			</figure>
+		</script>
+		<script type="text/html">
+			<!-- likes -->
+			<div class="chat-likes-like{{ if unread }} chat-unread{{ fi }}{{ if user.me }} me{{ fi }}">
+				<div><i class="fa fa-thumbs-up fa-2x"></i></div>
+				<a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting"><img src="/photos/{{ user.picture }}.jpg" alt="{{ user.name }}" border="0" /></a>
+				<div>
+					<div class="username"><i class="fa useronline fa-circle{{ if user.online }} online{{ fi }}" data-id="{{ user.id }}"></i><a href="{{ if user.me }}javascript:void(0){{ else }}/users/{{ user.linker }}/{{ fi }}" class="jrouting">{{ user.name }}</a></div>
+					<div class="position" title="{{ user.department}}">{{ user.position }}</div>
+					<div class="datetime" title="{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}" data-value="{{ datecreated }}">{{ datecreated | time }}</div>
+				</div>
+			</div>
 		</script>
 	</div>
 </div>
@@ -77,8 +89,10 @@
 			response.reverse();
 
 			if (CHATFILTER.page === 1) {
-				SETTER('chat', 'clean');
-				SETTER('chat', 'insert', response);
+				FIND('chat', function() {
+					this.clean();
+					this.insert(response);
+				});
 				SET('chat.empty', response.length === 0);
 			} else
 				SETTER('chat', 'prepend', response);
@@ -121,6 +135,9 @@
 		var self = this;
 		var history = [];
 
+		var Tlike;
+		var Tmessage;
+
 		self.next = false;
 		self.blind();
 		self.readonly();
@@ -132,6 +149,8 @@
 		};
 
 		self.prepend = function(value) {
+
+			var tmp = [];
 			var builder = [];
 			var last = user.lastmessages[MSG_ROUTE.id];
 
@@ -140,12 +159,21 @@
 				item.user = current.users.findItem('id', item.iduser);
 				item.favorited = item.favorite = common.favorites[item.id];
 				item.read = last ? newest(last, item.id) : false;
-				builder.push(self.template(item));
+
+				if (item.body !== ':thumbs-up:') {
+					tmp.length && self.insert_likes(tmp, builder);
+					tmp = [];
+					builder.push(Tmessage(item));
+				} else
+					tmp.push(item);
+
 				item.me && (chat.lastmessage = item);
 				history.push(item);
 			});
 
 			var el;
+
+			tmp.length && self.insert_likes(tmp, builder);
 
 			if (builder.length) {
 				builder.push('<div class="previouspage"><div>{0}</div></div>'.format(self.attr('data-previous').format(CHATFILTER.page)));
@@ -163,19 +191,29 @@
 			}
 
 			el.scrollTop(prev.eq(0).offset().top - 100);
-			self.next = value.length === CHATFILTER.max;
+			self.next = value.length >= CHATFILTER.max;
 			return self;
 		};
 
-		self.insert = function(value) {
+		self.insert_likes = function(arr, builder) {
+			builder.push('<figure class="chat-likes{0}">'.format(arr.length === 1 ? ' chat-likes-one' : ''));
+			arr.forEach(function(item) {
+				builder.push(Tlike(item));
+			});
+			builder.push('</figure>');
+			return self;
+		};
+
+		self.insert = function(value, ws) {
 
 			if (!(value instanceof Array))
 				value = [value];
 			else
-				self.next = value.length === CHATFILTER.max;
+				self.next = value.length >= CHATFILTER.max;
 
 			var builder = [];
 			var last = user.lastmessages[MSG_ROUTE.id];
+			var tmp = [];
 
 			value.forEach(function(item) {
 				item.me = user.id === item.iduser;
@@ -183,16 +221,44 @@
 				item.me && (chat.lastmessage = item);
 				item.favorited = item.favorite = common.favorites[item.id];
 				item.read = last ? newest(last, item.id) : false;
-				builder.push(self.template(item));
+
+				if (item.body !== ':thumbs-up:') {
+					tmp.length && self.insert_likes(tmp, builder);
+					tmp = [];
+					builder.push(Tmessage(item));
+				} else
+					tmp.push(item);
+
 				history.push(item);
 			});
 
+			!ws && tmp.length && self.insert_likes(tmp, builder);
 			value.length && (user.lastmessages[MSG_ROUTE.id] = value.last().id);
 			builder.length && chat.empty && SET('chat.empty', false);
-			var el = self.append(builder.join(''));
-			marked_video(el);
-			marked_iframe(el);
-			highlight(el);
+
+			var el = null;
+
+			// only one message via WS
+			if (ws && tmp.length) {
+				// for animation
+				tmp[0].unread = true;
+				el = self.find('figure').last();
+				if (el.hasClass('chat-likes')) {
+					el.append(Tlike(tmp[0]));
+					el.removeClass('chat-likes-one');
+				} else {
+					self.insert_likes(tmp, builder);
+					el = null;
+				}
+			}
+
+			if (!el) {
+				el = self.append(builder.join(''));
+				marked_video(el);
+				marked_iframe(el);
+				highlight(el);
+			}
+
 			scrollBottom();
 			setTimeout2(self.id, scrollBottom, 500);
 			return self;
@@ -202,7 +268,7 @@
 			item.me = user.id === item.iduser;
 			item.user = current.users.findItem('id', item.iduser);
 			item.me && (chat.lastmessage = item);
-			self.find('[data-id="{0}"]'.format(item.id)).replaceWith(self.template(item));
+			self.find('[data-id="{0}"]'.format(item.id)).replaceWith(Tmessage(item));
 			highlight(self.element);
 			marked_video(self.element);
 			marked_iframe(self.element);
@@ -211,9 +277,12 @@
 
 		self.make = function() {
 			self.classes('chat');
-			var scr = self.find('script');
-			self.template = Tangular.compile(scr.html());
-			scr.remove();
+			self.find('script').each(function(index) {
+				if (index)
+					Tlike = Tangular.compile(this.innerHTML);
+				else
+					Tmessage = Tangular.compile(this.innerHTML);
+			}).remove();
 
 			var content = $('#content');
 			content.on('scroll', function() {

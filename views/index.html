@@ -176,20 +176,11 @@
 		NAVIGATION.clientside('.jrouting');
 
 		$(document).on('click', '.userlinker', function(e) {
-			var editor = FIND('codemirror').codemirror();
-			var str = editor.getSelection() || editor.getValue();
-			var l = str.substring(str.length - 1);
-			var is = l === ' ' || str.length === 0;
+			codemirror_adduser(this.getAttribute('data-linker'));
+		});
 
-			if (is)
-				l = ' @';
-			else if (l !== '@')
-				l = ' @';
-			else
-				l = '';
-
-			editor.replaceSelection(l + this.getAttribute('data-linker'));
-			editor.focus();
+		$(document).on('dblclick', '.chat-message', function(e) {
+			codemirror_adduser(this.getAttribute('data-linker'));
 		});
 
 		$(document).on('click', '.operation', function(e) {
@@ -291,7 +282,7 @@
 							SETTER('nativenotifications', 'append', '@(New message from: {0})'.format(owner.name), response.body.substring(0, 80));
 						}
 						response.iduser !== user.id && playsound();
-						SETTER('chat', response.edited ? 'replace' : 'insert', response);
+						SETTER('chat', response.edited ? 'replace' : 'insert', response, true);
 						break;
 				}
 			};
@@ -333,7 +324,7 @@
 
 			component.edit = function(edit) {
 				// "chat" is defined in /templates/chat.html
-				if (!chat.lastmessage)
+				if (!chat.lastmessage || chat.lastmessage.body === ':thumbs-up:')
 					return CodeMirror.pass;
 				if (edit) {
 					component.set(chat.lastmessage.body);
@@ -567,6 +558,8 @@
 		}
 
 		function codemirror_thumbsup() {
+			if (chat.lastmessage && chat.lastmessage.iduser === user.id && chat.lastmessage.body === ':thumbs-up:')
+				return;
 			MSG_MESSAGE.files = null;
 			MSG_MESSAGE.body = ':thumbs-up:';
 			SETTER('websocket', 'send', MSG_MESSAGE);
@@ -584,6 +577,24 @@
 				editor.replaceSelection((is ? '' : ' ') + ':' + icon.replace('fa-', '') + ': ');
 				editor.focus();
 			});
+		}
+
+		function codemirror_adduser(linker) {
+			var editor = FIND('codemirror').codemirror();
+			var str = editor.getSelection() || editor.getValue();
+			var l = str.substring(str.length - 1);
+
+			if (l === ' ')
+				l = ' @';
+			else if (l && l !== '@')
+				l = ' @';
+			else if (!l)
+				l = '@';
+			else
+				l = '';
+
+			editor.replaceSelection(l + linker + ' ');
+			editor.focus();
 		}
 
 		function mainmenu_toggle() {

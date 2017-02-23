@@ -114,7 +114,7 @@ NEWOPERATION('messages.cleaner', function(error, value, callback) {
 	callback(SUCCESS(true));
 	setTimeout2(value, function() {
 		var db = NOSQL(value);
-		var max = 100;
+		var max = 200;
 		db.count().callback(function(err, count) {
 			if (count > max) {
 				count = count - max;

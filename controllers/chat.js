@@ -226,7 +226,13 @@ function messages() {
 					db.modify({ body: message.body, edited: true, dateupdated: message.datecreated }).where('id', id).where('iduser', iduser);
 					dbBackup.modify({ body: message.body, edited: true, dateupdated: message.datecreated }).where('id', id).where('iduser', iduser);
 				} else {
+
 					// New
+					if (message.body === ':thumbs-up:')
+						db.meta('likes', (db.meta('likes') || 0) + 1);
+					else
+						db.meta('likes', 0);
+
 					db.insert(message);
 					db.counter.hit('all').hit(client.user.id);
 					dbBackup.insert(message);
