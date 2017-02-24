@@ -146,10 +146,10 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .markdown .h1 { margin: 0 0 20px; font-size: 24px; padding: 0 0 15px; border-bottom: 1px solid #E0E0E0; color: black; }
 .markdown .h2 { margin: 10px 0 18px; font-size: 20px; padding: 0 0 10px; border-bottom: 1px solid #E0E0E0; color: black; }
 .markdown .h3 { margin: 0 0 5px; font-size: 16px; padding: 0 0 5px; color: black; }
-.markdown p code, .markdown li code, .markdown blockquote code, .markdown h1 code, .markdown h2 code, .markdown h3 code, .markdown h4 code { background-color: #E0E0E0; padding: 0 5px 1px; border-radius: 4px; font-size: 14px; }
+.markdown p code, .markdown li code, .markdown blockquote code, .markdown h1 code, .markdown h2 code, .markdown h3 code, .markdown h4 code { background-color: #E0E0E0; padding: 0 5px 1px; border-radius: 4px; font-size: 14px; font-family: Monaco, monospace; }
 .markdown p { margin: 0 0 20px; }
 .markdown pre { padding: 0; border-radius: 4px; margin: 20px 0; width: 100%; }
-.markdown pre code { padding: 15px; font-size: 14px; line-height: 18px; }
+.markdown pre code { padding: 15px; font-size: 14px; line-height: 18px; font-family: Monaco, monospace; }
 .markdown ul { margin: 0 0 20px 0; padding: 0 0 0 2em; }
 .markdown th { background-color: #F8F8F8; }
 .markdown blockquote { border-left: 5px solid #E0E0E0; margin: 10px 0; padding: 10px; color: gray; }
