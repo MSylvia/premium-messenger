@@ -807,6 +807,7 @@ COMPONENT('dropdowncheckbox', function() {
 	var container;
 	var data = [];
 	var values;
+	var prepared = false;
 
 	if (!window.$dropdowncheckboxtemplate)
 		window.$dropdowncheckboxtemplate = Tangular.compile('<div><label><input type="checkbox" value="{{ index }}" /><span>{{ text }}</span></label></div>');
@@ -895,8 +896,10 @@ COMPONENT('dropdowncheckbox', function() {
 		});
 
 		var ds = self.attr('data-source');
-		if (!ds)
+		if (!ds) {
+			prepared = true;
 			return;
+		}
 
 		self.watch(ds, prepare);
 		setTimeout(function() {
@@ -910,6 +913,7 @@ COMPONENT('dropdowncheckbox', function() {
 			return;
 
 		var clsempty = 'ui-dropdowncheckbox-values-empty';
+		prepared = true;
 
 		if (!value) {
 			container.addClass(clsempty).empty().html(self.attr('data-empty'));
@@ -938,7 +942,7 @@ COMPONENT('dropdowncheckbox', function() {
 
 	self.setter = function(value) {
 
-		if (NOTMODIFIED(self.id, value))
+		if (!prepared || NOTMODIFIED(self.id, value))
 			return;
 
 		var label = '';
