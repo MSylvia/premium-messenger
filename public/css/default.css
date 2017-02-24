@@ -45,7 +45,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 #panel .caption:first-child { margin-top: 0; }
 
 .mainmenu { position: absolute; }
-.monospace { font-family: monospace; }
+.monospace { font-family: Monaco, monospace; }
 
 .caption { font-size: 12px; font-weight: bold; color: #9AA7B3; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .caption .operation { float: right; margin: -2px 21px 0 0; font-size: 14px; cursor: pointer; opacity: .4; }
@@ -227,14 +227,14 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .task:first-child { border-top: 0; }
 .task-checkbox { width: 22px; border: 1px solid silver; float: left; text-align: center; border-radius: 4px; cursor: not-allowed; color: white; }
 .task-body { margin-left: 35px; padding: 1px 0 0; }
-.task-body code { font-family: monospace; padding: 1px 3px; border-radius: 3px; background-color: #E0E0E0; }
+.task-body code { font-family: Monaco, monospace; padding: 1px 3px; border-radius: 3px; background-color: #E0E0E0; }
 .task-checked { color: black; background-color: #F8F8F8; }
 .task-removed { color: #A0A0A0 !important; }
 .task-removed a { color: #B0B0B0; }
 .task .exec { cursor: pointer; }
 
 .codemirrorhelp { float: right !important; }
-.codemirrorhelp code { padding: 0 2px; border-radius: 3px; background-color: #E0E0E0; font-family: monospace; }
+.codemirrorhelp code { padding: 0 2px; border-radius: 3px; background-color: #E0E0E0; font-family: Monaco, monospace; }
 
 .file-user img { margin-right: 10px; border-radius: 4px; float: left; }
 .file-user > div { margin-left: 45px; }
