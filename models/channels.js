@@ -14,6 +14,7 @@ NEWSCHEMA('Channel').make(function(schema) {
 		var tmp = model.$clean();
 
 		tmp.linker = model.name.slug();
+		!tmp.linker && (tmp.linker = U.GUID(10));
 
 		if (tmp.id) {
 

@@ -32,7 +32,8 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.department = model.department;
 			tmp.picture = model.picture;
 			tmp.blocked = model.blocked;
-			tmp.linker = model.name.slug();
+			var linker = model.name.slug(); // beacause of unicodes (e.g. Chinese chars)
+			linker && (tmp.linker = linker);
 			tmp.channels = model.channels;
 			tmp.status = model.status;
 			tmp.notifications = model.notifications;
@@ -53,7 +54,7 @@ NEWSCHEMA('User').make(function(schema) {
 		}
 
 		if (!tmp.linker)
-			tmp.linker = GUID(10);
+			tmp.linker = U.GUID(10);
 
 		var index = F.global.users.findIndex(n => n.id !== tmp.id && n.linker === tmp.linker);
 		index !== -1 && (tmp.linker += U.GUID(3));
