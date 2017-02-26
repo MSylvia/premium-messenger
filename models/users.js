@@ -52,6 +52,12 @@ NEWSCHEMA('User').make(function(schema) {
 			notify = true;
 		}
 
+		if (!tmp.linker)
+			tmp.linker = GUID(10);
+
+		var index = F.global.users.findIndex(n => n.id !== tmp.id && n.linker === tmp.linker);
+		index !== -1 && (tmp.linker += U.GUID(3));
+
 		F.global.users.quicksort('name');
 		F.global.refresh && F.global.refresh();
 		OPERATION('users.save', NOOP);
