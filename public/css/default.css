@@ -45,7 +45,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 #panel .caption:first-child { margin-top: 0; }
 
 .mainmenu { position: absolute; }
-.monospace { font-family: Monaco, monospace; }
+.monospace { font-family: Menlo, Monaco, monospace; }
 
 .caption { font-size: 12px; font-weight: bold; color: #9AA7B3; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .caption .operation { float: right; margin: -2px 21px 0 0; font-size: 14px; cursor: pointer; opacity: .4; }
@@ -146,10 +146,10 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .markdown .h1 { margin: 0 0 20px; font-size: 24px; padding: 0 0 15px; border-bottom: 1px solid #E0E0E0; color: black; }
 .markdown .h2 { margin: 10px 0 18px; font-size: 20px; padding: 0 0 10px; border-bottom: 1px solid #E0E0E0; color: black; }
 .markdown .h3 { margin: 0 0 5px; font-size: 16px; padding: 0 0 5px; color: black; }
-.markdown p code, .markdown li code, .markdown blockquote code, .markdown h1 code, .markdown h2 code, .markdown h3 code, .markdown h4 code { background-color: #E0E0E0; padding: 0 5px 1px; border-radius: 4px; font-size: 14px; font-family: Monaco, monospace; }
+.markdown p code, .markdown li code, .markdown blockquote code, .markdown h1 code, .markdown h2 code, .markdown h3 code, .markdown h4 code { background-color: #E0E0E0; padding: 0 5px 1px; border-radius: 4px; font-size: 14px; font-family: Menlo, Monaco, monospace; }
 .markdown p { margin: 0 0 20px; }
 .markdown pre { padding: 0; border-radius: 4px; margin: 20px 0; width: 100%; }
-.markdown pre code { padding: 15px; font-size: 14px; line-height: 18px; font-family: Monaco, monospace; }
+.markdown pre code { padding: 15px; font-size: 14px; line-height: 18px; font-family: Menlo, Monaco, monospace; }
 .markdown ul { margin: 0 0 20px 0; padding: 0 0 0 2em; }
 .markdown th { background-color: #F8F8F8; }
 .markdown blockquote { border-left: 5px solid #E0E0E0; margin: 10px 0; padding: 10px; color: gray; }
@@ -227,14 +227,14 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .task:first-child { border-top: 0; }
 .task-checkbox { width: 22px; border: 1px solid silver; float: left; text-align: center; border-radius: 4px; cursor: not-allowed; color: white; }
 .task-body { margin-left: 35px; padding: 1px 0 0; }
-.task-body code { font-family: Monaco, monospace; padding: 1px 3px; border-radius: 3px; background-color: #E0E0E0; }
+.task-body code { font-family: Menlo, Menlo, Monaco, monospace; padding: 1px 3px; border-radius: 3px; background-color: #E0E0E0; }
 .task-checked { color: black; background-color: #F8F8F8; }
 .task-removed { color: #A0A0A0 !important; }
 .task-removed a { color: #B0B0B0; }
 .task .exec { cursor: pointer; }
 
 .codemirrorhelp { float: right !important; }
-.codemirrorhelp code { padding: 0 2px; border-radius: 3px; background-color: #E0E0E0; font-family: Monaco, monospace; }
+.codemirrorhelp code { padding: 0 2px; border-radius: 3px; background-color: #E0E0E0; font-family: Menlo, Monaco, monospace; }
 
 .file-user img { margin-right: 10px; border-radius: 4px; float: left; }
 .file-user > div { margin-left: 45px; }
