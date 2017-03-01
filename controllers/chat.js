@@ -39,10 +39,6 @@ function messages() {
 		MSG_CDL.channels = F.global.channels;
 		MSG_CDL.users = F.global.users;
 
-		// latest values
-		client.threadtype = client.user.threadtype;
-		client.threadid = client.user.threadid;
-
 		client.send(MSG_CDL, undefined, function(key, value) {
 			if (is && key === 'channels') {
 				is = false;
