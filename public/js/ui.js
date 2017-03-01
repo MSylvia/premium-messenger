@@ -1451,6 +1451,7 @@ COMPONENT('websocket', function() {
 	var self = this;
 	var ws;
 	var url;
+	var pending = [];
 
 	self.online = false;
 	self.readonly();
@@ -1466,7 +1467,10 @@ COMPONENT('websocket', function() {
 	};
 
 	self.send = function(obj) {
-		ws && ws.send(encodeURIComponent(JSON.stringify(obj)));
+		if (ws)
+			ws.send(encodeURIComponent(JSON.stringify(obj)));
+		else
+			pending.push(obj);
 		return self;
 	};
 
@@ -1500,7 +1504,13 @@ COMPONENT('websocket', function() {
 	function onOpen(e) {
 		SETTER('loading', 'hide', 500);
 		self.online = true;
-		EMIT('online', true);
+		pending.waitFor(function(item, next) {
+			self.send(item);
+			setTimeout(next, 10);
+		}, function() {
+			pending = [];
+			EMIT('online', true);
+		});
 	}
 
 	self.connect = function() {
