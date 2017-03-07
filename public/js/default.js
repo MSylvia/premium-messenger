@@ -99,7 +99,7 @@ function marked_features(str) {
 	}
 
 	var tmp = str.substring(beg, str.length);
-	tmp && builder.push(smilefy(mailify(urlify(tmp), true)));
+	tmp && builder.push(smilefy(mailify(urlify(tmp))));
 	return builder.join('');
 }
 
