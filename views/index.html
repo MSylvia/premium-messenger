@@ -89,7 +89,7 @@
 			<div class="row">
 				<div class="col-md-4">
 					<h2 data-b="current.title" data-b-html="n => n" class="singleline">...</h2>
-					<p data-b="current.descripriton" data-b-html="n => n" class="singleline">...</p>
+					<p data-b="current.description" data-b-html="n => n" class="singleline">...</p>
 				</div>
 				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
 					<div class="attachments" data-b="common.page" data-b-class="n => n === 'chat' ? '-attachment-disabled' : '+attachment-disabled'"><a href="javascript:void(0)" class="exec" data-exec="chat_files" title="@(Files)"><i class="fa fa-copy"></i></a></div>
@@ -437,7 +437,7 @@
 					current.route.type = 'channel';
 					current.route.item = item;
 					SET('current.title', '#' + item.name);
-					SET('current.descripriton', item.description);
+					SET('current.description', item.description);
 					SET('common.search', '');
 					SET('common.page', 'chat');
 					SETTER('codemirror', 'reload');
@@ -458,7 +458,7 @@
 					current.route.type = 'user';
 					current.route.item = item;
 					SET('current.title', item.name);
-					SET('current.descripriton', item.department + ' / ' + item.position);
+					SET('current.description', item.department + ' / ' + item.position);
 					SET('common.search', '');
 					SET('common.page', 'chat');
 					SETTER('codemirror', 'reload');
