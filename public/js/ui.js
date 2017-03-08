@@ -282,7 +282,7 @@ COMPONENT('dropdown', function() {
 		if (!ds)
 			return;
 
-		var prerender = function(path) {
+		var prerender = function() {
 			var value = self.get(self.attr('data-source'));
 			!NOTMODIFIED(self.id, value) && self.render(value || EMPTYARRAY);
 		};
@@ -290,7 +290,7 @@ COMPONENT('dropdown', function() {
 		self.watch(ds, prerender, true);
 	};
 
-	self.state = function(type, who) {
+	self.state = function(type) {
 		if (!type)
 			return;
 		var invalid = self.isInvalid();
@@ -389,7 +389,7 @@ COMPONENT('textbox', function() {
 
 		icon2 && builder.push('<div><span class="fa {0}"></span></div>'.format(icon2));
 		increment && !icon2 && builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
-		increment && self.event('click', '.fa-caret-up,.fa-caret-down', function(e) {
+		increment && self.event('click', '.fa-caret-up,.fa-caret-down', function() {
 			var el = $(this);
 			var inc = -1;
 			if (el.hasClass('fa-caret-up'))
@@ -426,7 +426,7 @@ COMPONENT('textbox', function() {
 		container = self.find('.ui-textbox');
 	};
 
-	self.state = function(type, who) {
+	self.state = function(type) {
 		if (!type)
 			return;
 		var invalid = self.isInvalid();
@@ -568,7 +568,7 @@ COMPONENT('page', function() {
 		SETTER('loading', 'show');
 		isProcessing = true;
 
-		INJECT(el.attr('data-template'), el, function() {
+		IMPORT(el.attr('data-template'), el, function() {
 			isProcessing = false;
 
 			var init = el.attr('data-init');
@@ -620,8 +620,8 @@ COMPONENT('form', function() {
 	}
 
 	self.readonly();
-	self.submit = function(hide) { self.hide(); };
-	self.cancel = function(hide) { self.hide(); };
+	self.submit = function() { self.hide(); };
+	self.cancel = function() { self.hide(); };
 	self.onHide = function(){};
 
 	var hide = self.hide = function() {
@@ -644,7 +644,6 @@ COMPONENT('form', function() {
 
 	self.make = function() {
 		var width = self.attr('data-width') || '800px';
-		var submit = self.attr('data-submit');
 		var enter = self.attr('data-enter');
 		autocenter = self.attr('data-autocenter') === 'true';
 		self.condition = self.attr('data-if');
@@ -660,7 +659,7 @@ COMPONENT('form', function() {
 			EMIT('reflow', self.name);
 		});
 
-		self.find('button').on('click', function(e) {
+		self.find('button').on('click', function() {
 			window.$$form_level--;
 			switch (this.name) {
 				case 'submit':
@@ -677,7 +676,7 @@ COMPONENT('form', function() {
 		});
 	};
 
-	self.setter = function(value) {
+	self.setter = function() {
 
 		setTimeout2('noscroll', function() {
 			$('html').toggleClass('noscroll', $('.ui-form-container').not('.hidden').length ? true : false);
@@ -1003,7 +1002,7 @@ COMPONENT('dropdowncheckbox', function() {
 		values.html(label);
 	};
 
-	self.state = function(type) {
+	self.state = function() {
 		self.find('.ui-dropdowncheckbox').toggleClass('ui-dropdowncheckbox-invalid', self.isInvalid());
 	};
 
@@ -1011,7 +1010,7 @@ COMPONENT('dropdowncheckbox', function() {
 		return;
 
 	window.$dropdowncheckboxevent = true;
-	$(document).on('click', function(e) {
+	$(document).on('click', function() {
 		if (window.$dropdowncheckboxelement) {
 			window.$dropdowncheckboxelement.addClass('hidden');
 			window.$dropdowncheckboxelement = null;
@@ -1026,7 +1025,6 @@ COMPONENT('codemirror', function() {
 	var skipA = false;
 	var skipB = false;
 	var editor;
-	var timeout;
 	var isTyping = false;
 	var currentH;
 	var maxlength;
@@ -1062,8 +1060,6 @@ COMPONENT('codemirror', function() {
 	self.make = function() {
 
 		var height = self.attr('data-height');
-		var icon = self.attr('data-icon');
-		var content = self.html();
 		self.html('<div class="ui-codemirror"></div>');
 
 		var container = self.find('.ui-codemirror');
@@ -1166,8 +1162,6 @@ COMPONENT('codemirror', function() {
 		skipB = true;
 
 		CodeMirror.commands['selectAll'](editor);
-		var f = editor.getCursor(true);
-		var t = editor.getCursor(false);
 		skipB = true;
 		editor.setValue(editor.getValue());
 		editor.setCursor(editor.lineCount(), 0);
@@ -1182,7 +1176,7 @@ COMPONENT('codemirror', function() {
 		}, 1000);
 	};
 
-	self.state = function(type) {
+	self.state = function() {
 		self.find('.ui-codemirror').toggleClass('ui-codemirror-invalid', self.isInvalid());
 	};
 });
@@ -1190,7 +1184,6 @@ COMPONENT('codemirror', function() {
 COMPONENT('confirm', function() {
 	var self = this;
 	var is = false;
-	var visible = false;
 
 	self.readonly();
 	self.singleton();
@@ -1228,14 +1221,12 @@ COMPONENT('confirm', function() {
 		self.callback && self.callback(index);
 		self.classes('-ui-confirm-visible');
 		setTimeout2(self.id, function() {
-			visible = false;
 			self.classes('hidden');
 		}, 1000);
 	};
 
 	self.content = function(cls, text) {
 		!is && self.html('<div><div class="ui-confirm-body"></div></div>');
-		visible = true;
 		self.find('.ui-confirm-body').empty().append(text);
 		self.classes('-hidden');
 		setTimeout2(self.id, function() {
@@ -1286,7 +1277,7 @@ COMPONENT('search', function() {
 		options_delay = (self.attr('data-delay') || '200').parseInt();
 	};
 
-	self.setter = function(value, path, type) {
+	self.setter = function(value) {
 
 		if (!options_selector || !options_attribute || value == null)
 			return;
@@ -1349,7 +1340,7 @@ COMPONENT('binder', function() {
 		});
 	};
 
-	self.autobind = function(path, value) {
+	self.autobind = function(path) {
 		var mapper = keys[path];
 		var template = {};
 		mapper && mapper.forEach(function(item) {
@@ -1486,7 +1477,7 @@ COMPONENT('websocket', function() {
 		return self;
 	};
 
-	function onClose(e) {
+	function onClose() {
 		self.close(true);
 		setTimeout(function() {
 			self.connect();
@@ -1498,10 +1489,10 @@ COMPONENT('websocket', function() {
 			self.message(JSON.parse(decodeURIComponent(e.data)));
 		} catch (e) {
 			window.console && console.warn('WebSocket "{0}": {1}'.format(url, e.toString()));
-		};
+		}
 	}
 
-	function onOpen(e) {
+	function onOpen() {
 		SETTER('loading', 'hide', 500);
 		self.online = true;
 		pending.waitFor(function(item, next) {
@@ -1515,12 +1506,12 @@ COMPONENT('websocket', function() {
 
 	self.connect = function() {
 		ws && self.close();
-		timeout = setTimeout(function() {
+		setTimeout2(self.id, function() {
 			ws = new WebSocket(url);
 			ws.onopen = onOpen;
 			ws.onclose = onClose;
 			ws.onmessage = onMessage;
-		}, 100);
+		}, 100, 5);
 		return self;
 	};
 });
@@ -1579,23 +1570,25 @@ COMPONENT('importer', function() {
 	var reload = self.attr('data-reload');
 
 	self.readonly();
-	self.setter = function(value) {
+	self.setter = function() {
 
 		if (!self.evaluate(self.attr('data-if')))
 			return;
 
 		if (imported) {
 			if (reload)
-				return EXEC(reload);
-			self.setter = null;
+				EXEC(reload);
+			else
+				self.setter = null;
 			return;
 		}
 
 		imported = true;
 		IMPORT(self.attr('data-url'), function() {
 			if (reload)
-				return EXEC(reload);
-			self.remove();
+				EXEC(reload);
+			else
+				self.remove();
 		});
 	};
 });
@@ -1667,7 +1660,6 @@ COMPONENT('audio', function() {
 			index--;
 			self.items.splice(index, 1);
 		}
-		return self;
 	};
 
 	self.stop = function(url) {

@@ -114,7 +114,7 @@ function messages() {
 			case 'message':
 
 				if (!client.threadid || !client.threadtype)
-					return
+					return;
 
 				var id = message.id;
 				message.id = id ? id : UID();

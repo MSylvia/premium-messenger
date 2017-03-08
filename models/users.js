@@ -25,7 +25,6 @@ NEWSCHEMA('User').make(function(schema) {
 
 		if (model.id) {
 			tmp = F.global.users.findItem('id', model.id);
-			notify = tmp.name !== model.name || tmp.picture !== model.picture || tmp.status !== model.status;
 			tmp.name = model.name;
 			tmp.email = model.email;
 			tmp.position = model.position;
@@ -50,7 +49,6 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.online = false;
 			tmp.linker = model.name.slug();
 			F.global.users.push(tmp);
-			notify = true;
 		}
 
 		if (!tmp.linker)

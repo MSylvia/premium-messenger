@@ -173,15 +173,3 @@ function logoff() {
 	this.cookie(F.config.cookie, '', '-1 day');
 	this.redirect('/');
 }
-
-function json_favorite_add(id, idmessage) {
-	this.id = id;
-	this.idmessage = idmessage;
-	this.$workflow('favorite', this.callback());
-}
-
-function json_favorite_rem(id, idmessage) {
-	this.id = id;
-	this.idmessage = idmessage;
-	this.$workflow('unfavorite', this.callback());
-}

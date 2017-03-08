@@ -28,7 +28,6 @@ $(window).on('resize', function() {
 
 ON('resize', function() {
 	var $w = $(window);
-	var width = $w.width();
 	var height = $w.height();
 
 	var msgbox = $('#messagebox');
@@ -104,7 +103,7 @@ function marked_features(str) {
 }
 
 
-function smilefy(str, wrap) {
+function smilefy(str) {
 	var db = { ':-)': 1, ':)': 1, ';)': 8, ':D': 0, '8)': 5, ':((': 7, ':(': 3, ':|': 2, ':P': 6, ':O': 4, ':*': 9, '+1': 10, '1': 11, '\/': 12 };
 	return str.replace(/(\-1|[:;8O\-)DP(|\*]|\+1){1,3}/g, function(match) {
 		if (match === '-1')
@@ -141,7 +140,7 @@ function urlify(str, a) {
 }
 
 function mailify(str, a) {
-	return str.replace(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g, function(m, b, c) {
+	return str.replace(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g, function(m) {
 		var len = m.length;
 		var l = m.substring(len - 1);
 		if (l === '.' || l === ',')
@@ -176,12 +175,12 @@ function findusers(str) {
 	for (var i = 0, length = match.length; i < length; i++) {
 		var text = match[i].trim();
 		var beg = text.indexOf('@');
-		var end = text.indexOf(' ', index);
+		var end = text.indexOf(' ', beg);
 		text = text.substring(beg + 1, end === -1 ? text.length : end);
 		var user = current.users.findItem('linker', text);
 		if (user) {
 			is = true;
-			users[user.id] = true
+			users[user.id] = true;
 		}
 	}
 	return is ? users : null;
