@@ -157,7 +157,6 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .markdown p:last-child { margin-bottom: 0; }
 .markdown .fa { font-size: 18px; margin: 0 2px; color: black; }
 .markdown .fa-2x { font-size: 3em; }
-.markdown img { max-width: 1024px; }
 .markdown .fa-heart, .markdown .fa-heart-o { color: #E53A37; animation: 0.5s scale infinite alternate; }
 .markdown .fa-smile-o { color: #CA8B0D; }
 
