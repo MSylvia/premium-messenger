@@ -4,7 +4,7 @@ NEWOPERATION('users.save', function(error, value, callback) {
 	callback(SUCCESS(true));
 	setTimeout2('users.save', function() {
 		Fs.writeFile(F.path.databases('users.json'), JSON.stringify(F.global.users), F.error());
-	}, 500);
+	}, 500, 20);
 });
 
 NEWOPERATION('users.load', function(error, value, callback) {
@@ -122,6 +122,40 @@ NEWOPERATION('messages.cleaner', function(error, value, callback) {
 			}
 		});
 	}, 30000);
+});
+
+const SEND_CLIENT = {};
+const SEND_MESSAGE = {};
+
+NEWOPERATION('send', function(error, value, callback) {
+
+	// value.id = ID MESSAGE FOR UPDATE (OPTIONAL)
+	// value.iduser = IDUSER;
+	// value.idtarget = IDCHANNEL or IDUSER;
+	// value.target = 'channel' or 'user';
+	// value.body = 'MESSAGE in MARKDOWN';
+	// value.users = [Array of ID users]; (OPTIONAL)
+	// value.files = [{ name: String, url: String }]; (OPTIONAL)
+
+	SEND_CLIENT.user = F.global.users.findItem('id', value.iduser);
+
+	if (!SEND_CLIENT.user) {
+		error.push('error-user-404');
+		return callback();
+	}
+
+	SEND_CLIENT.threadid = value.idtarget;
+	SEND_CLIENT.threadtype = value.target;
+
+	value.users && value.users.indexOf(SEND_CLIENT.user.id) === -1 && value.users.push(SEND_CLIENT.user.id);
+
+	SEND_MESSAGE.id = value.id;
+	SEND_MESSAGE.body = value.body;
+	SEND_MESSAGE.users = value.users || null;
+	SEND_MESSAGE.files = value.files || null;
+
+	F.global.sendmessage(SEND_CLIENT, SEND_MESSAGE);
+	callback(SUCCESS(true));
 });
 
 F.wait('database');

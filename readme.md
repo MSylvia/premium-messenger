@@ -41,6 +41,24 @@ F.on('messenger.close', function(controller, client) {
 F.on('messenger.message', function(controller, client, message) {
     // message === OBJECT
 });
+
+// How to send a message?
+options = {};
+
+// REQUIRED
+options.iduser = 'ID USER WHICH SENDS MESSAGE';
+options.target = 'channel'; // or "user"
+options.idtarget = 'idchannel' // or "iduser"
+options.body = 'MARKDOWN MESSAGE'; // how to perform like? just send ":thumbs-up:" in body
+
+// OPTIONAL
+options.id = 'ID MESSAGE'; // for editing of an existing message
+options.users = ['iduser1', 'iduser2']; // optional, which users can by notified? (works with channels only)
+options.files = [{ name: 'filename', url: 'url to download' }]; // optional, (it serves for file browser only)
+
+OPERATION('send', options, function(err, response) {
+    console.log('DONE');
+});
 ```
 
 ### Client-side
