@@ -225,7 +225,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .savisible { display: none; }
 .sa .savisible { display: block; }
 
-.task { margin-top: 10px; border-top: 1px solid #E0E0E0; padding: 10px 40px 0; color: black; }
+.task { margin-top: 10px; border-top: 1px solid #E0E0E0; padding: 10px 20px 0; color: black; }
 .task:first-child { border-top: 0; }
 .task-checkbox { width: 22px; border: 1px solid silver; float: left; text-align: center; border-radius: 4px; cursor: not-allowed; color: white; }
 .task-body { margin-left: 35px; padding: 1px 0 0; }

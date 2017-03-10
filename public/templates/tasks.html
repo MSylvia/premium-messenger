@@ -1,19 +1,17 @@
 <div class="padding">
-	<div class="padding npb">
-		<nav data-jc="template" data-jc-path="tasks.unread">
-			<script type="text/html">
-				{{ if count }}
-					<div class="unreadmessages row">
-					{{ foreach m in items }}
-						<div class="col-lg-3 col-md-4 col-xs-6 m"><a href="{{ m.url }}" class="jrouting"><span class="count">{{ m.count }}</span>{{ if m.user }}<img src="/photos/{{ m.picture }}.jpg" alt="{{ m.name }}" border="0" />{{ else }}<i class="fa fa-envelope"></i>{{ fi }}<span>{{ m.name}}</span></a></div>
-					{{ end }}
-					</div>
-				{{ fi }}
-			</script>
-		</nav>
-		<div class="fs12"><i class="fa fa-check-circle green mr5"></i>@(Add a private task:)</div>
-		<div data-jc="textbox" data-jc-keypress="false" data-jc-path="tasks.form.body" data-placeholder="@(Type a task description and press enter)" data-maxlength="200" data-control-icon="fa-keyboard-o" class="mt5"></div>
-	</div>
+	<nav data-jc="template" data-jc-path="tasks.unread">
+		<script type="text/html">
+			{{ if count }}
+				<div class="unreadmessages row">
+				{{ foreach m in items }}
+					<div class="col-lg-3 col-md-4 col-xs-6 m"><a href="{{ m.url }}" class="jrouting"><span class="count">{{ m.count }}</span>{{ if m.user }}<img src="/photos/{{ m.picture }}.jpg" alt="{{ m.name }}" border="0" />{{ else }}<i class="fa fa-envelope"></i>{{ fi }}<span>{{ m.name}}</span></a></div>
+				{{ end }}
+				</div>
+			{{ fi }}
+		</script>
+	</nav>
+	<div class="fs12"><i class="fa fa-check-circle green mr5"></i>@(Add a private task:)</div>
+	<div data-jc="textbox" data-jc-keypress="false" data-jc-path="tasks.form.body" data-placeholder="@(Type a task description and press enter)" data-maxlength="200" data-control-icon="fa-keyboard-o" class="mt5"></div>
 </div>
 <div data-jc="repeater" data-jc-path="tasks.items">
 	<script type="text/html">
