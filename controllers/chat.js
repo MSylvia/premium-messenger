@@ -35,6 +35,7 @@ function messages() {
 	};
 
 	self.on('open', function(client) {
+		var was = client.user.online === true;
 		var is = true;
 		client.user.online = true;
 		client.user.datelogged = F.datetime;
@@ -57,18 +58,19 @@ function messages() {
 			self.send(MSG_ONOFF);
 		}, 500);
 
-		F.emit('messenger.online', self, client);
+		!was && F.emit('messenger.open', self, client);
 	});
 
 	self.on('close', function(client) {
 		if (self.find(n => n.user.id === client.user.id && n.id !== client.id))
 			return;
+		var was = client.user.online === false;
 		client.user.online = false;
 		MSG_ONOFF.id = client.user.id;
 		MSG_ONOFF.online = false;
 		MSG_ONOFF.datelogged = F.datetime;
 		self.send(MSG_ONOFF);
-		F.emit('messenger.close', self, client);
+		!was && F.emit('messenger.close', self, client);
 	});
 
 	self.on('message', function(client, message) {
@@ -133,6 +135,10 @@ F.global.sendmessage = function(client, message) {
 	message.datecreated = F.datetime = new Date();
 	message.iduser = iduser;
 	message.mobile = client.req ? client.req.mobile : false;
+	message.robot = client.send ? false : true;
+
+	if (!message.type)
+		message.type = 'message';
 
 	id && (message.edited = true);
 	client.user.lastmessages[client.threadid] = message.id;
@@ -157,7 +163,8 @@ F.global.sendmessage = function(client, message) {
 				return true;
 			}
 
-			return n.user.id === iduser && n.threadid === client.threadid;
+			// !client.send (the messages is from "robot")
+			return (!client.send || n.user.id === iduser) && n.threadid === client.threadid;
 		});
 
 		if (is) {
