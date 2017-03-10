@@ -164,7 +164,7 @@ F.global.sendmessage = function(client, message) {
 			}
 
 			// !client.send (the messages is from "robot")
-			return (!client.send || n.user.id === iduser) && n.threadid === client.threadid;
+			return ((!client.send && n.user.id === client.threadid) || (n.user.id === iduser)) && n.threadid === client.threadid;
 		});
 
 		if (is) {
