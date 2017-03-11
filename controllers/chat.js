@@ -76,7 +76,7 @@ function messages() {
 	self.on('message', function(client, message) {
 
 		var iduser = client.user.id;
-		F.emit('messenger.message', self, client, message);
+		F.emit('messenger.data', self, client, message);
 
 		switch (message.type) {
 
@@ -143,7 +143,9 @@ F.global.sendmessage = function(client, message) {
 	id && (message.edited = true);
 	client.user.lastmessages[client.threadid] = message.id;
 
+	F.emit('messenger.message', self, client, message);
 	NOSQL('messages').counter.hit('all').hit(iduser);
+
 	// threadtype = "user" (direct message) or "channel"
 
 	if (client.threadtype === 'user') {
