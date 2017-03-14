@@ -38,7 +38,13 @@ F.on('messenger.close', function(controller, client) {
     // disconnected client
 });
 
+F.on('messenger.data', function(controller, client, data) {
+    // RAW data from websocket
+    // data === OBJECT
+});
+
 F.on('messenger.message', function(controller, client, message) {
+    // New message
     // message === OBJECT
 });
 
