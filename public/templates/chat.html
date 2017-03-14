@@ -148,6 +148,10 @@
 			history = [];
 		};
 
+		self.debug = function() {
+			return { Tlike: Tlike, Tmessage: Tmessage, history: history };
+		};
+
 		self.prepend = function(value) {
 
 			var tmp = [];
@@ -155,8 +159,13 @@
 			var last = user.lastmessages[MSG_ROUTE.id];
 
 			value.forEach(function(item) {
+
 				item.me = user.id === item.iduser;
 				item.user = current.users.findItem('id', item.iduser);
+
+				if (!item.user)
+					return;
+
 				item.favorited = item.favorite = common.favorites[item.id];
 				item.read = last ? newest(last, item.id) : false;
 
@@ -218,6 +227,10 @@
 			value.forEach(function(item) {
 				item.me = user.id === item.iduser;
 				item.user = current.users.findItem('id', item.iduser);
+
+				if (!item.user)
+					return;
+
 				item.me && (chat.lastmessage = item);
 				item.favorited = item.favorite = common.favorites[item.id];
 				item.read = last ? newest(last, item.id) : false;
