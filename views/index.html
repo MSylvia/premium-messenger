@@ -558,7 +558,7 @@
 		}
 
 		function codemirror_thumbsup() {
-			if (chat.lastmessage && chat.lastmessage.iduser === user.id && chat.lastmessage.body === ':thumbs-up:')
+			if (chat.lastmessage && chat.lastmessage.iduser === user.id && chat.lastmessage.body === ':thumbs-up:' && chat.lastmessage.datecreated.parseDate().add('3 minutes') > new Date())
 				return;
 			MSG_MESSAGE.files = null;
 			MSG_MESSAGE.body = ':thumbs-up:';

@@ -3,3 +3,4 @@ debug.pid
 sftp-config.json
 logs/*
 /dependencies
+databases/*
