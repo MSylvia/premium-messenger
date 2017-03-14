@@ -1401,19 +1401,6 @@ COMPONENT('binder', function() {
 				obj.classes = classes ? FN(decode(classes)) : undefined;
 				obj.html = html ? FN(decode(html)) : undefined;
 				obj.visible = visible ? FN(decode(visible)) : undefined;
-
-				var tmp = el.find('script[type="text/html"]');
-				var str = '';
-				if (tmp.length)
-					str = tmp.html();
-				else
-					str = el.html();
-
-				if (str.indexOf('{{') !== -1) {
-					obj.template = Tangular.compile(str);
-					tmp.length && tmp.remove();
-				}
-
 				el.data('data-b', obj);
 			}
 
