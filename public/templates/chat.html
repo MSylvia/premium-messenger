@@ -144,6 +144,7 @@
 		self.singleton();
 
 		self.clean = function() {
+			chat.lastmessage = null;
 			self.empty();
 			history = [];
 		};
