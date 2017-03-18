@@ -16,7 +16,7 @@
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700&subset=latin,latin-ext" />
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.css" />
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/github.min.css" />
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/mode/markdown/markdown.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
@@ -178,12 +178,6 @@
 		$(document).on('click', '.userlinker', function(e) {
 			codemirror_adduser(this.getAttribute('data-linker'));
 		});
-
-/*
-		$(document).on('dblclick', '.chat-message', function(e) {
-			codemirror_adduser(this.getAttribute('data-linker'));
-		});
-*/
 
 		$(document).on('click', '.operation', function(e) {
 			e.preventDefault();
@@ -436,6 +430,7 @@
 						return REDIRECT('/');
 					current.route.type = 'channel';
 					current.route.item = item;
+					MSG_MESSAGE.id = undefined;
 					SET('current.title', '#' + item.name);
 					SET('current.description', item.description);
 					SET('common.search', '');
@@ -457,6 +452,7 @@
 				if (item && item.id !== user.id) {
 					current.route.type = 'user';
 					current.route.item = item;
+					MSG_MESSAGE.id = undefined;
 					SET('current.title', item.name);
 					SET('current.description', item.department + ' / ' + item.position);
 					SET('common.search', '');
@@ -560,7 +556,9 @@
 		function codemirror_thumbsup() {
 			if (chat.lastmessage && chat.lastmessage.iduser === user.id && chat.lastmessage.body === ':thumbs-up:' && chat.lastmessage.datecreated.parseDate().add('3 minutes') > new Date())
 				return;
+			MSG_MESSAGE.id = undefined;
 			MSG_MESSAGE.files = null;
+			MSG_MESSAGE.users = null;
 			MSG_MESSAGE.body = ':thumbs-up:';
 			SETTER('websocket', 'send', MSG_MESSAGE);
 		}
