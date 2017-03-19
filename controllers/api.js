@@ -47,6 +47,7 @@ exports.install = function() {
 function file_read(req, res) {
 
 	var id = req.split[1].replace('.' + req.extension, '');
+	res.noCompress = true;
 
 	F.exists(req, res, function(next, filename) {
 		NOSQL('files').counter.hit('read');
@@ -57,7 +58,6 @@ function file_read(req, res) {
 				return res.throw404();
 			}
 
-			res.noCompress = true;
 			var writer = require('fs').createWriteStream(filename);
 
 			CLEANUP(writer, function() {
