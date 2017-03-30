@@ -72,8 +72,8 @@ Tangular.register('markdown', function(value) {
 
 		if (l !== ' ' && l !== '>')
 			l = '';
-
-		return u ? ((text.substring(0, index) + '<img src="/photos/{0}.jpg" alt="{1}" width="18" border="0" class="chat-user-picture" /><a href="javascript:void(0)" class="b userlinker" data-linker="{2}">{1}</a>'.format(u.picture, Tangular.helpers.encode(u.name), u.linker)) + l) : text;
+		// <img src="/photos/{0}.jpg" alt="{1}" width="18" border="0" class="chat-user-picture" />
+		return u ? ((text.substring(0, index) + '<a href="javascript:void(0)" class="b userlinker" data-linker="{2}">{1}</a>'.format(u.picture, Tangular.helpers.encode(u.name), u.linker)) + l) : text;
 	}).trim();
 
 	WORKFLOW('messenger.render')(MARKDOWN);

@@ -60,7 +60,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat-picture img { border-radius: 4px; }
 .chat-user-picture { border-radius: 4px; margin-right: 5px; vertical-align: -2px; }
 .chat-body { margin-left: 50px; padding-bottom: 10px; min-height: 70px; }
-.markdown .userlinker { color: #303030; background-color: #F0F0F0; padding: 0 4px; border-radius: 4px; vertical-align: 0; }
+.markdown .userlinker { color: #303030; background-color: #dbf3f3; padding: 0 4px; border-radius: 4px; vertical-align: 0; font-size: 14px; }
 .chat-user { line-height: 18px; }
 .chat-user i { margin: 4px 5px 0 0; font-size: 12px; float: left; color: silver; display: none; }
 .chat-user i.online { display: block; vertical-align: middle; }
@@ -172,7 +172,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .chat-likes-like img { border-radius: 100px; max-width: 30px; border: 2px solid #E0E0E0; margin: -35px 0 0 -15px; position: absolute; }
 .chat-likes { padding: 12px 10px 8px !important; }
 .chat-likes .username { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.chat-likes .username .fa { margin-right: 5px; }
+.chat-likes .username .fa { margin-right: 5px; font-size: 12px; }
 .chat-likes .datetime { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-likes .position { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: help; color: black; }
 .chat-likes .me .username a { color: #D63B32; }
@@ -181,7 +181,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 .chat-likes-one .fa-thumbs-up { margin-bottom: 0; }
 .chat-likes-one img { display: none; }
 .chat-likes-one .chat-likes-like { width: auto; text-align: left; padding-left: 6px; }
-.chat-likes-one .chat-likes-like > div { position: relative; display: inline-block; margin-right: 20px; line-height: 12px; }
+.chat-likes-one .chat-likes-like > div { position: relative; display: inline-block; margin-right: 12px; line-height: 12px; }
 .chat-likes-one .chat-likes-like > div:first-child { float: left; }
 .chat-likes-one .username { font-size: 14px; font-weight: bold; margin: 2px 0 5px; }
 

@@ -1034,11 +1034,16 @@ COMPONENT('codemirror', function() {
 	};
 
 	self.released = function(is) {
-		is && editor.setValue('');
+		if (is) {
+			if (isMOBILE)
+				editor.val('');
+			else
+				editor.setValue('');
+		}
 	};
 
 	self.getValue = function() {
-		var value = editor.getValue();
+		var value = isMOBILE ? editor.val() : editor.getValue();
 		return value.length > maxlength ? value.substring(0, maxlength) : value;
 	};
 
@@ -1064,6 +1069,73 @@ COMPONENT('codemirror', function() {
 
 		var container = self.find('.ui-codemirror');
 		maxlength = (self.attr('data-maxlength') || '').parseInt();
+
+		if (isMOBILE) {
+			self.append('<textarea maxlength="{0}" placeholder="{1}"></textarea>'.format(maxlength, self.attr('data-placeholder')));
+			editor = self.find('textarea');
+
+			editor.getSelection = function() {
+				return editor.val();
+			};
+
+			editor.getValue = function() {
+				return editor.val();
+			};
+
+			editor.replaceSelection = function(val) {
+				insertTextarea(editor.get(0), val);
+			};
+
+			editor.on('keypress', function() {
+				if (isTyping) {
+					setTimeout2(self.id + 'typing', function() {
+						isTyping = false;
+					}, 5000);
+					return;
+				}
+				isTyping = true;
+				self.typing();
+			});
+
+			editor.on('keydown', function(e) {
+
+				if (e.keyCode === 13 && (e.metaKey || e.ctrlKey)) {
+					self.enter(1) !== CodeMirror.Pass && e.preventDefault();
+					return;
+				}
+
+				if (e.keyCode === 13) {
+					self.enter(0) !== CodeMirror.Pass && e.preventDefault();
+					return;
+				}
+
+				if (e.keyCode === 27) {
+					self.edit(false);
+					return;
+				}
+
+				if (e.keyCode === 38) {
+					!editor.val() && self.edit(true);
+					return;
+				}
+			});
+
+			editor.on('change', function() {
+				if (self.release())
+					return;
+
+				setTimeout2(self.id, function() {
+					var val = editor.val();
+					skipA = true;
+					self.reset(true);
+					self.dirty(false);
+					self.set(val);
+					CACHE('codemirror.' + NAVIGATION.url, val, '7 days');
+				}, 200);
+			});
+
+			return;
+		}
 
 		editor = CodeMirror(container.get(0), { lineNumbers: self.attr('data-linenumbers') === 'true', lineWrapping: true, mode: self.attr('data-type') || 'htmlmixed', indentUnit: 4, placeholder: self.attr('data-placeholder'), extraKeys: { 'Enter': function() { return self.enter(0); }, 'Cmd-Enter': function() { return self.enter(1); }, 'Up': function() { if (editor.getValue()) return CodeMirror.Pass; self.edit(true); }, 'Esc': function() { self.edit(false); return CodeMirror.pass; }, 'Ctrl-Enter': function() { return self.enter(1); }}});
 
@@ -1156,6 +1228,12 @@ COMPONENT('codemirror', function() {
 		}
 
 		type && CACHE('codemirror.' + NAVIGATION.url, value, '7 days');
+
+		if (isMOBILE) {
+			editor.val(value || '');
+			return;
+		}
+
 		skipB = true;
 		editor.setValue(value || '');
 		editor.refresh();
@@ -2107,3 +2185,18 @@ jC.formatter(function(path, value, type) {
 
 	return value.format(2);
 });
+
+function insertTextarea(el, text) {
+	var val = el.value, endIndex, range;
+	if (el.selectionStart !== undefined && el.selectionEnd !== undefined) {
+		endIndex = el.selectionEnd;
+		el.value = val.slice(0, el.selectionStart) + text + val.slice(endIndex);
+		el.selectionStart = el.selectionEnd = endIndex + text.length;
+	} else if (document.selection !== undefined && document.selection.createRange !== undefined) {
+		el.focus();
+		range = document.selection.createRange();
+		range.collapse(false);
+		range.text = text;
+		range.select();
+	}
+}
