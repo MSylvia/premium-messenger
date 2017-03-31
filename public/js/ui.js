@@ -1610,7 +1610,7 @@ COMPONENT('typing', function() {
 
 		max = (self.attr('data-max') || '4').parseInt();
 
-		self.classes('ui-typing');
+		self.classes('ui-typing hidden-xs');
 		var scr = self.find('script');
 		self.template = Tangular.compile(scr.html());
 		scr.remove();
