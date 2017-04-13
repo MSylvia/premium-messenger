@@ -80,6 +80,8 @@
 
 	function users_lazyload() {
 		$('.img-lazyload').toArray().waitFor(function(el, next) {
+			if (common.page !== 'users')
+				return next();
 			el = $(el);
 			if (!el.hasClass('img-lazyload'))
 				return next();
