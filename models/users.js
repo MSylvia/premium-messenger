@@ -21,7 +21,6 @@ NEWSCHEMA('User').make(function(schema) {
 		}
 
 		var tmp;
-		var notify;
 
 		if (model.id) {
 			tmp = F.global.users.findItem('id', model.id);
@@ -51,9 +50,7 @@ NEWSCHEMA('User').make(function(schema) {
 			F.global.users.push(tmp);
 		}
 
-		if (!tmp.linker)
-			tmp.linker = U.GUID(10);
-
+		!tmp.linker && (tmp.linker = U.GUID(10));
 		var index = F.global.users.findIndex(n => n.id !== tmp.id && n.linker === tmp.linker);
 		index !== -1 && (tmp.linker += U.GUID(3));
 
