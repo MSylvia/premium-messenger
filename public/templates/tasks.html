@@ -53,6 +53,8 @@
 		WAIT(function() {
 			return current.users !== EMPTYARRAY;
 		}, tasks_refreshunread);
+
+		SET('common.stats', null);
 	}
 
 	ON('unread', tasks_refreshunread);

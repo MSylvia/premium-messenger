@@ -32,6 +32,7 @@
 	<div data-jc="message" data-button="@(Close)"></div>
 	<div data-jc="websocket" data-jc-id="websocket" data-url="/"></div>
 	<div data-jc="audio" data-jc-path="common.volume"></div>
+	<div data-jc="calendar" data-days="@(SU,MO,TU,WE,TH,FR,SO)" data-months="@(January,February,March,April,May,June,July,August,September,October,November,December)" data-today="@(Set today)" data-firstday="0"></div>
 	<div data-jc="nativenotifications" data-jc-path="common.notifications"></div>
 	<div data-jc="clipboardimage"></div>
 	<div data-jc="fontawesome" data-search="@(Search icons ...)"></div>
@@ -91,7 +92,10 @@
 					<h2 data-b="current.title" data-b-html="n => n" class="singleline">...</h2>
 					<p data-b="current.description" data-b-html="n => n" class="singleline">...</p>
 				</div>
-				<div class="col-lg-4 col-lg-offset-4 col-md-5 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
+				<div class="col-lg-3 col-lg-offset-1 visible-lg">
+					<div data-jc="nosqlcounter" data-jc-path="common.stats"></div>
+				</div>
+				<div class="col-lg-4 col-md-5 col-lg-offset-0 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
 					<div class="attachments" data-b="common.page" data-b-class="n => n === 'chat' ? '-attachment-disabled' : '+attachment-disabled'"><a href="javascript:void(0)" class="exec" data-exec="chat_files" title="@(Files)"><i class="fa fa-copy"></i></a></div>
 					<div data-jc="searchbox" data-jc-path="common.search" data-enter="true" data-placeholder="@(Type a phrase and press enter)"></div>
 				</div>
@@ -146,6 +150,7 @@
 			this.volume = 1;
 			this.ticks = Date.now();
 			this.online = false;
+			this.stats = null;
 		});
 
 		// Cache in localStorage

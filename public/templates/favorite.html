@@ -34,6 +34,7 @@
 		SET('current.descripriton', '@(All stored favorites messages)');
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
+		SET('common.stats', null);
 
 		WAIT(function() {
 			return current.users !== EMPTYARRAY;

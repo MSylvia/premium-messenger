@@ -41,6 +41,7 @@
 		$('#messagebox').addClass('hidden');
 		EMIT('resize');
 		users_refresh();
+		SET('common.stats', null);
 	}
 
 	WATCH('current.users', users_refresh);

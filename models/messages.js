@@ -18,7 +18,12 @@ NEWSCHEMA('Message').make(function(schema) {
 		controller.user.unread[id] && (delete controller.user.unread[id]);
 
 		if (controller.query.q) {
-			NOSQL(controller.id + '-backup').find().search('search', controller.query.q.keywords(true, true)).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(callback);
+			NOSQL(controller.id + '-backup').find().search('search', controller.query.q.keywords(true, true)).page((controller.query.page || 1) - 1, controller.query.max || 15).callback(function(err, response) {
+				var output = SINGLETON('messages.query');
+				output.items = response;
+				output.stats = undefined;
+				callback(output);
+			});
 			return;
 		}
 
@@ -29,10 +34,17 @@ NEWSCHEMA('Message').make(function(schema) {
 			controller.query.max = 15;
 
 		db.find().sort('datecreated', true).page((controller.query.page || 1) - 1, controller.query.max + count).callback(function(err, response) {
+
 			// Sets the first message as read message
 			if (controller.query.page === 1 && id && response.length)
 				controller.user.lastmessages[id] = response[0].id;
-			callback(response);
+
+			db.counter.monthly('all', function(err, counter) {
+				var output = SINGLETON('messages.query');
+				output.items = response;
+				output.stats = counter;
+				callback(output);
+			});
 		});
 	});
 

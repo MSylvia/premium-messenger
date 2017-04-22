@@ -85,17 +85,21 @@
 			if (err)
 				return;
 
+			var items = response.items;
+
+			SET('common.stats', response.stats);
+
 			// We have to reverse array because all messages are from newest to older
-			response.reverse();
+			items.reverse();
 
 			if (CHATFILTER.page === 1) {
 				FIND('chat', function() {
 					this.clean();
-					this.insert(response);
+					this.insert(items);
 				});
-				SET('chat.empty', response.length === 0);
+				SET('chat.empty', items.length === 0);
 			} else
-				SETTER('chat', 'prepend', response);
+				SETTER('chat', 'prepend', items);
 
 			SETTER('websocket', 'send', MSG_ROUTE);
 			SETTER('loading', 'hide', 500);
@@ -122,11 +126,13 @@
 		AJAX('GET /api/messages/{0}/'.format((MSG_ROUTE.type === 'channel' ? 'channel' : 'user') + MSG_ROUTE.id), CHATSEARCH, function(response) {
 			SETTER('loading', 'hide', 1000);
 
-			response.forEach(function(item) {
+			var items = response.items;
+
+			items.forEach(function(item) {
 				item.user = current.users.findItem('id', item.iduser);
 			});
 
-			SET('chat.search', response);
+			SET('chat.search', items);
 			setTimeout(function() {
 				var el = $('#chatsearchresult');
 				marked_video(el);
