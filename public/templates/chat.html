@@ -1,7 +1,7 @@
 <div data-b="common.search" data-b-visible="n => n" class="hidden">
 	<div class="padding">
 		<h3><i class="fa fa-search mr5"></i>@(Search results)</h3>
-		<div data-jc="repeater" data-jc-path="chat.search" class="chat">
+		<div data-jc="repeater" data-jc-path="chat.search" class="chat" id="chatsearchresult">
 			<script type="text/html">
 				{{ if user }}
 				<figure class="chat-message{{ if !read }} chat-unread{{ fi }}{{ if user.me }} me{{ fi }}">
@@ -127,6 +127,12 @@
 			});
 
 			SET('chat.search', response);
+			setTimeout(function() {
+				var el = $('#chatsearchresult');
+				marked_video(el);
+				marked_iframe(el);
+				highlight(el);
+			}, 500);
 		});
 	});
 
@@ -300,7 +306,7 @@
 
 			var content = $('#content');
 			content.on('scroll', function() {
-				if (!self.next || common.page !== 'chat')
+				if (!self.next || common.page !== 'chat' || common.search)
 					return;
 				setTimeout2('contentscroll', function() {
 					content.scrollTop() === 0 && chat_reload(CHATFILTER.page + 1);
