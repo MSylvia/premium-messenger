@@ -6,7 +6,7 @@ html { overflow: hidden; }
 html,body { margin: 0; height: 100%; position: relative; }
 body { background-color: white; padding: 0; color: gray; font-smoothing: antialiased; overflow-y: scroll; overflow-x: hidden; overflow-scrolling: touch; font-family: Arial; font-size: 14px; }
 
-.panel { height: 100%; float: left; background-color: #303030; width: 220px; overflow: hidden; transition: left 0.5s; box-shadow: 5px 0 10px rgba(0,0,0,0.1); }
+.panel { height: 100%; float: left; background: #303030 linear-gradient(-90deg,#303030,#252525); width: 220px; overflow: hidden; transition: left 0.5s; box-shadow: 5px 0 10px rgba(0,0,0,0.1); }
 .panel .padding { padding: 5px 20px; }
 .panel hr { border-color: #404040; }
 .body { height: 100%; margin-left: 220px; overflow: hidden; }
@@ -47,7 +47,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .mainmenu { position: absolute; }
 .monospace { font-family: Menlo, Monaco, monospace; }
 
-.caption { font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.caption { font-size: 12px; font-weight: bold; color: silver; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .caption .operation { float: right; margin: -3px 0 0 7px; font-size: 14px; cursor: pointer; opacity: .4; font-size: 15px; }
 .caption .operation:first-child { margin-right: 21px; font-size: 14px; }
 .caption .operation:hover { opacity: 1; }
@@ -86,7 +86,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .panel nav a { color: gray; display: block; padding: 1px 0 1px 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 15px; border-radius: 0 4px 4px 0; margin-bottom: 2px; }
 .panel nav a:hover { background-color: #404040; text-decoration: none; }
 .panel nav .fa { width: 16px; opacity: 0.5; font-size: 11px; float: left; margin: 5px 0 0 0; }
-.panel nav .selected { background-color: #202020 !important; color: white !important; }
+.panel nav .selected { background-color: #383838 !important; color: white !important; }
 .panel nav .highlight { color: #FFCE54; font-weight: bold; }
 .panel nav .fa-heart { color: #FF5651; opacity: 1; }
 .panel nav .fa-check-circle { color: #92E464; opacity: 1; }
