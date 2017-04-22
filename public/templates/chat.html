@@ -71,8 +71,8 @@
 
 <script>
 	var MSG_ROUTE = {};
-	var CHATFILTER = { max: 15 };
-	var CHATSEARCH = { max: 30, q: '', page: 1 };
+	var CHATFILTER = { max: WIDTH() === 'xs' ? 15 : 25 };
+	var CHATSEARCH = { max: 35, q: '', page: 1 };
 	var chat = { empty: true, lastmessage: null };
 
 	function chat_reload(page) {
