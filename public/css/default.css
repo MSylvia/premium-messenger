@@ -6,7 +6,7 @@ html { overflow: hidden; }
 html,body { margin: 0; height: 100%; position: relative; }
 body { background-color: white; padding: 0; color: gray; font-smoothing: antialiased; overflow-y: scroll; overflow-x: hidden; overflow-scrolling: touch; font-family: Arial; font-size: 14px; }
 
-.panel { height: 100%; float: left; background: #303030 linear-gradient(-90deg,#303030,#252525); width: 220px; overflow: hidden; transition: left 0.5s; box-shadow: 5px 0 10px rgba(0,0,0,0.1); }
+.panel { height: 100%; float: left; background: #303030 linear-gradient(-90deg,#303030,#252525); width: 220px; overflow: hidden; transition: left 0.5s; box-shadow: inset -10px 0 10px rgba(0,0,0,0.3), 5px 0 10px rgba(0,0,0,0.1); }
 .panel .padding { padding: 5px 20px; }
 .panel hr { border-color: #404040; }
 .body { height: 100%; margin-left: 220px; overflow: hidden; }
