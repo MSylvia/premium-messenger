@@ -22,6 +22,7 @@ NEWOPERATION('users.load', function(error, value, callback) {
 				user.department = 'Members';
 
 			!user.lastmessages && (user.lastmessages = {});
+			!user.blacklist && (user.blacklist = {});
 
 			// Cleaner for unhandled assignment
 			delete user.recent[''];

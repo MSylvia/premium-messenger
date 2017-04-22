@@ -213,7 +213,7 @@ F.global.sendmessage = function(client, message) {
 		// Set "unread" for users outside of this channel
 		for (var i = 0, length = F.global.users.length; i < length; i++) {
 			var user = F.global.users[i];
-			if (!tmp[user.id] && (!user.channels || user.channels[idchannel]) && (!message.users || message.users[user.id])) {
+			if (!tmp[user.id] && (!user.blacklist || !user.blacklist[idchannel]) && (!user.channels || user.channels[idchannel]) && (!message.users || message.users[user.id])) {
 				if (user.unread[idchannel])
 					user.unread[idchannel]++;
 				else
@@ -222,7 +222,7 @@ F.global.sendmessage = function(client, message) {
 		}
 
 		self && self.all(function(m) {
-			if (m.user.id !== iduser && m.threadid !== client.threadid && (!m.user.channels || m.user.channels[client.threadid]) && (!message.users || message.users[m.user.id])) {
+			if (m.user.id !== iduser && m.threadid !== client.threadid && (!m.user.blacklist || !m.user.blacklist[client.threadid]) && (!m.user.channels || m.user.channels[client.threadid]) && (!message.users || message.users[m.user.id])) {
 				MSG_UNREAD.unread = m.user.unread;
 				MSG_UNREAD.lastmessages = m.user.lastmessages;
 				MSG_UNREAD.recent = undefined;

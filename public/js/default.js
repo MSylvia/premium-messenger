@@ -39,7 +39,9 @@ ON('resize', function() {
 	else
 		msgbox = msgbox.height();
 
-	$('#content').css('height', height - $('#header').height() - (msgbox));
+	var header = $('#header').height();
+
+	$('#content').css({ 'margin-top': header }).css('height', height - header - (msgbox));
 	var tmp = $('#panel');
 	tmp.css('height', height - tmp.offset().top);
 });
@@ -149,6 +151,40 @@ function mailify(str, a) {
 			l = '';
 		return (a ? '<a href="mailto:{0}">{0}</a>'.format(m) : '[' + m + '](mailto:' + m + ')') + l;
 	});
+}
+
+function hashtagify(str) {
+	var beg = -1;
+	while (true) {
+		beg = str.indexOf('#', beg);
+		if (beg === -1)
+			return str;
+
+		var p = str.substring(beg - 1, beg);
+		if (p && p !== ' ') {
+			beg++;
+			continue;
+		}
+
+		var end = str.length;
+
+		for (var i = beg; i < beg + 15; i++) {
+			var c = str.charCodeAt(i);
+			switch (c) {
+				case 32:
+				case 44:
+				case 45:
+				case 46:
+				case 58:
+				case 59:
+					end = i;
+					break;
+			}
+		}
+
+		var hash = str.substring(beg, end);
+		str = str.replace(hash, '');
+	}
 }
 
 function findfiles(str) {

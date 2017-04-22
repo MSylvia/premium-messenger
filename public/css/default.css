@@ -6,9 +6,9 @@ html { overflow: hidden; }
 html,body { margin: 0; height: 100%; position: relative; }
 body { background-color: white; padding: 0; color: gray; font-smoothing: antialiased; overflow-y: scroll; overflow-x: hidden; overflow-scrolling: touch; font-family: Arial; font-size: 14px; }
 
-.panel { height: 100%; float: left; background-color: #303E4D; width: 220px; overflow: hidden; transition: left 0.5s; }
+.panel { height: 100%; float: left; background-color: #303030; width: 220px; overflow: hidden; transition: left 0.5s; box-shadow: 5px 0 10px rgba(0,0,0,0.1); }
 .panel .padding { padding: 5px 20px; }
-.panel hr { border-color: #283440; }
+.panel hr { border-color: #404040; }
 .body { height: 100%; margin-left: 220px; overflow: hidden; }
 
 .padding { padding: 20px; }
@@ -31,10 +31,10 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .npb { padding-bottom: 0; }
 .npt { padding-top: 0; }
 
-#header { border-bottom: 1px solid #E0E0E0; padding: 0 20px; background: linear-gradient(white,#F8F8F8); min-height: 60px; }
+#header { border-bottom: 1px solid #E0E0E0; padding: 0 20px; background: linear-gradient(white,#F5F5F5); min-height: 60px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); position: fixed; right: 0; left: 220px; z-index: 5; }
 #header .m { margin-bottom: 0;}
 #content { overflow-y: auto; overflow-x: hidden; width: 100%; overflow-scrolling: touch; }
-#messagebox { min-height: 65px; }
+#messagebox { min-height: 65px; box-shadow: 0 -5px 10px rgba(0,0,0,0.1); position: fixed; bottom: 0; left: 220px; right: 0; }
 #status { border-top: 1px solid #E0E0E0; height: 30px; font-size: 11px; padding: 5px 0 0 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: gray; background: linear-gradient(white,#F8F8F8); line-height: 16px; }
 #status .fa { font-size: 16px; vertical-align: middle; line-height: 0; }
 #status > div { float: left; margin-right: 10px; }
@@ -47,8 +47,9 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .mainmenu { position: absolute; }
 .monospace { font-family: Menlo, Monaco, monospace; }
 
-.caption { font-size: 12px; font-weight: bold; color: #9AA7B3; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.caption .operation { float: right; margin: -2px 21px 0 0; font-size: 14px; cursor: pointer; opacity: .4; }
+.caption { font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.caption .operation { float: right; margin: -3px 0 0 7px; font-size: 14px; cursor: pointer; opacity: .4; font-size: 15px; }
+.caption .operation:first-child { margin-right: 21px; font-size: 14px; }
 .caption .operation:hover { opacity: 1; }
 
 .chat { padding-bottom: 10px; }
@@ -82,31 +83,30 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .chat-favorite .fa-heart { color: #D63B32; }
 .chat .fa-thumbs-up { color: #4A89DC !important; }
 
-.panel nav a { color: #99A0A7; display: block; padding: 1px 0 1px 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 15px; border-radius: 0 4px 4px 0; margin-bottom: 2px; }
-.panel nav a:hover { background-color: #404C5B; text-decoration: none; }
+.panel nav a { color: gray; display: block; padding: 1px 0 1px 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 15px; border-radius: 0 4px 4px 0; margin-bottom: 2px; }
+.panel nav a:hover { background-color: #404040; text-decoration: none; }
 .panel nav .fa { width: 16px; opacity: 0.5; font-size: 11px; float: left; margin: 5px 0 0 0; }
-.panel nav .selected { background-color: #6698C8 !important; color: white !important; }
-.panel nav .highlight { color: yellow; font-weight: bold; }
+.panel nav .selected { background-color: #202020 !important; color: white !important; }
+.panel nav .highlight { color: #FFCE54; font-weight: bold; }
 .panel nav .fa-heart { color: #FF5651; opacity: 1; }
 .panel nav .fa-check-circle { color: #92E464; opacity: 1; }
 .panel .caption { margin: 20px 0 5px 20px; }
-.panel hr { border-color: #404C5B; }
 
 .panel .user { color: white; padding: 20px 20px 5px; }
 .panel .user-name { font-size: 18px; font-weight: bold; }
 .panel .user-name img { margin-right: 10px; border-radius: 4px; }
 .panel .user-name > .fa { width: 26px; }
-.panel .user-stats { margin: 5px 0 0; font-size: 11px; color: #99A0A7; float: left; }
+.panel .user-stats { margin: 5px 0 0; font-size: 11px; color: gray; float: left; }
 .panel .user-settings { margin: 3px 0 0; font-size: 14px; float: right;  }
-.panel .user-settings .off { color: #4C5A6D !important; }
-.panel .user-settings .fa { margin-left: 7px; padding-left: 7px; cursor: pointer; color: #99A0A7; border-left: 1px solid #404C5B; width: 16px; text-align: center; }
+.panel .user-settings .off { color: gray !important; }
+.panel .user-settings .fa { margin-left: 7px; padding-left: 7px; cursor: pointer; color: #FFCE54; border-left: 1px solid #505050; width: 16px; text-align: center; }
 .panel .user-settings .fa:first-child { margin-left: 0; padding-left: 0; border-left: 0; }
 .panel nav .operation { float: right; }
 
 .search .fa-times { color: #D63B32; cursor: pointer; }
 
-.panel .search { background-color: #404C5B; border-radius: 4px; margin: 10px 20px 20px; padding: 2px; overflow: hidden; color: #5C6D83; }
-.panel .search span { float: left; width: 30px; font-size: 12px; border-right: 1px solid #4C5A6C; text-align: center; height: 22px; padding: 3px 0 0 0; }
+.panel .search { background-color: #404040; border-radius: 4px; margin: 10px 20px 20px; padding: 2px; overflow: hidden; color: gray; }
+.panel .search span { float: left; width: 30px; font-size: 12px; border-right: 1px solid #505050; text-align: center; height: 22px; padding: 3px 0 0 0; }
 .panel .search div { margin-left: 30px; padding: 0 10px; height: 22px; }
 .panel .search input { background: transparent; border: 0; padding: 0; margin: 0; font-family: Arial; font-size: 12px; color: #E0E0E0; outline: 0; width: 100%; }
 
@@ -288,4 +288,13 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 	.chat-picture { width: 24px; }
 	.chat-body { margin-left: 35px; }
 	.chat figure { padding: 10px 10px; }
+	#messagebox { left: 0; }
+	#header { left: 0; }
 }
+
+.blacklist .item { margin-bottom: 1px; padding: 5px 10px; cursor: pointer; color: white; border-radius: 4px; background-color: #D63B32; }
+.blacklist .item:first-child { border-top: 0; }
+.blacklist .item .fa { width: 24px; border-right: 1px solid #E0E0E0; margin-right: 10px; }
+.blacklist .fa:before { content: '\f070'; }
+.blacklist .item-visible .fa:before { content: '\f06e'; }
+.blacklist .item-visible { font-weight: bold; background-color: #68B25B; }

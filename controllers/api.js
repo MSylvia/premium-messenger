@@ -19,6 +19,7 @@ exports.install = function() {
 		// Channels (SA)
 		F.route('/api/channels/',       json_save,     ['*Channel', 'post']);
 		F.route('/api/channels/{id}/',  json_remove,   ['*Channel', 'delete']);
+		F.route('/api/blacklist/',      json_blacklist,['post']);
 
 		// Messages
 		F.route('/api/messages/{id}/',  json_query,    ['*Message']);
@@ -167,6 +168,19 @@ function json_exec(id) {
 function json_files(id) {
 	this.id = id;
 	this.$workflow('files', this.callback());
+}
+
+function json_blacklist() {
+	var self = this;
+	if (self.body instanceof Array) {
+		self.user.blacklist = {};
+		for (var i = 0, length = self.body.length; i < length; i++) {
+			var id = self.body[i];
+			id.isUID() && (self.user.blacklist[id] = true);
+		}
+		OPERATION('users.save', NOOP);
+	}
+	self.json(SUCCESS(true));
 }
 
 function logoff() {

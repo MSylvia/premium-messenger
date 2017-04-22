@@ -52,10 +52,10 @@
 		<hr class="nmt nmb" />
 		<div id="panel">
 			<div data-jc="search" data-jc-path="panel.search" data-selector=".jsearch">
-				<div class="caption jsearch" data-search="">@{if user.sa}<div class="operation exec" data-path="common.form" data-value="'formchannel'"><i class="fa fa-plus-square-o"></i></div>@{fi}@(Channels)</div>
+				<div class="caption jsearch" data-search=""><div class="operation exec" data-path="common.form" data-value="'formblacklist'"><i class="fa fa-rss-square"></i></div>@{if user.sa}<div class="operation exec" data-path="common.form" data-value="'formchannel'"><i class="fa fa-plus-square-o"></i></div>@{fi}@(Channels)</div>
 				<nav data-jc="repeater" data-jc-path="current.channels" class="nav-channels">
 					<script type="text/html">
-						{{ if is }}
+						{{ if is && visible }}
 						<a href="/channels/{{ linker }}/" class="jrouting jsearch" data-id="{{ id }}" data-search="{{ name }}">@{if user.sa }<span class="operation" data-name="channel"><i class="fa fa-pencil"></i></span>@{fi}<i class="fa fa-hashtag"></i>{{ name }}</a>
 						{{ fi }}
 					</script>
@@ -129,11 +129,14 @@
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'searchresults'" data-url="/forms/searchresults.html" data-reload="searchresults_reload"></div>
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'help'" data-url="/forms/help.html"></div>
 	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'files'" data-url="/forms/files.html" data-reload="files_reload"></div>
+	<div data-jc="importer" data-jc-path="common.form" data-if="value === 'formblacklist'" data-url="/forms/formblacklist.html" data-reload="formblacklist_reload"></div>
 	<input type="file" id="uploadfile" class="hidden" />
 
 	@{json(user, 'userdata', (k, v) => k !== 'password' ? v : undefined)}
 
 	<script>
+
+		jC.$version = 2;
 
 		MAKE('common', function() {
 			this.enter == null && (this.enter = true);
@@ -248,6 +251,7 @@
 
 						response.channels.forEach(function(item) {
 							item.is = user.channels ? user.channels[item.id] === true : true;
+							item.visible = user.blacklist ? (user.blacklist[item.id] ? false : true) : true;
 						});
 
 						SET('current.channels', response.channels);
