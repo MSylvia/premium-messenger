@@ -95,16 +95,16 @@ WORKFLOW('messenger.render', function(message) {
 SETTER('websocket', 'send', OBJECT);
 ```
 
-## HTML Formatting
+## HTML Formatting
 
 `+v2.0.0`. Administrators have disabled `xss` protection, s each admin can inject a raw HTML into the markdown directly, example:
 
 ```markdown
 Only administrators can inject HTML directly via:
 
-\`\`\`xss
+```xss
 <b>THIS WILL BE BOLDED</b>
-\`\`\`
+```
 ```
 
 ## Contributors
