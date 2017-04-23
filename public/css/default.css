@@ -31,11 +31,11 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 .npb { padding-bottom: 0; }
 .npt { padding-top: 0; }
 
-#header { border-bottom: 1px solid #E0E0E0; padding: 0 20px; background: linear-gradient(white,#F5F5F5); min-height: 60px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); position: fixed; right: 0; left: 220px; z-index: 5; }
+#header { border-bottom: 1px solid #E0E0E0; padding: 0 20px; background: linear-gradient(white,#F5F5F5); min-height: 60px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); position: fixed; right: 0; left: 220px; z-index: 5; }
 #header .m { margin-bottom: 0;}
 #header .ui-nosqlcounter { height: 33px; margin: 12px 0 0 0; }
 #content { overflow-y: auto; overflow-x: hidden; width: 100%; overflow-scrolling: touch; }
-#messagebox { min-height: 65px; box-shadow: 0 -5px 10px rgba(0,0,0,0.1); position: fixed; bottom: 0; left: 220px; right: 0; }
+#messagebox { min-height: 65px; box-shadow: 0 -3px 10px rgba(0,0,0,0.08); position: fixed; bottom: 0; left: 220px; right: 0; }
 #status { border-top: 1px solid #E0E0E0; height: 30px; font-size: 11px; padding: 5px 0 0 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: gray; background: linear-gradient(white,#F8F8F8); line-height: 16px; }
 #status .fa { font-size: 16px; vertical-align: middle; line-height: 0; }
 #status > div { float: left; margin-right: 10px; }
@@ -283,7 +283,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 	.bl { border-width: 0; }
 	.mainmenu { right: 20px; font-size: 22px; margin: 15px 0 0; color: gray; z-index: 5; }
 	.body { margin-left: 0; }
-	.panel { position: absolute; left: -240px; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+	.panel { position: absolute; left: -240px; z-index: 10; box-shadow: 3px 0 10px rgba(0,0,0,0.1); }
 	.panel-xs { left: 0; }
 	.section { margin: 0 25px; }
 	.chat-picture { width: 24px; }
