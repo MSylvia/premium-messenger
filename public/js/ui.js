@@ -2136,10 +2136,13 @@ COMPONENT('fontawesome', function() {
 COMPONENT('nosqlcounter', function() {
 	var self = this;
 	var count = (self.attr('data-count') || '0').parseInt();
+	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 	self.readonly();
 	self.make = function() {
 		self.toggle('ui-nosqlcounter hidden', true);
+		var calendar = FIND('calendar');
+		calendar && (months = calendar.months);
 	};
 
 	self.setter = function(value) {
@@ -2161,22 +2164,28 @@ COMPONENT('nosqlcounter', function() {
 			maxbars = maxbars / 2;
 
 		var dt = new Date();
-		var stats = [];
+		var current = dt.format('yyyyMM');
+		var stats = null;
 
-		for (var i = 0; i < maxbars; i++) {
-			var id = dt.format('yyyyMM');
-			var item = value.findItem('id', id);
-			stats.push(item ? item : { id: id, month: dt.getMonth() + 1, year: dt.getFullYear(), value: 0 });
-			dt = dt.add('-1 month');
+		if (self.attr('data-lastvalues') === 'true') {
+			var max = value.length - maxbars;
+			if (max < 0)
+				max = 0;
+			stats = value.slice(max, value.length);
+		} else {
+			stats = [];
+			for (var i = 0; i < maxbars; i++) {
+				var id = dt.format('yyyyMM');
+				var item = value.findItem('id', id);
+				stats.push(item ? item : { id: id, month: dt.getMonth() + 1, year: dt.getFullYear(), value: 0 });
+				dt = dt.add('-1 month');
+			}
+			stats.reverse();
 		}
-
-		stats.reverse();
 
 		var max = stats.scalar('max', 'value');
 		var bar = 100 / maxbars;
 		var builder = [];
-		var months = FIND('calendar').months;
-		var current = new Date().format('yyyyMM');
 		var cls = '';
 
 		stats.forEach(function(item, index) {
