@@ -4,7 +4,7 @@
 
 # Installation
 
-- __Premium Messenger__ (v1.1.0) needs latest Total.js from NPM `+v2.4.0`
+- __Premium Messenger__ (v2.0.0) needs latest Total.js from NPM `+v2.5.0`
 - __License__: [MIT](license.txt)
 - [__Live chat with professional support__](https://messenger.totaljs.com)
 - [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
@@ -93,6 +93,18 @@ WORKFLOW('messenger.render', function(message) {
 
 // How to send a message to the server via WebSocket?
 SETTER('websocket', 'send', OBJECT);
+```
+
+## HTML Formatting
+
+`+v2.0.0`. Administrators have disabled `xss` protection, s each admin can inject a raw HTML into the markdown directly, example:
+
+```markdown
+Only administrators can inject HTML directly via:
+
+\`\`\`xss
+<b>THIS WILL BE BOLDED</b>
+\`\`\`
 ```
 
 ## Contributors
