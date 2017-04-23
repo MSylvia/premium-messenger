@@ -33,7 +33,7 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 
 #header { border-bottom: 1px solid #E0E0E0; padding: 0 20px; background: linear-gradient(white,#F5F5F5); min-height: 60px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); position: fixed; right: 0; left: 220px; z-index: 5; }
 #header .m { margin-bottom: 0;}
-#header .ui-nosqlcounter { height: 34px; margin: 12px 0 0 0; }
+#header .ui-nosqlcounter { height: 33px; margin: 12px 0 0 0; }
 #content { overflow-y: auto; overflow-x: hidden; width: 100%; overflow-scrolling: touch; }
 #messagebox { min-height: 65px; box-shadow: 0 -5px 10px rgba(0,0,0,0.1); position: fixed; bottom: 0; left: 220px; right: 0; }
 #status { border-top: 1px solid #E0E0E0; height: 30px; font-size: 11px; padding: 5px 0 0 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: gray; background: linear-gradient(white,#F8F8F8); line-height: 16px; }
@@ -113,8 +113,8 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 
 .section { border: 1px solid #E0E0E0; border-radius: 4px; }
 
-#header .search { background-color: white; border-radius: 4px; margin: 12px 0 0; padding: 2px; overflow: hidden; color: gray; border: 1px solid #D0D0D0; margin-right: 45px; }
-#header .search span { float: left; width: 40px; font-size: 14px; border-right: 1px solid #D0D0D0; text-align: center; height: 28px; padding: 6px 0 0 0; }
+#header .search { background-color: white; border-radius: 4px; margin: 12px 0 0; padding: 2px; overflow: hidden; color: gray; border: 1px solid #E0E0E0; margin-right: 45px; }
+#header .search span { float: left; width: 40px; font-size: 14px; border-right: 1px solid #E0E0E0; text-align: center; height: 28px; padding: 6px 0 0 0; }
 #header .search div { margin-left: 40px; padding: 6px 10px 0; height: 28px; }
 #header .search input { background: transparent; border: 0; padding: 0; margin: 0; font-family: Arial; font-size: 14px; color: black; outline: 0; width: 100%; }
 #header p { font-size: 12px; margin: 0; padding: 0; line-height: 14px; }

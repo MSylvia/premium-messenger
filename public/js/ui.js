@@ -716,19 +716,10 @@ COMPONENT('form', function() {
 COMPONENT('repeater-group', function() {
 
 	var self = this;
-	var html;
 	var template_group;
 	var group;
 
 	self.readonly();
-
-	self.released = function(is) {
-		if (is) {
-			html = self.html();
-			self.empty();
-		} else
-			html && self.html(html);
-	};
 
 	self.make = function() {
 		group = self.attr('data-group');
@@ -753,7 +744,6 @@ COMPONENT('repeater-group', function() {
 		if (NOTMODIFIED(self.id, value))
 			return;
 
-		html = '';
 		var length = value.length;
 		var groups = {};
 
@@ -1377,7 +1367,7 @@ COMPONENT('search', function() {
 					hide.push(el);
 				else
 					show.push(el);
-				setTimeout(next, 3);
+				next();
 			}, function() {
 
 				hide.forEach(function(item) {
@@ -2145,37 +2135,51 @@ COMPONENT('fontawesome', function() {
 
 COMPONENT('nosqlcounter', function() {
 	var self = this;
-	var count = (self.attr('data-count') || '12').parseInt();
+	var count = (self.attr('data-count') || '0').parseInt();
 
 	self.readonly();
 	self.make = function() {
-		self.toggle('ui-nosqlcounter', true);
+		self.toggle('ui-nosqlcounter hidden', true);
 	};
 
 	self.setter = function(value) {
 
-		if (!value || !value.length)
+		var is = !value || !value.length;
+		self.toggle('hidden', is);
+
+		if (is)
 			return self.empty();
 
-		var maxbars = count;
+		var maxbars = 12;
+
+		if (count === 0)
+			maxbars = self.element.width() / 30 >> 0;
+		else
+			maxbars = count;
 
 		if (WIDTH() === 'xs')
-			maxbars = (maxbars / 2) >> 0;
+			maxbars = maxbars / 2;
 
-		var max = value.length - maxbars;
-		if (max < 0)
-			max = 0;
+		var dt = new Date();
+		var stats = [];
 
-		value = value.slice(max, value.length);
-		max = value.scalar('max', 'value');
+		for (var i = 0; i < maxbars; i++) {
+			var id = dt.format('yyyyMM');
+			var item = value.findItem('id', id);
+			stats.push(item ? item : { id: id, month: dt.getMonth() + 1, year: dt.getFullYear(), value: 0 });
+			dt = dt.add('-1 month');
+		}
 
+		stats.reverse();
+
+		var max = stats.scalar('max', 'value');
 		var bar = 100 / maxbars;
 		var builder = [];
 		var months = FIND('calendar').months;
 		var current = new Date().format('yyyyMM');
 		var cls = '';
 
-		value.forEach(function(item, index) {
+		stats.forEach(function(item, index) {
 			var val = item.value;
 			if (val > 999)
 				val = (val / 1000).format(1, 2) + 'K';
@@ -2183,15 +2187,15 @@ COMPONENT('nosqlcounter', function() {
 			var h = (item.value / max) * 60;
 			h += 40;
 
-			cls = '';
+			cls = item.value ? '' : 'empty';
 
 			if (item.id === current)
 				cls += (cls ? ' ' : '') + 'current';
 
-			if (index === 11)
+			if (index === maxbars - 1)
 				cls += (cls ? ' ' : '') + 'last';
 
-			builder.push('<div style="width:{0}%;height:{1}%" title="{3}" class="{4}"><span>{2}</span></div>'.format(bar.format(0, 3), h.format(0, 3), val, months[item.month - 1] + ' ' + item.year, cls));
+			builder.push('<div style="width:{0}%;height:{1}%" title="{3}" class="{4}"><span>{2}</span></div>'.format(bar.format(2, ''), h.format(0, ''), val, months[item.month - 1] + ' ' + item.year, cls));
 		});
 
 		self.html(builder);
@@ -2447,6 +2451,46 @@ COMPONENT('calendar', function() {
 			header.push('<th>{0}</th>'.format(output.header[i].name));
 
 		self.html('<div class="ui-calendar-header"><button class="ui-calendar-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-chevron-left"></span></button><div class="ui-calendar-header-info">{2} {3}</div><button class="ui-calendar-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-chevron-right"></span></button></div><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table>'.format(output.year, output.month, self.months[value.getMonth()], value.getFullYear(), header.join(''), builder.join('')) + (self.today ? '<div><a href="javascript:void(0)" class="ui-calendar-today">' + self.today + '</a></div>' : ''));
+	};
+});
+
+COMPONENT('lazyload', function() {
+	var self = this;
+	var selector, container, offset;
+
+	self.readonly();
+
+	self.make = function() {
+		selector = self.attr('data-selector');
+		offset = +(self.attr('data-offset') || 50);
+		container = $(self.attr('data-container') || window);
+		container.on('scroll', self.refresh);
+		setTimeout(function() {
+			self.refresh();
+		}, 1000);
+	};
+
+	self.refresh = function() {
+		!self.release() && setTimeout2(self.id, self.prepare, 200);
+	};
+
+	self.released = self.refresh;
+	self.setter = self.refresh;
+
+	self.prepare = function() {
+		var scroll = container.scrollTop();
+		var beg = scroll - offset;
+		var end = beg + container.height() + offset;
+		self.find(selector).each(function() {
+			if (this.getAttribute('data-lazyload'))
+				return;
+			var el = $(this);
+			var top = (container !== window ? scroll : 0) + el.offset().top;
+			if (top >= beg && top <= end) {
+				el.attr('data-lazyload', true);
+				EXEC(self.attr('data-exec'), el);
+			}
+		});
 	};
 });
 
