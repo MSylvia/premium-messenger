@@ -102,15 +102,15 @@ SETTER('websocket', 'send', OBJECT);
 ```markdown
 Only administrators can inject HTML directly via:
 
- ```xss
+\```xss
  <b>THIS WILL BE BOLDED</b>
- ```
+\```
 ```
 
-## Contributors
+## Contributors
 
 - Peter Širka (author) <petersirka@gmail.com>
-- Martin Smola (support)  <smola.martin@gmail.com>
+- Martin Smola (support) <smola.martin@gmail.com>
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: license.txt
