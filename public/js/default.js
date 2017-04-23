@@ -59,8 +59,10 @@ function scrollBottom() {
 }
 
 Tangular.register('markdown', function(value) {
+	var xss = marked_xss_parse(value, this.user.sa);
+
 	MARKDOWN.message = this;
-	MARKDOWN.html = marked(marked_features(value)).replace(REGEXP.smiles, function(text) {
+	MARKDOWN.html = marked(marked_features(xss.body)).replace(REGEXP.smiles, function(text) {
 		return text.replace(REGEXP.l, '<').replace(REGEXP.g, '>').replace(REGEXP.quotes, '"');
 	}).replace(/<img/g, '<img class="img-responsive"').replace(REGEXP.table, '<table class="table table-bordered"').replace(/<a\s/g, '<a target="_blank"');
 
@@ -71,16 +73,45 @@ Tangular.register('markdown', function(value) {
 		var index = text.indexOf('@');
 		var l = text.substring(text.length - 1);
 		var u = current.users.findItem('linker', text.substring(index + 1).trim());
-
 		if (l !== ' ' && l !== '>')
 			l = '';
-		// <img src="/photos/{0}.jpg" alt="{1}" width="18" border="0" class="chat-user-picture" />
 		return u ? ((text.substring(0, index) + '<a href="javascript:void(0)" class="b userlinker" data-linker="{2}">{1}</a>'.format(u.picture, Tangular.helpers.encode(u.name), u.linker)) + l) : text;
 	}).trim();
+
+	xss.body = MARKDOWN.html;
+	MARKDOWN.html = marked_xss_inject(xss, this.user.sa);
 
 	WORKFLOW('messenger.render')(MARKDOWN);
 	return MARKDOWN.html;
 });
+
+function marked_xss_parse(body, can) {
+	var xss_script = /<script.*?>.*?<\/script>/igm;
+	var beg = -1;
+	var obj = {};
+	obj.body = body;
+	obj.cache = [];
+
+	if (!can)
+		return obj;
+
+	while (true) {
+		beg = obj.body.indexOf('```xss', beg);
+		if (beg === -1)
+			return obj;
+		var end = obj.body.indexOf('```', beg + 6);
+		if (end === -1)
+			return obj;
+		obj.cache.push(obj.body.substring(beg + 6, end).replace(xss_script, ''));
+		obj.body = obj.body.substring(0, beg) + '$$' + (obj.cache.length - 1) + '$$' + obj.body.substring(end + 3);
+	}
+}
+function marked_xss_inject(obj, can) {
+
+	return can ? obj.body.replace(/\$\$\d+\$\$/g, function(id) {
+		return obj.cache[+id.replace(/\$/g, '')];
+	}) : obj.body;
+}
 
 function marked_features(str) {
 	var builder = [];

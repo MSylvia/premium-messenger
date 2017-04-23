@@ -37,6 +37,7 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.notifications = model.notifications;
 			model.password && !model.password.startsWith('****') && (tmp.password = model.password.sha1());
 			tmp.channels && F.global.channels.forEach(n => tmp.unread[n.id] && (delete tmp.unread[n.id]));
+			tmp.sa = model.sa;
 		} else {
 			tmp = model.$clean();
 			tmp.id = UID();
@@ -47,6 +48,7 @@ NEWSCHEMA('User').make(function(schema) {
 			tmp.lastmessages = {};
 			tmp.online = false;
 			tmp.linker = model.name.slug();
+			tmp.sa = model.sa;
 			F.global.users.push(tmp);
 		}
 
