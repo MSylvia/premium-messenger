@@ -102,9 +102,9 @@ SETTER('websocket', 'send', OBJECT);
 ```markdown
 Only administrators can inject HTML directly via:
 
-```xss
-<b>THIS WILL BE BOLDED</b>
-```
+ ```xss
+ <b>THIS WILL BE BOLDED</b>
+ ```
 ```
 
 ## Contributors
