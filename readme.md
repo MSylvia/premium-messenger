@@ -27,7 +27,7 @@
 
 ## How can I extend messenger independently?
 
-### Server-side
+### Server-side
 
 ```javascript
 F.on('messenger.open', function(controller, client) {
@@ -67,7 +67,7 @@ OPERATION('send', options, function(err, response) {
 });
 ```
 
-### Client-side
+### Client-side
 
 ```javascript
 ON('messager.ready', function() {
