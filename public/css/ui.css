@@ -180,7 +180,7 @@ label span { vertical-align: middle; }
 .ui-nosqlcounter div:hover { opacity: 0.8; }
 .ui-nosqlcounter span { border-bottom: 1px solid rgba(255,255,255,0.5); display: block; padding: 2px 0; overflow: hidden; white-space: nowrap; }
 .ui-nosqlcounter .empty { background-color: #A0A0A0; }
-.ui-nosqlcounter .current { background-color: #E74024; }
+.ui-nosqlcounter .current { background-color: #D63B32; }
 
 .ui-calendar { font-size: 12px; position: absolute; background-color: white; width: 250px; height: 270px; border: 1px solid #E0E0E0; left: 100px; top: 100px; padding: 10px; border-radius: 2px; z-index: 6; color: gray; }
 .ui-calendar table { width: 100%; margin-bottom: 10px; }

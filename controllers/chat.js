@@ -2,6 +2,7 @@ const MSG_ONOFF = { type: 'online' };
 const MSG_CDL = { type: 'cdl' };
 const MSG_UNREAD = { type: 'unread' };
 const MSG_TYPING = { type: 'typing' };
+const MSG_MUTE = { type: 'mute' };
 const SKIPFIELDS = { email: true, unread: true, recent: true, channels: true, password: true, ticks: true };
 
 exports.install = function() {
@@ -102,6 +103,26 @@ function messages() {
 				client.user.unread[message.id] && (delete client.user.unread[message.id]);
 				break;
 
+			case 'mute':
+
+				if (!client.threadid)
+					return;
+
+				if (client.user.mute) {
+					if (client.user.mute[client.threadid])
+						delete client.user.mute[client.threadid];
+					else
+						client.user.mute[client.threadid] = F.datetime.getTime();
+				} else {
+					client.user.mute = {};
+					client.user.mute[client.threadid] = F.datetime.getTime();
+				}
+
+				client.user.mute[message.id];
+				MSG_MUTE.body = client.user.mute;
+				client.send(MSG_MUTE);
+				break;
+
 			case 'recent':
 				delete client.user.recent[message.id];
 				OPERATION('users.save', NOOP);
@@ -171,7 +192,7 @@ F.global.sendmessage = function(client, message) {
 
 		if (is) {
 			tmp = F.global.users.findItem('id', client.threadid);
-			if (tmp) {
+			if (tmp && (!tmp.mute || !tmp.mute[iduser])) {
 
 				if (tmp.unread[iduser])
 					tmp.unread[iduser]++;
@@ -213,7 +234,7 @@ F.global.sendmessage = function(client, message) {
 		// Set "unread" for users outside of this channel
 		for (var i = 0, length = F.global.users.length; i < length; i++) {
 			var user = F.global.users[i];
-			if (!tmp[user.id] && (!user.blacklist || !user.blacklist[idchannel]) && (!user.channels || user.channels[idchannel]) && (!message.users || message.users[user.id])) {
+			if (!tmp[user.id] && (!user.blacklist || !user.blacklist[idchannel]) && (!user.mute || !user.mute[idchannel]) && (!user.channels || user.channels[idchannel]) && (!message.users || message.users[user.id])) {
 				if (user.unread[idchannel])
 					user.unread[idchannel]++;
 				else
@@ -222,7 +243,7 @@ F.global.sendmessage = function(client, message) {
 		}
 
 		self && self.all(function(m) {
-			if (m.user.id !== iduser && m.threadid !== client.threadid && (!m.user.blacklist || !m.user.blacklist[client.threadid]) && (!m.user.channels || m.user.channels[client.threadid]) && (!message.users || message.users[m.user.id])) {
+			if (m.user.id !== iduser && m.threadid !== client.threadid && (!m.user.blacklist || !m.user.blacklist[client.threadid]) && (!m.user.mute || !m.user.mute[client.threadid]) && (!m.user.channels || m.user.channels[client.threadid]) && (!message.users || message.users[m.user.id])) {
 				MSG_UNREAD.unread = m.user.unread;
 				MSG_UNREAD.lastmessages = m.user.lastmessages;
 				MSG_UNREAD.recent = undefined;

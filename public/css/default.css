@@ -119,10 +119,14 @@ body { background-color: white; padding: 0; color: gray; font-smoothing: antiali
 #header .search input { background: transparent; border: 0; padding: 0; margin: 0; font-family: Arial; font-size: 14px; color: black; outline: 0; width: 100%; }
 #header p { font-size: 12px; margin: 0; padding: 0; line-height: 14px; }
 #header { line-height: 10px; }
-#header .attachments { float: right; width: 34px; text-align: center; margin-top: 12px; }
-#header .attachments a { position: relative; display: inline-block; font-size: 18px; background-color: #E0E0E0; padding: 8px 0; border-radius: 4px; width: 100%; color: #505050; }
-#header .attachments a:hover { background-color: #E5E5E5; }
-.attachment-disabled a { color: silver !important; background-color: #F0F0F0 !important; cursor: not-allowed; }
+#header .header-button { float: right; width: 34px; text-align: center; margin: 12px 0 0 10px; }
+#header .header-button a { position: relative; display: inline-block; font-size: 18px; background-color: #E0E0E0; padding: 8px 0; border-radius: 4px; width: 100%; color: #505050; }
+#header .header-button a:hover { background-color: #E5E5E5; color: black; }
+.header-button-mute .fa:before { content: '\f0f3'; }
+.header-button-mute-selected .fa:before { content: '\f1f6'; }
+.header-button-mute-selected a { background-color: #D63B32 !important; color: white !important; }
+.header-button-disabled a { color: silver !important; background-color: #F0F0F0 !important; cursor: not-allowed; }
+.header-button-disabled.header-button-mute .fa:before { content: '\f0f3' !important; }
 
 h2 { font: normal bold 25px $font; margin: 0; padding: 0; color: black; }
 #header h2 { padding-top: 5px; }

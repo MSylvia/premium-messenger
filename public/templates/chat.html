@@ -348,6 +348,10 @@
 		};
 	});
 
+	function chat_mute() {
+		SETTER('websocket', 'send', { type: 'mute' });
+	}
+
 	function chat_files() {
 		common.page === 'chat' && SET('common.form', 'files');
 	}

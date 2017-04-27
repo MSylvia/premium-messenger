@@ -96,7 +96,8 @@
 					<div data-jc="nosqlcounter" data-jc-path="common.stats"></div>
 				</div>
 				<div class="col-lg-4 col-md-5 col-lg-offset-0 col-md-offset-3 hidden m" data-b="common.page" data-b-visible="n => n === 'chat' || n === 'users'">
-					<div class="attachments" data-b="common.page" data-b-class="n => n === 'chat' ? '-attachment-disabled' : '+attachment-disabled'"><a href="javascript:void(0)" class="exec" data-exec="chat_files" title="@(Files)"><i class="fa fa-copy"></i></a></div>
+					<div class="header-button header-button-mute" data-b="common.page" data-b-class="n => n === 'chat' ? '-header-button-disabled' : '+header-button-disabled'"><a href="javascript:void(0)" class="exec" data-exec="chat_mute" title="@(Mute for 1 hour)"><i class="fa"></i></a></div>
+					<div class="header-button" data-b="common.page" data-b-class="n => n === 'chat' ? '-header-button-disabled' : '+header-button-disabled'"><a href="javascript:void(0)" class="exec" data-exec="chat_files" title="@(Files)"><i class="fa fa-copy"></i></a></div>
 					<div data-jc="searchbox" data-jc-path="common.search" data-enter="true" data-placeholder="@(Type a phrase and press enter)"></div>
 				</div>
 			</div>
@@ -238,6 +239,11 @@
 					case 'typing':
 						tmp = current.users.findItem('id', response.id);
 						tmp && SETTER('typing', 'insert', tmp);
+						break;
+
+					case 'mute':
+						user.mute = response.body;
+						refresh_mute();
 						break;
 
 					case 'unread':
@@ -447,6 +453,7 @@
 					SETTER('codemirror', 'reload');
 					var is = user.unread[item.id];
 					delete user.unread[item.id];
+					refresh_mute();
 					is && refresh_unread();
 				} else
 					REDIRECT('/');
@@ -471,6 +478,7 @@
 					delete user.unread[item.id];
 					user.recent[item.id] = true;
 					refresh_recent();
+					refresh_mute();
 					is && refresh_unread();
 				} else
 					REDIRECT('/');
@@ -509,6 +517,14 @@
 				item.online && item.id !== user.id && (count++);
 			});
 			current.online !== count && SET('current.online', count);
+		}
+
+		function refresh_mute() {
+			var btn = $('.header-button-mute');
+			var is = false;
+			if (current.route.item)
+				is = user.mute && user.mute[current.route.item.id] ? true : false;
+			btn.toggleClass('header-button-mute-selected', is);
 		}
 
 		function refresh_recent() {
