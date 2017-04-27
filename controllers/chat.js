@@ -112,10 +112,10 @@ function messages() {
 					if (client.user.mute[client.threadid])
 						delete client.user.mute[client.threadid];
 					else
-						client.user.mute[client.threadid] = F.datetime.getTime();
+						client.user.mute[client.threadid] = F.datetime.add('1 hour').getTime();
 				} else {
 					client.user.mute = {};
-					client.user.mute[client.threadid] = F.datetime.getTime();
+					client.user.mute[client.threadid] = F.datetime.add('1 hour').getTime();
 				}
 
 				client.user.mute[message.id];
