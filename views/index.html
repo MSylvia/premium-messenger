@@ -273,6 +273,7 @@
 					refresh_unread();
 					!current.ready && EMIT('messenger.ready');
 					current.ready = true;
+					SETTER('loading', 'hide');
 					break;
 
 				case 'online':
