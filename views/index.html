@@ -287,13 +287,15 @@
 					break;
 
 				case 'message':
-					var focus = document.hasFocus();
-					if (!response.edited && !focus && response.iduser !== user.id) {
-						favicon.badge('?');
-						var owner = current.users.findItem('id', response.iduser);
-						SETTER('nativenotifications', 'append', '@(New message from: {0})'.format(owner.name), response.body.substring(0, 80));
+					if (!user.mute || !user.mute[user.id]) {
+						var focus = document.hasFocus();
+						if (!response.edited && !focus && response.iduser !== user.id) {
+							favicon.badge('?');
+							var owner = current.users.findItem('id', response.iduser);
+							SETTER('nativenotifications', 'append', '@(New message from: {0})'.format(owner.name), response.body.substring(0, 80));
+						}
+						response.iduser !== user.id && playsound();
 					}
-					response.iduser !== user.id && playsound();
 					SETTER('chat', response.edited ? 'replace' : 'insert', response, true);
 					break;
 			}
