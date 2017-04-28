@@ -227,76 +227,74 @@
 			SET('common.online', is);
 		});
 
-		ON('#websocket', function(component) {
-			refresh_unread();
-			component.message = function(response) {
+		ON('#websocket', refresh_unread);
+		ON('message', function(response) {
 
-				EMIT('messenger.message', response);
+			EMIT('messenger.message', response);
 
-				var tmp, container;
-				switch (response.type) {
+			var tmp, container;
+			switch (response.type) {
 
-					case 'typing':
-						tmp = current.users.findItem('id', response.id);
-						tmp && SETTER('typing', 'insert', tmp);
-						break;
+				case 'typing':
+					tmp = current.users.findItem('id', response.id);
+					tmp && SETTER('typing', 'insert', tmp);
+					break;
 
-					case 'mute':
-						user.mute = response.body;
-						refresh_mute();
-						break;
+				case 'mute':
+					user.mute = response.body;
+					refresh_mute();
+					break;
 
-					case 'unread':
-						user.unread = response.unread;
-						if (response.recent) {
-							user.recent = response.recent;
-							refresh_recent();
-						}
-						refresh_unread();
-						break;
-
-					case 'cdl':
-
-						tmp = response.users.findItem('id', user.id);
-						tmp.me = true;
-
-						response.channels.forEach(function(item) {
-							item.is = user.channels ? user.channels[item.id] === true : true;
-							item.visible = user.blacklist ? (user.blacklist[item.id] ? false : true) : true;
-						});
-
-						SET('current.channels', response.channels);
-						SET('current.users', response.users);
-						EMIT('location');
+				case 'unread':
+					user.unread = response.unread;
+					if (response.recent) {
+						user.recent = response.recent;
 						refresh_recent();
-						refresh_online();
-						refresh_unread();
-						!current.ready && EMIT('messenger.ready');
-						current.ready = true;
-						break;
+					}
+					refresh_unread();
+					break;
 
-					case 'online':
-						$('.useronline[data-id="{0}"]'.format(response.id)).toggleClass('online', response.online);
-						tmp = current.users.findItem('id', response.id);
-						if (tmp) {
-							tmp.online = response.online;
-							tmp.datelogged = response.datelogged;
-						}
-						refresh_online();
-						break;
+				case 'cdl':
 
-					case 'message':
-						var focus = document.hasFocus();
-						if (!response.edited && !focus && response.iduser !== user.id) {
-							favicon.badge('?');
-							var owner = current.users.findItem('id', response.iduser);
-							SETTER('nativenotifications', 'append', '@(New message from: {0})'.format(owner.name), response.body.substring(0, 80));
-						}
-						response.iduser !== user.id && playsound();
-						SETTER('chat', response.edited ? 'replace' : 'insert', response, true);
-						break;
-				}
-			};
+					tmp = response.users.findItem('id', user.id);
+					tmp.me = true;
+
+					response.channels.forEach(function(item) {
+						item.is = user.channels ? user.channels[item.id] === true : true;
+						item.visible = user.blacklist ? (user.blacklist[item.id] ? false : true) : true;
+					});
+
+					SET('current.channels', response.channels);
+					SET('current.users', response.users);
+					EMIT('location');
+					refresh_recent();
+					refresh_online();
+					refresh_unread();
+					!current.ready && EMIT('messenger.ready');
+					current.ready = true;
+					break;
+
+				case 'online':
+					$('.useronline[data-id="{0}"]'.format(response.id)).toggleClass('online', response.online);
+					tmp = current.users.findItem('id', response.id);
+					if (tmp) {
+						tmp.online = response.online;
+						tmp.datelogged = response.datelogged;
+					}
+					refresh_online();
+					break;
+
+				case 'message':
+					var focus = document.hasFocus();
+					if (!response.edited && !focus && response.iduser !== user.id) {
+						favicon.badge('?');
+						var owner = current.users.findItem('id', response.iduser);
+						SETTER('nativenotifications', 'append', '@(New message from: {0})'.format(owner.name), response.body.substring(0, 80));
+					}
+					response.iduser !== user.id && playsound();
+					SETTER('chat', response.edited ? 'replace' : 'insert', response, true);
+					break;
+			}
 		});
 
 		$(window).focus(function() {

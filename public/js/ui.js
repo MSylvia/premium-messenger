@@ -1508,16 +1508,15 @@ COMPONENT('websocket', function() {
 
 	var reconnect_timeout;
 	var self = this;
-	var ws;
-	var url;
-	var pending = [];
+	var ws, url;
+	var queue = [];
+	var sending = false;
 
 	self.online = false;
 	self.readonly();
-	self.blind();
 
 	self.make = function() {
-		reconnect_timeout = (self.attr('data-reconnect') || '5000').parseInt();
+		reconnect_timeout = (self.attr('data-reconnect') || '2000').parseInt();
 		url = self.attr('data-url');
 		if (!url.match(/^(ws|wss)\:\/\//))
 			url = (location.protocol.length === 6 ? 'wss' : 'ws') + '://' + location.host + (url.substring(0, 1) !== '/' ? '/' : '') + url;
@@ -1526,48 +1525,60 @@ COMPONENT('websocket', function() {
 	};
 
 	self.send = function(obj) {
-		if (ws)
-			ws.send(encodeURIComponent(JSON.stringify(obj)));
-		else
-			pending.push(obj);
+		queue.push(encodeURIComponent(JSON.stringify(obj)));
+		self.process();
 		return self;
+	};
+
+	self.process = function(callback) {
+
+		if (!ws || sending || !queue.length || ws.readyState !== 1) {
+			callback && callback();
+			return;
+		}
+
+		sending = true;
+		var async = queue.splice(0, 3);
+		async.waitFor(function(item, next) {
+			ws.send(item);
+			setTimeout(next, 5);
+		}, function() {
+			callback && callback();
+			sending = false;
+			queue.length && self.process();
+		});
 	};
 
 	self.close = function(isClosed) {
 		if (!ws)
 			return self;
-		SETTER('loading', 'show');
 		self.online = false;
-		EMIT('online', false);
 		ws.onopen = ws.onclose = ws.onmessage = null;
 		!isClosed && ws.close();
 		ws = null;
+		EMIT('online', false);
 		return self;
 	};
 
 	function onClose() {
 		self.close(true);
-		setTimeout(function() {
-			self.connect();
-		}, reconnect_timeout);
+		setTimeout(self.connect, reconnect_timeout);
 	}
 
 	function onMessage(e) {
+		var data;
 		try {
-			self.message(JSON.parse(decodeURIComponent(e.data)));
+			data = JSON.parse(decodeURIComponent(e.data));
+			self.attr('data-jc-path') && self.set(data);
 		} catch (e) {
 			window.console && console.warn('WebSocket "{0}": {1}'.format(url, e.toString()));
 		}
+		data && EMIT('message', data);
 	}
 
 	function onOpen() {
-		SETTER('loading', 'hide', 500);
 		self.online = true;
-		pending.waitFor(function(item, next) {
-			self.send(item);
-			setTimeout(next, 10);
-		}, function() {
-			pending = [];
+		self.process(function() {
 			EMIT('online', true);
 		});
 	}
@@ -1579,7 +1590,7 @@ COMPONENT('websocket', function() {
 			ws.onopen = onOpen;
 			ws.onclose = onClose;
 			ws.onmessage = onMessage;
-		}, 100, 5);
+		}, 100);
 		return self;
 	};
 });
