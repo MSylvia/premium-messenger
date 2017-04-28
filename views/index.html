@@ -225,6 +225,7 @@
 		ON('online', function(is) {
 			is && current.ready && current.route && current.route.type && REDIRECT(NAVIGATION.url);
 			SET('common.online', is);
+			current.ready && SETTER('loading', is ? 'hide' : 'show');
 		});
 
 		ON('#websocket', refresh_unread);

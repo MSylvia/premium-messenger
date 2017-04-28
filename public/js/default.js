@@ -18,10 +18,6 @@ $(document).ready(function() {
 	}, 100);
 });
 
-ON('ready', function() {
-	SETTER('loading', 'hide', 1000);
-});
-
 $(window).on('resize', function() {
 	EMIT('resize');
 });
