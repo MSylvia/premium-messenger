@@ -281,6 +281,7 @@ h3 { font: normal bold 18px $font; margin: 0 0 20px; padding: 0; color: black; }
 @media(max-width:980px) {
 	#header .attachments { margin-top: 0; }
 	#header .m { margin-bottom: 20px; }
+	#header .header-button { margin-top: 0; }
 }
 
 @media(max-width:767px) {
