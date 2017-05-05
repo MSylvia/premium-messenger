@@ -4,6 +4,8 @@
 
 # Installation
 
+- Install [__Node.js__ platform](https://www.nodejs.org)
+- Install [__GraphicsMagick__](http://www.graphicsmagick.org)
 - __Premium Messenger__ (v2.0.0) needs latest Total.js from NPM `+v2.5.0`
 - __License__: [MIT](license.txt)
 - [__Live chat with professional support__](https://messenger.totaljs.com)
