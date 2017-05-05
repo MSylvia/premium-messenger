@@ -130,13 +130,17 @@ function messages() {
 
 			// Starts typing
 			case 'typing':
+
+				if (client.user.blocked)
+					return;
+
 				MSG_TYPING.id = iduser;
 				self.send(MSG_TYPING, (id, m) => m.user !== client.user && ((m.user.id === client.threadid && m.threadid === iduser) || (client.threadtype === 'channel' && m.threadtype === client.threadtype && m.threadid === client.threadid)));
 				break;
 
 			// Real message
 			case 'message':
-				F.global.sendmessage(client, message);
+				!client.user.blocked && F.global.sendmessage(client, message);
 				break;
 		}
 	});
